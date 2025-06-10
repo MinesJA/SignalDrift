@@ -1,0 +1,210 @@
+/**
+ * This will reveal the tooltip when the nav link is hovered
+ */
+.tooltipHover-kYwlrZiFkb {
+  position: relative;
+}
+.tooltipHover-kYwlrZiFkb .tooltip-O8fkCONe80 {
+    opacity: 0;
+    transition: all 250ms;
+    font-size: 10px;
+  }
+.tooltipHover-kYwlrZiFkb:hover .tooltip-O8fkCONe80 {
+    opacity: 1;
+  }
+.newButton-ouSfhmn82B {
+  background: #eaae5a;
+  color: #0d1321;
+  padding: 4px 6px 2px 6px;
+  font-size: 8px;
+  margin-left: 5px;
+  border-radius: 2px;
+  font-weight: 700;
+  line-height: 10px;
+}
+.newButton-ouSfhmn82B span {
+    margin-left: 0px !important;
+    white-space: nowrap;
+  }
+.newButtonESPORTS-SdkedDvUYz {
+  background: #2c74ef;
+  color: #fff;
+  padding: 2px 6px 1px 6px;
+  font-size: 9px;
+  margin-left: 9px;
+  border-radius: 2px;
+  font-weight: 700;
+  line-height: 10px;
+}
+.newButtonESPORTS-SdkedDvUYz span {
+    margin-left: 0px !important;
+    white-space: nowrap;
+  }
+.shootoutIcon-JcUDRClECc:before {
+  color: #ced0d2;
+}
+.shootoutIcon-JcUDRClECc:before:hover {
+    color: #eaae5a;
+  }
+
+
+html[lang="ru"] .subNav-_4wnIDF5La {
+  font-size: 10px;
+}
+
+html[lang="ru"] .subNav-_4wnIDF5La a > span {
+    white-space: normal;
+  }
+
+/**
+ * Sub Nav
+ */
+
+.subNav-_4wnIDF5La {
+  border-top: 1px solid rgba(255,255,255,.2);
+  display: flex;
+  font-size: 13px;
+  text-transform: uppercase;
+  font-weight: 500;
+  line-height: 1;
+  transition: opacity 250ms;
+}
+
+.subNav-_4wnIDF5La a {
+    color: rgba(255, 255, 255, .8);
+  }
+
+[lang="pt"] .linksContainer-sMFvvfJAl6 a,
+[lang="pl"] .linksContainer-sMFvvfJAl6 a,
+[lang="es"] .linksContainer-sMFvvfJAl6 a,
+[lang="ru"] .linksContainer-sMFvvfJAl6 a {
+  font-size: 11px;
+}
+
+@media (max-width: 938px) {
+
+[lang="pt"] .linksContainer-sMFvvfJAl6 a,
+[lang="pl"] .linksContainer-sMFvvfJAl6 a,
+[lang="es"] .linksContainer-sMFvvfJAl6 a,
+[lang="ru"] .linksContainer-sMFvvfJAl6 a {
+    padding: 9px 10px;
+}
+  }
+
+.linksContainer-sMFvvfJAl6 {
+  display: flex;
+  padding: 0 15px;
+  /* overflow: hidden; */
+}
+
+.linksContainer-sMFvvfJAl6 .loading-x_YTnYZOjz {
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+  }
+
+.linksContainer-sMFvvfJAl6 a {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+  }
+
+@media (max-width: 1096px) {
+
+.linksContainer-sMFvvfJAl6 a {
+      padding: 12px 10px;
+  }
+    }
+
+.linksContainer-sMFvvfJAl6 a i {
+      font-size: 16px;
+      padding-right: 8px;
+    }
+
+.linksContainer-sMFvvfJAl6 a span {
+      justify-content: center;
+      text-align: left;
+    }
+
+.linksContainer-sMFvvfJAl6 a.selected-ZCWzrezfE7 {
+      color: rgba(255, 255, 255, 1);
+      box-shadow: 0 -3px 0 0 var(--global-colors-primary) inset;
+    }
+
+.linksContainer-sMFvvfJAl6 a.selected-ZCWzrezfE7 i {
+        color: var(--global-colors-primary);
+      }
+
+.linksContainer-sMFvvfJAl6 a:hover:not(.active-Uy1IuSB7rA) {
+      box-shadow: 0 -3px 0 0 var(--global-colors-primary) inset;
+    }
+
+@media (max-width: 1280px) {
+  .linksContainer-sMFvvfJAl6 {
+    padding: 0;
+  }
+}
+
+@media (max-width: 1280px) {
+  .linksContainer-sMFvvfJAl6 {
+    padding: 0;
+  }
+}
+
+@media (--largeViewport) {
+  .linksContainer-sMFvvfJAl6 {
+    padding: 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .subNav-_4wnIDF5La {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .subNav-_4wnIDF5La {
+    font-size: 1.25rem;
+  }
+}
+
+@media (--mediumViewport) {
+  .subNav-_4wnIDF5La {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 872px) {
+  .subNav-_4wnIDF5La {
+    font-size: 1.05rem;
+  }
+}
+
+.linksContainer-sMFvvfJAl6 .disabledLink-zHBQw2nbZ6 {
+  color: var(--disabledGray);
+  cursor: default;
+}
+
+.linksContainer-sMFvvfJAl6 .disabledLink-zHBQw2nbZ6:hover:not(.active-Uy1IuSB7rA) {
+    box-shadow: none;
+    cursor: default;
+  }
+
+.linksContainer-sMFvvfJAl6 .disabledLink-zHBQw2nbZ6.selected-ZCWzrezfE7 {
+  color: var(--disabledGray);
+  box-shadow: none;
+  cursor: default;
+}
+
+.linksContainer-sMFvvfJAl6 .disabledLink-zHBQw2nbZ6.selected-ZCWzrezfE7 i {
+    color: var(--disabledGray);
+  }
+
+.linksContainer-sMFvvfJAl6 .disabledLink-zHBQw2nbZ6.selected-ZCWzrezfE7:hover {
+    box-shadow: none;
+    cursor: default;
+  }
+

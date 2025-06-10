@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FanDuel Test Page - Padres vs Brewers</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #1a1a1a; color: white; }
+        .game-header { background: #0f4c75; padding: 20px; margin-bottom: 20px; }
+        .moneyline-container { background: #2a2a2a; padding: 20px; border-radius: 8px; }
+        .bet-button { 
+            background: #4caf50; color: white; border: none; padding: 12px 24px; 
+            margin: 5px; border-radius: 4px; cursor: pointer; font-weight: bold;
+        }
+        .bet-button:hover { background: #45a049; }
+        .team-row { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
+        .team-name { font-weight: bold; font-size: 16px; }
+        .odds-display { font-size: 18px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="game-header">
+        <h1 data-test-id="game-title">San Diego Padres @ Milwaukee Brewers</h1>
+        <p>MLB - Moneyline</p>
+    </div>
+
+    <div class="moneyline-container" data-test-id="moneyline-market">
+        <h2>Moneyline</h2>
+
+        <div class="team-row" data-test-id="padres-row">
+            <span class="team-name">San Diego Padres</span>
+            <button class="bet-button" data-test-id="padres-moneyline-outcome">
+                <span class="odds-display">-102</span>
+            </button>
+        </div>
+
+        <div class="team-row" data-test-id="brewers-row">
+            <span class="team-name">Milwaukee Brewers</span>
+            <button class="bet-button" data-test-id="brewers-moneyline-outcome">
+                <span class="odds-display">-116</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Additional test elements -->
+    <div class="sportsbook-odds" data-test-id="all-odds">
+        <div data-test-id="outcome-padres">Padres -102</div>
+        <div data-test-id="outcome-brewers">Brewers -116</div>
+    </div>
+
+</body>
+</html>
+        

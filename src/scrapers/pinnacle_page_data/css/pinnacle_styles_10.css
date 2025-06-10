@@ -1,0 +1,329 @@
+/*------------------------------------------------------------------*\
+ * DESKTOP
+/*------------------------------------------------------------------*/
+
+/**
+ * Parent-most container
+ */
+
+.highlightFade-LDa5LsAKPO[data-expanded="false"] .toggleBtn-VjWuUs4chA {
+    animation-name: highlightFade-LDa5LsAKPO;
+    animation-duration: 4s;
+    animation-iteration-count: 1;
+    border-radius: var(--global-border-radius);
+  }
+
+.highlightFade-LDa5LsAKPO[data-expanded="true"] ul .favListItem-u8PFSPJyh_:nth-last-child(2) {
+    animation-name: highlightFade-LDa5LsAKPO;
+    animation-duration: 4s;
+    animation-iteration-count: 1;
+    border-radius: var(--global-border-radius);
+  }
+
+.removeContainer-UHOs275ON3 {
+  position: static;
+}
+
+/**
+ * List item <li>
+ */
+
+.favListItem-u8PFSPJyh_ {
+  position: relative;
+  margin: 2px 0;
+  border-bottom: none;
+  height: 30px;
+}
+
+.favListItem-u8PFSPJyh_:hover .icon-spWlAi3B91 {
+      margin-right: -10px;
+    }
+
+.favListItem-u8PFSPJyh_:hover [data-name="count"] {
+      margin-right: 20px;
+    }
+
+.favListItem-u8PFSPJyh_ > a {
+    line-height: 28px;
+    text-align: start;
+    display: flex;
+    flex-direction: row;
+    vertical-align: middle;
+    height: 100%;
+  }
+
+.favListItem-u8PFSPJyh_ * {
+    cursor: pointer;
+  }
+
+/* sports icon */
+
+.favListItem-u8PFSPJyh_ i {
+    width: 32px;
+    min-width: 32px;
+    display: flex;
+    flex-grow: 0;
+    align-items: center;
+    justify-content: center;
+    transition: all 100ms;
+    color: var(--layout-sidebar-icon-color);
+  }
+
+.favListItem-u8PFSPJyh_ i:hover {
+      color: var(--layout-sidebar-icon-hover-color);
+    }
+
+.favListItem-u8PFSPJyh_:hover,
+  .favListItem-u8PFSPJyh_ .active-hyxpQIHy0M {
+    border-radius: 3px;
+    background-color: var(--layout-sidebar-item-hover-background);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  }
+
+.favListItem-u8PFSPJyh_ label {
+    width: 90%;
+    max-width: calc(100% - 10px);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    transform: translateZ(0); /* hack: needed to hide overflow child span */
+  }
+
+/**
+ * Show a tooltip if the name elipses
+ */
+
+.hoverTooltip-ejdAjUiOaP:hover label span {
+  white-space: nowrap;
+  transform: translateX(0);
+  transition: 1s;
+}
+
+.hoverTooltip-ejdAjUiOaP:hover label span {
+  transform: translateX(calc(86px - 100%));
+  position: absolute;
+}
+
+/**
+ * Icons
+ */
+
+.favListItem-u8PFSPJyh_ .dragIcon-EmiWVn8aPS {
+  display: none;
+}
+
+.favListItem-u8PFSPJyh_:hover .dragIcon-EmiWVn8aPS {
+  display: flex !important;
+}
+
+.favListItem-u8PFSPJyh_:hover .dragIcon-EmiWVn8aPS:hover {
+    color: var(--layout-sidebar-icon-hover-color);
+  }
+
+.favListItem-u8PFSPJyh_:hover .sportIcon-JWcbPwrinT {
+  display: none !important;
+}
+
+.favListItem-u8PFSPJyh_ .removeIcon-Dro324O8xd {
+  height: 100%;
+  width: 30px;
+  min-width: 30px;
+  transform: translate3d(5px, 0, 0);
+  opacity: 0;
+  transition: all 200ms var(--global-animation-easing);
+  cursor: pointer;
+  text-align: center;
+}
+
+.favListItem-u8PFSPJyh_:hover .removeIcon-Dro324O8xd {
+  visibility: visible;
+  transform: translate3d(3px, 0, 0);
+  opacity: 1;
+}
+
+.favListItem-u8PFSPJyh_:hover .removeIcon-Dro324O8xd:hover {
+    color: var(--red);
+  }
+
+.favListItem-u8PFSPJyh_:hover .removeIcon-Dro324O8xd:active {
+    margin-top: 2px;
+    height: calc(100% - 2px);
+  }
+
+/**
+ *
+ */
+
+.justReceivedProps-CElI1_Pf32 .list-rt2AhCL21M {
+  overflow: hidden !important;
+  max-width: 210px;
+}
+
+/**
+ * Class assigned to the <li> element being dragged which sits outside of the
+ * parent <ul> container and is appeneded to the root dom element
+ */
+
+.itsDragging-GURZHVYxuL {
+  background: var(--layout-sidebar-item-hover-background);
+  box-shadow: 0 3px 25px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  font-size: 12px;
+  border-radius: 3px;
+  color: var(--layout-sidebar-color);
+}
+
+.itsDragging-GURZHVYxuL .dragIcon-EmiWVn8aPS {
+    color: var(--global-colors-primary);
+    display: flex;
+  }
+
+.itsDragging-GURZHVYxuL .sportIcon-JWcbPwrinT {
+    display: none !important;
+  }
+
+.itsDragging-GURZHVYxuL .removeIcon-Dro324O8xd {
+    display: none !important;
+  }
+
+.emptyMsg-wjJN0cvmkO {
+  font-size: 11px;
+  text-align: left;
+  padding: 7px 10px;
+}
+
+.toggleBtn-VjWuUs4chA {
+  margin-top: 10px;
+  font-size: 12px;
+  text-align: center;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  cursor: pointer;
+  color: #91949b;
+  line-height: 28px;
+  text-transform: uppercase;
+}
+
+.toggleBtn-VjWuUs4chA:hover {
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+  }
+
+.toggleBtn-VjWuUs4chA span {
+    margin-right: 8px;
+  }
+
+.toggleIcon-BfmzLROcJ7 {
+  transition: all 150ms ease-in-out;
+  display: flex;
+}
+
+.toggleIcon-BfmzLROcJ7.down-lxbNNdvTEi {
+  transform: rotate(90deg);
+  padding-bottom: 8px;
+}
+
+.toggleIcon-BfmzLROcJ7.up-GszvrDC1xG {
+  transform: rotate(-90deg);
+  padding-top: 8px;
+}
+
+.dragIcon-EmiWVn8aPS {
+  cursor: row-resize;
+}
+
+.removeIcon-Dro324O8xd {
+  display: flex;
+  position: absolute;
+  right: 3px;
+  max-width: 40px;
+  justify-content: center;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,
+    var(--layout-sidebar-item-hover-background) 30%
+  );
+  border-radius: 0 3px 3px 0;
+}
+
+.removeIcon-Dro324O8xd:hover {
+    color: var(--global-colors-primary);
+  }
+
+/**
+ * Tooltips
+ */
+
+.confirmContainer-t88y7_K1hX .tooltip-wEBX8bsSJl {
+  top: -25px;
+  right: -230px;
+  min-height: 65px;
+  min-width: 220px;
+  font-size: 12px;
+  padding: 10px 20px;
+  color: var(--global-font-color);
+  transition: all 250ms ease-in-out 150ms;
+}
+
+.confirmContainer-t88y7_K1hX .tooltip-wEBX8bsSJl h2 {
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+/* Tooltip Buttons */
+
+.confirmContainer-t88y7_K1hX .tooltip-wEBX8bsSJl .removeConfirmBtn-_Ua2XeijBS {
+    float: right;
+  }
+
+.confirmContainer-t88y7_K1hX .tooltip-wEBX8bsSJl .removeCancelBtn-Pm317zmcKo {
+    float: right;
+    margin-right: 20px;
+  }
+
+@keyframes highlightFade-LDa5LsAKPO {
+  0% {
+    background-color: var(--lightningYellow);
+    color: var(--global-font-color);
+  }
+  5% {
+    background-color: white;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  }
+  10% {
+    background-color: var(--lightningYellow);
+    color: var(--global-font-color);
+  }
+  15% {
+    background-color: white;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  }
+  20% {
+    background-color: var(--lightningYellow);
+    color: var(--global-font-color);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0);
+  }
+}
+
+/**
+ * Anonymous block
+ */
+
+.sidebarAnonBlock-wGAp_nr3D7 {
+  font-size: 11px;
+  padding: 7px 10px;
+  border-radius: 3px;
+  background: var(--components-favourites-anonBlock-background);
+}
+
+.favouritesCountPadding-c3UxQm1Zlb {
+  padding: 0 10px 0 5px;
+}
+

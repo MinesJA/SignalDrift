@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Betfair Test Page - Offline Version</title>
+    <meta charset="utf-8">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .odds-table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            margin: 20px 0;
+        }
+        .odds-table th, .odds-table td { 
+            border: 1px solid #ddd; 
+            padding: 8px; 
+            text-align: center; 
+        }
+        .odds-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .back-price { 
+            background-color: #E3F2FD; 
+            color: #1976D2; 
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 3px;
+        }
+        .lay-price { 
+            background-color: #FCE4EC; 
+            color: #C2185B; 
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 3px;
+        }
+        .team-name { 
+            font-weight: bold; 
+            text-align: left;
+            padding-left: 15px;
+        }
+        .market-header {
+            background: #2196F3;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .test-selectors {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>San Diego Padres @ Milwaukee Brewers</h1>
+
+        <div class="market-header">
+            <h2>Match Odds</h2>
+            <p>Matched: £13,604 | Market ID: 1.123456789</p>
+        </div>
+
+        <table class="odds-table">
+            <thead>
+                <tr>
+                    <th>Selection</th>
+                    <th colspan="3">Back (Bet)</th>
+                    <th colspan="3">Lay (Offer)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="runner-line" data-testid="padres-runner">
+                    <td class="team-name">San Diego Padres</td>
+                    <td><span class="back-price" data-testid="padres-back-0">2.12</span><br><small>£29</small></td>
+                    <td><span class="back-price" data-testid="padres-back-1">2.34</span><br><small>£508</small></td>
+                    <td><span class="back-price" data-testid="padres-back-2">2.36</span><br><small>£422</small></td>
+                    <td><span class="lay-price" data-testid="padres-lay-0">2.52</span><br><small>£33</small></td>
+                    <td><span class="lay-price" data-testid="padres-lay-1">2.7</span><br><small>£834</small></td>
+                    <td><span class="lay-price" data-testid="padres-lay-2">110</span><br><small>£2</small></td>
+                </tr>
+                <tr class="runner-line" data-testid="brewers-runner">
+                    <td class="team-name">Milwaukee Brewers</td>
+                    <td><span class="back-price" data-testid="brewers-back-0">1.58</span><br><small>£742</small></td>
+                    <td><span class="back-price" data-testid="brewers-back-1">1.59</span><br><small>£678</small></td>
+                    <td><span class="back-price" data-testid="brewers-back-2">1.66</span><br><small>£50</small></td>
+                    <td><span class="lay-price" data-testid="brewers-lay-0">1.74</span><br><small>£1256</small></td>
+                    <td><span class="lay-price" data-testid="brewers-lay-1">1.9</span><br><small>£33</small></td>
+                    <td><span class="lay-price" data-testid="brewers-lay-2">110</span><br><small>£3</small></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Additional test data for selector testing -->
+        <div class="test-selectors">
+            <h3>Test Selectors:</h3>
+            <div data-testid="odds-container">
+                <button class="outcome-price back-odd" data-testid="padres-moneyline">2.36</button>
+                <button class="outcome-price back-odd" data-testid="brewers-moneyline">1.66</button>
+            </div>
+
+            <div class="market-lines">
+                <div class="selection-name team-padres">San Diego Padres</div>
+                <div class="selection-name team-brewers">Milwaukee Brewers</div>
+            </div>
+        </div>
+
+        <p><small>Generated: 2025-06-07 20:10:14 | Test page for Betfair scraper development</small></p>
+    </div>
+</body>
+</html>
+        

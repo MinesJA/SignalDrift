@@ -1,0 +1,2862 @@
+/* media queries */
+/* @custom-media --anyViewport (min-width: 0px);
+@custom-media --tinyViewport (max-width: 325px);
+@custom-media --smallViewport (max-width: 768px);
+@custom-media --mediumViewport (max-width: 1024px);
+@custom-media --largeViewport (max-width: 1280px);
+@custom-media --hugeViewport (min-width: 1281px);
+
+@custom-media --mobile (max-width: 768px);
+@custom-media --desktop (min-width: 768px);
+@custom-media --tablet (max-width: 834px); */
+
+/*
+README THIS!
+Color names are generated from https://www.color-blindness.com/color-name-hue/
+Please use this tool instead of coming up with your own color names
+as it generates real color names based on the supplied hex value.
+*/
+:root {
+  /* used for mobile */
+  --viewport-height: 100%;
+
+  /* colors */
+  --alertPink: #FFCCD0;
+  --alertDarkPink: #F59EA5;
+  --aliceBlue: #E8F2FE;
+  --almostWhite: #EBEBEB;
+  --azure: #0A74EF;
+  --bahamaBlue: #1A446F;
+  --black: #000;
+  --blackPearl: #081C34;
+  --blue: #046DF6;
+  --blueFrost: #CEE3FF;
+  --blueWhale: #203044;
+  --blueLavender: #DEEFFD;
+  --blueZodiac: #0C2038;
+  --blumine: #334E6A;
+  --brightGreen: #7ED321;
+  --bunker: #101419;
+  --carrotOrange: #F18725;
+  --ceruleanBlue: #1274EF;
+  --cloudBurst: #343c48;
+  --cyprus: #081A30;
+  --darkBlue: #072443;
+  --darkSlateBlue: #445c76;
+  --dimGray: #666;
+  --dodgerBlue: #419bf9;
+  --funBlue: #1941a2;
+  --gainsboro: #cffbd4;
+  --mintGainsboro: #d0fad5;
+  --mintGainsboroDark: #ACF6C4;
+  --ghostWhite: #f8f9fa;
+  --green: #0FA810;
+  --ivory: #fdffea;
+  --khaki: #fbdb90;
+  --lightningYellow: #FFBE15; /* used for stars */
+  --lightCyprus: #0C2038;
+  --linkWater: #CCD3DA;
+  --lightPink: #c56a84;
+  --manatee: #91949B;         /* blueish Gray; used on icons */
+  --mediumSeaGreen: #4ebf4f;
+  --navy: #091f38;
+  --moccasin: #FFEBBB;
+  --moccasin2: #FFE7AF;
+  --monaLisa: #FF8181;
+  --mountainMeadow: #27CD66;
+  --nero: #222;
+  --nobel: #999;
+  --onahau: #C5DCEF;
+  --orange: #FF5500;
+  --darkOrange: #FF9201;
+  --pink: #FFCCCF;
+  --raven: #71777F;
+  --red: #F33C4D;
+  --regalBlue: #182f49;
+  --lightRegalBlue: #1D3A5A;
+  --sapphire: #05162b;
+  --shuttleGrey: #666B72;
+  --smaltBlue: #516375;
+  --snowFlurry: #CFFBD4;
+  --softYellow: #FFFFEB;
+  --solitude: #F1F3F7;        /* light off-blue */
+  --solitude2: #F7F8FA;
+  --solitudeBlue: #e8ecf3;
+  --tiber: #0B1422;
+  --watermelon: #FF4A70;
+  --white: #FFFFFF;
+  --whiteSmoke: #f1f3f6;
+  --darkWhiteSmoke: #f3f3f3;
+  --yellow: #FFEC00;
+  --yellowOrange: #ffb300;
+  --zircon: #E1E5E8;
+  --zumthor: #CACED2;
+  --fiord: #505661;
+  --darkGreen: #030C1A;
+  --dodgerBlue: #066EF6;
+  --brightSkyBlue: #378EFF;
+  --cello: #364a61;
+  --veryDarkBlue: #13273E;
+  --chartreuseYellow: #DFF20A;
+
+  /* grays */
+  --athensGray: #DADBDC;
+  --blueBayoux : #617081;
+  --darkGray-3: #AAA;
+  --darkGray: #333;
+  --dimGray: #707070;
+  --disabledGray: #7f838b;
+  --gainsboro: #ddd;
+  --gray: #ccc;
+  --grayBlue: #545a64;
+  --lightGray: #f1f1f1;
+  --medDarkGray: #5f5f5f;
+  --medGray: #72777F;
+  --silver: #c4c4c4;
+  --sisal: #d5c9be;
+  --strongGray: #747980;
+  --veryLightGrey: #cacaca;
+  --brightGrey: #545A64;
+  --bellyGrey: #c2c8cf;
+  --darkGreyBlue: #2e4259;
+  --periwinkleGray: #C6D2E9;
+  --dodgerBlue-3: #2b86fd;
+  --darkGray-2: #535353;
+  --lavenderBlue: #b9d7ff;
+  --portGore: #394d68;
+  --gainsboro-3: #DEDEDE;
+  /* gradients */
+  --blueGradient: linear-gradient(90deg, var(--tiber) 0%, #042D56 100%);
+}
+
+html {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  margin: 0;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+h1,
+h2,
+h3,
+h4,
+p,
+blockquote,
+figure,
+ol,
+ul {
+  margin: 0;
+  padding: 0;
+}
+main,
+li {
+  display: block;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-size: inherit;
+}
+strong {
+  font-weight: bold;
+}
+a,
+button {
+  color: inherit;
+  /*transition: 150ms ease-in-out;*/
+}
+a {
+  text-decoration: none;
+}
+button {
+  overflow: visible;
+  border: 0;
+  font: inherit;
+  -webkit-font-smoothing: inherit;
+  letter-spacing: inherit;
+  background: none;
+  cursor: pointer;
+}
+::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+:focus {
+  outline: 0;
+}
+img {
+  max-width: 100%;
+  height: auto;
+  border: 0;
+}
+* {
+  border-radius: 0;
+}
+
+html, body {
+  font-family: "Roboto", sans-serif;
+  font-display: swap;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--layout-background);
+  line-height: 1.6;
+  font-size: 1.6em;
+  color: var(--global-font-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* -webkit-tap-highlight-color: red; */
+  transition: background 500ms;
+
+  /* prevent double-tap zoom on iOS */
+  touch-action: manipulation;
+}
+
+body[data-betslip-open="true"], body[data-modal-open="true"] {
+    overflow: hidden;
+    height: 100%;
+  }
+
+/* this is needed to disable scrolling on the body content
+   when the bet slip is open */
+/* body[data-betslip-open="true"] #root .side-bar,
+body[data-betslip-open="true"] #root .side-bar-panel > div:not(#betslip) {
+  display: none;
+} */
+
+html.is-mobile {
+
+}
+
+ul {
+  text-align: left;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-user-select: default;
+     -moz-user-select: default;
+          user-select: default;
+}
+
+a {
+  text-decoration: none;
+}
+
+button {
+  font-weight: bold;
+}
+
+select {
+  -webkit-appearance: menulist;
+  -moz-appearance: menulist;
+       appearance: menulist;
+}
+
+a {
+  cursor: pointer;
+}
+
+p {
+  margin-bottom: 1.35em;
+}
+
+p a {
+  color: var(--global-colors-primary);
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+strong {
+  font-weight: bold;
+}
+
+input[type="search"] {
+  -webkit-appearance: none;
+}
+
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  display: none;
+}
+
+/* Prevent the text contents of draggable elements from being selectable. */
+/* [draggable] {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -khtml-user-drag: element;
+  -webkit-user-drag: element;
+
+  cursor: move;
+}
+
+[draggable] * {
+  pointer-events: none;
+  cursor: move;
+} */
+
+/* This is temporarily hide the error overlay */
+/* @todo: remove me
+script[src="/static/js/bundle.js"] ~ iframe {
+  display: none;
+} */
+
+#modal {
+  position: fixed;
+  z-index: 100;
+  /* If I see higher, I'll git-blame and throw the culprit in a lake */
+}
+
+.veil {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: rgba(11, 20, 34, .6);
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+@keyframes bounceIn{
+  0%{
+    opacity: 0;
+    transform: scale(0.3) translate3d(0,0,0);
+  }
+  50%{
+    opacity: 0.9;
+    transform: scale(1.1);
+  }
+  80%{
+    opacity: 1;
+    transform: scale(0.89);
+  }
+  100%{
+    opacity: 1;
+    transform: scale(1) translate3d(0,0,0);
+  }
+}
+
+@keyframes fadeIn{
+  0%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+}
+
+.fade-appear,
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-appear-active,
+.fade-enter-active {
+  transition: opacity .5s linear;
+  opacity: 1;
+}
+
+.fade-exit {
+  transition: opacity .5s linear;
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+}
+
+.spinner {
+  border: 3px solid var(--components-marketBtn-loading-circle-color); 
+  border-top: 3px solid var(--global-colors-tertiary); 
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.contentBlock {
+  border-radius: var(--global-border-radius);
+  margin-bottom: 15px;
+  background: var(--components-contentBlock-background);
+  /* overflow: hidden; */
+  box-shadow: var(--components-contentBlock-shadow);
+}
+
+.contentBlock.content {
+  background: var(--components-contentBlock-content-background);
+}
+
+@media (--mobile) {
+  .contentBlock {
+    border-radius: 0;
+  }
+}
+
+.contentBlock.square {
+  border-radius: none;
+}
+
+.contentBlock.rounded {
+  border-radius: var(--global-border-radius);
+}
+
+.content {
+  padding: var(--global-spacing-padding);
+}
+
+.contentBlockHeading {
+  background-color: var(--components-contentBlock-heading-background);
+  border-radius: var(--global-border-radius) var(--global-border-radius) 0 0;
+  color: var(--components-contentBlock-heading-color);
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  height: 35px;
+  line-height: 35px;
+  padding: 0 15px;
+  position: relative;
+  text-align: left;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+/* modifiers */
+.contentBlockHeading.borderBlue {
+  border-bottom: 3px solid var(--global-colors-tertiary);
+  line-height: 32px;
+}
+
+.contentBlockHeading.borderGreen {
+  border-bottom: 3px solid var(--global-colors-secondary);
+  line-height: 32px;
+}
+
+@media (--mobile) {
+  .contentBlockHeading {
+    border-radius: 0;
+    height: 30px;
+    line-height: 30px;
+  }
+
+  .contentBlockHeading.borderBlue, .contentBlockHeading.borderGreen {
+    line-height: calc(30px - 3px);
+  }
+}
+
+.contentBlockHeadingSml {
+  background-color: var(--components-contentBlock-headingSml-background);
+  color: white;
+  font-size: 11px;
+  height: 25px;
+  line-height: 25px;
+  padding: 0 15px;
+}
+
+/*
+.cn:not(.layout) { background-image: url('../assets/flags/cn.svg'); }
+.cz:not(.layout) { background-image: url('../assets/flags/cz.svg'); }
+.de:not(.layout) { background-image: url('../assets/flags/de.svg'); }
+.es:not(.layout) { background-image: url('../assets/flags/es.png'); }
+.fi:not(.layout) { background-image: url('../assets/flags/fi.svg'); }
+.fr:not(.layout) { background-image: url('../assets/flags/fr.svg'); }
+.en:not(.layout) { background-image: url('../assets/flags/global.svg'); }
+.il:not(.layout) { background-image: url('../assets/flags/il.svg'); }
+.it:not(.layout) { background-image: url('../assets/flags/it.svg'); }
+.jp:not(.layout) { background-image: url('../assets/flags/jp.svg'); }
+.kr:not(.layout) { background-image: url('../assets/flags/kr.svg'); }
+.no:not(.layout) { background-image: url('../assets/flags/no.svg'); }
+.pl:not(.layout) { background-image: url('../assets/flags/pl.svg'); }
+.pt:not(.layout) { background-image: url('../assets/flags/pt.svg'); }
+.ru:not(.layout) { background-image: url('../assets/flags/ru.svg'); }
+.se:not(.layout) { background-image: url('../assets/flags/se.svg'); }
+.tw:not(.layout) { background-image: url('../assets/flags/tw.svg'); }
+*/
+
+/**
+ * Groups of fields
+ */
+.formGroup {
+  padding: var(--global-spacing-padding);
+  margin-bottom: var(--global-spacing-margin);
+  border-radius: var(--global-border-radius);
+  background-color: var(--components-form-group-background);
+  font-size: 12px;
+}
+
+@media (--mobile) {
+  .formGroup {
+    padding-top: calc(var(--global-spacing-padding) * 2);
+    margin-bottom: 0;
+    border-radius: 0;
+    border-bottom: 1px solid var(--global-border-color);
+  }
+  .employmentDetails{
+    padding-top: calc(var(--global-spacing-padding) * 1);
+  }
+}
+
+.formGroup:empty {
+  display: none;
+}
+
+.formGroupTitle {
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0 0 20px;
+  padding: 0;
+}
+  @media (--mobile) {
+    .formGroupTitle {
+      font-size: 15px;
+    }
+  }
+
+.formGroup table,
+.formGroup table tr,
+.formGroup table td {
+  color: var(--global-font-color);
+}
+
+/**
+ * Fields
+ */
+.formFieldsInline {
+  display: flex;
+  align-items: initial;
+}
+  .formFieldsInine > div {
+    margin-right: var(--global-spacing-margin);
+  }
+
+.formField {
+  margin-bottom: var(--global-spacing-margin);
+  position: relative;
+  max-width: 400px;
+}
+    /* states */
+  .formField.isInvalid .formElementWrap {
+    border-color: var(--red);
+  }
+
+  .formField.focused .formElementWrap {
+    border: 1px solid var(--components-form-focus-color);
+    box-shadow: var(--components-form-focus-shadow);
+  }
+  .formField.isInvalid .formElementWrap, .formField.isInvalid.focused .formElementWrap{
+    border-color: var(--red);
+  }
+
+  /* modifiers */
+  .formField.fullWidth {
+    max-width: 100%;
+  }
+
+  .formField.inline {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .formField.positionTop {
+    align-items: baseline;
+  }
+
+  /* firefox - removed highlighted input onBlur */
+  .formField input {
+    box-shadow: none;
+  }
+
+.formFieldLabel {
+  font-weight: 500;
+  padding: 0 0 10px;
+  display: block;
+}
+
+.formElementWrap {
+  border: 1px solid var(--components-form-border-color);
+  border-radius: var(--global-border-radius);
+  display: flex;
+  transition: all 100ms ease-in-out;
+  position: relative;
+}
+
+  /* icons */
+  .formElementWrap i[fill="currentColor"]:first-child {
+    min-width: 44px;
+    flex-grow: 0;
+   /*  border-right: 1px solid var(--global-border-color); */
+  }
+
+  .formElementWrap .leftIcon {
+    border-top-left-radius: var(--global-border-radiusSml);
+    border-bottom-left-radius: var(--global-border-radiusSml);
+    font-weight: bold;
+    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1;
+    min-width: 44px;
+    font-size: 14px;
+    color: var(--components-form-icon-color);
+  }
+
+  .formElementWrap .leftIconDisabled {
+    background-color: var(--components-form-disabled-background);
+  }
+
+  .formElementWrap .iconRight {
+    /* position: absolute;
+    right: 15px;
+    top: 0; */
+    border-top-right-radius: var(--global-border-radiusSml);
+    border-bottom-right-radius: var(--global-border-radiusSml);
+    padding: 0 15px;
+    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    line-height: 1;
+  }
+
+  .formElementWrap .icon-x {
+    color: var(--red);
+    font-size: .7em;
+  }
+
+  .formElementWrap .icon-check-box-tick-icon {
+    color: var(--global-colors-secondary);
+    font-size: .8em;
+  }
+
+  .formElementWrap .icon-down-arrow {
+    color: var(--medGray);
+    font-size: 6px;
+    cursor: pointer;
+  }
+
+/* attached to input, select, etc **/
+.formElement {
+  display: flex;
+  border: none;
+  border-radius: 0 var(--global-border-radiusSml) var(--global-border-radiusSml) 0;
+  min-width: 20px;
+  flex: 1;
+  margin: 0;
+}
+  .formElement::-moz-placeholder {
+    font-style: normal;
+    color: var(--components-form-placeholder-color);
+  }
+  .formElement::placeholder {
+    font-style: normal;
+    color: var(--components-form-placeholder-color);
+  }
+
+  .formElement:disabled {
+    background-color: var(--components-form-disabled-background);
+    color: var(--components-form-disabled-color);
+  }
+
+.select {
+  -moz-appearance: window;
+  -webkit-appearance: none;
+
+  border: none;
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  height: 44px;
+  padding-right: 40px;
+  -moz-text-align-last: center;
+       text-align-last: center;
+  text-align: center;
+  width: 100%;
+
+  color: var(--components-form-select-color);
+  background: var(--components-form-select-background);
+  box-shadow: var(--components-container-shadow);
+  padding-left: var(--global-spacing-padding);
+  background-size: 12px auto;
+}
+
+.select.dark {
+  color: var(--white);
+  background: #11253a url('/img/icons/down-arrow-white.png') calc(100% - 16px) center no-repeat;
+  background-size: 12px auto;
+}
+
+/**
+ * Footer butons
+ */
+.formButtons {
+}
+@media (--mobile) {
+  .formButtons .btn {
+      width: 100%;
+      margin: auto;
+  }
+}
+
+  .formButtons.mobile {
+    padding: var(--global-spacing-padding);
+    background: var(--components-form-buttons-background);
+  }
+
+  @media (--desktop) {
+    .formButtons a:not(:last-child) {
+      margin-right: 10px;
+    }
+  }
+
+/* -------------------------------------------------------------------------- */
+/* MODIFIERS
+/* -------------------------------------------------------------------------- */
+
+.formField.large {
+}
+  .formField.large .formFieldLabel {
+    font-size: 16px;
+  }
+
+  .formField.large .formElement {
+    height: 44px;
+    /* line-height: 44px; */
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 16px;
+  }
+
+.formField.medium {
+}
+  .formField.medium .formFieldLabel {
+    font-size: 13px;
+  }
+  .formField.medium .formElement {
+    height: 36px;
+    /* line-height: 36px; */
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 13px;
+    /* firefox - removed highlighted input onBlur */
+    box-shadow: none;
+  }
+
+.formField.small {
+}
+  .formField.small .formFieldLabel {
+    font-size: 12px;
+  }
+  .formField.small .formElement {
+    height: 28px;
+    /* line-height: 28px; */
+    padding-left: 12px;
+    padding-right: 12px;
+    font-size: 12px;
+    border-radius: var(--global-border-radiusSml);
+  }
+
+/* -------------------------------------------------------------------------- */
+/* THEMES
+/* -------------------------------------------------------------------------- */
+
+.primary .formElement,
+.primary .select ,
+.primary .leftIcon,
+.primary .iconRight,
+.primary .select-search-box__search {
+  background: var(--components-form-primary-background);
+}
+.primary .formElement {
+  color: var(--components-form-primary-color);
+}
+
+.secondary .formElement,
+.secondary .select,
+.secondary .leftIcon,
+.secondary .iconRight {
+  background: var(--components-form-secondary-background);
+}
+
+.secondary .formElement {
+  color: var(--components-form-secondary-color);
+}
+
+.primary .formElement[disabled],
+.secondary .formElement[disabled] {
+  background: var(--components-form-disabled-background);
+  color: var(--components-form-disabled-color);
+  /* For iOS */
+  -webkit-text-fill-color: var(--components-form-disabled-color);
+  opacity: 1;
+}
+
+/* -------------------------------------------------------------------------- */
+/* VALIDATIONS
+/* -------------------------------------------------------------------------- */
+
+.validationErrors {
+  margin: 5px 0 var(--global-spacing-margin);
+  background: var(--global-messages-attention-background);
+  color: var(--global-messages-attention-color);
+  padding: 7.5px var(--global-spacing-padding);
+  font-size: 12px;
+  font-weight: normal;
+  border-radius: var(--global-border-radius);
+}
+.validationErrors > div div:before {
+  content: '\2022  ';
+}
+.validationErrors span {
+  display: block;
+}
+
+.validationErrorTxt {
+  color: var(--watermelon);
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.successTxt {
+  color: var(--global-colors-secondary);
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.pendingTxt {
+  color: var(--global-colors-primary);
+  font-weight: bold;
+  font-size: 13px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Extra
+/* -------------------------------------------------------------------------- */
+
+/* Base style for hr dividers used in some forms. */
+.divider {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid var(--components-form-border-color);
+  margin: 0;
+  padding: 0;
+}
+.dividerPersonalDetails {
+  max-width: 417px;
+  color: #979797;
+  margin-left: 6px;
+}
+
+
+
+.modalContentContainer {
+  background: var(--components-modal-background);
+  color: var(--components-modal-color);
+  border-radius: var(--global-border-radius);
+  min-width: 300px;
+  overflow: auto;
+  box-shadow: var(--components-modal-shadow);
+}
+
+.modalContent {
+  padding: calc(var(--global-spacing-padding) * 2);
+}
+
+/*
+  @todo: ensure that these global classes are not in use anywhere:
+
+  .tab {
+    font-size: 13px;
+    padding: 7px 0;
+    color: grey;
+    text-transform: uppercase;
+    transition: none;
+    margin-right: 30px;
+    transition: box-shadow 250ms var(--global-animation-easing);
+    color: var(--fontBaseColor);
+    opacity: .8;
+  }
+
+  .tabs[data-selected="true"] {
+    font-weight: bold;
+    box-shadow: 0 -3px 0 0 var(--global-colors-primary) inset;
+    color: var(--fontBaseColor);
+  }
+
+  .tabs:last-child {
+    margin-right: 0;
+  }
+*/
+
+/*
+  @todo: use these in TabsCompat
+ */
+.tabs {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  background: var(--components-tabs-background);
+}
+
+.tabs.fillParent {
+  align-items: stretch;
+}
+
+.tabs.fillParent .tabItem {
+  flex: 1;
+}
+
+.tabItem {
+  font-size: 13px;
+  padding: 10px 0;
+  margin: 0;
+  color: var(--components-tabs-color);
+  font-weight: 500;
+  text-transform: uppercase;
+  transition: box-shadow 150ms var(--global-animation-easing);
+  opacity: .8;
+}
+
+.tabItem:hover {
+  box-shadow: 0 -3px 0 0 var(--global-colors-primary) inset;
+}
+
+.tabItem.addPadding {
+  padding-left: var(--global-spacing-padding);
+  padding-right: var(--global-spacing-padding);
+}
+
+.tabItem[data-selected="true"] {
+  opacity: 1;
+  box-shadow: 0 -3px 0 0 var(--global-colors-primary) inset;
+  color: var(--global-font-color);
+}
+
+.tabItem:last-child {
+  margin-right: 0;
+}
+
+.tab {
+  font-size: 13px;
+  padding: 7px 0;
+  text-transform: uppercase;
+  margin-right: 30px;
+  transition: box-shadow 250ms var(--easing);
+  color: var(--fontBaseColor);
+  opacity: .8;
+}
+
+.tab[data-selected="true"], .tab.active {
+  font-weight: bold;
+  box-shadow: 0 -3px 0 0 var(--global-colors-primary) inset;
+  color: var(--fontBaseColor);
+}
+
+.tab:last-child {
+  margin-right: 0;
+}
+
+
+[tooltip].marketBtn {
+  /* margin:20px 60px; */
+}
+
+[tooltip] {
+  position:relative;
+  display:inline-block;
+}
+
+[tooltip]::before {
+  content: "";
+  position: absolute;
+  top:-6px;
+  left:50%;
+  transform: translateX(-50%);
+  border-width: 4px 6px 0 6px;
+  border-style: solid;
+  border-color: var(--darkBlue) transparent transparent transparent;
+  z-index: 2;
+  opacity: 0;
+}
+
+[tooltip-position='left']::before{
+  left:0;
+  top:50%;
+  margin-left:-12px;
+  transform:translatey(-50%) rotate(-90deg);
+}
+[tooltip-position='top']::before{
+  left:50%;
+}
+[tooltip-position='buttom']::before{
+  top:100%;
+  margin-top:8px;
+  transform: translateX(-50%) translatey(-100%) rotate(-180deg);
+}
+[tooltip-position='right']::before{
+  left:100%;
+  top:50%;
+  margin-left:1px;
+  transform:translatey(-50%) rotate(90deg);
+}
+
+[tooltip]::after {
+  content: attr(tooltip);
+  position: absolute;
+  left:50%;
+  top:-6px;
+  transform: translateX(-50%)  translateY(-100%);
+  background: var(--darkBlue);
+  text-align: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 80px;
+  border-radius: var(--global-border-radius);
+  pointer-events: none;
+  padding: 4px;
+  z-index: 1;
+  opacity: 0;
+  filter: drop-shadow(rgba(0, 0, 0, 0.4) 0 1px 6px);
+  will-change: filter;
+}
+
+/**
+* Positions
+*/
+[tooltip-position='left']::after{
+  left:0;
+  top:50%;
+  margin-left:-8px;
+  transform: translateX(-100%) translateY(-50%);
+}
+[tooltip-position='top']::after{
+  left:50%;
+}
+[tooltip-position='buttom']::after{
+  top:100%;
+  margin-top:8px;
+  transform: translateX(-50%) translateY(0%);
+}
+[tooltip-position='right']::after{
+  left:100%;
+  top:50%;
+  margin-left:8px;
+  transform: translateX(0%) translateY(-50%);
+}
+
+[tooltip]:hover::after,[tooltip]:hover::before {
+  opacity:1;
+}
+
+/**
+* Themes
+*/
+[tooltip][data-theme="light"]::before {
+  border-color: var(--white) transparent transparent transparent;
+}
+[tooltip][data-theme="light"]::after {
+  background: var(--white);
+  color: var(--darkBlue);
+}
+
+.page-heading {
+  padding: 22px 0;
+  margin-bottom: 2rem;
+  font-size: 13px;
+  color: var(--medGray);
+}
+
+/* Prevent auto-zoom on mobile when user scaling enabled */
+@media (--mobile) {
+  select,
+  textarea,
+  input {
+    font-size: 16px !important;
+  }
+}
+
+.transparent { background: transparent; }
+
+.text-left { text-align: left !important; }
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
+.uppercase { text-transform: uppercase; }
+.bold { font-weight: bold }
+.condensed { letter-spacing: -1px }
+
+.blurred { filter: blur(2px); }
+
+.no-background { background: none !important; }
+
+.no-border { border: none !important; }
+.no-border-top { border-top: 0 !important; }
+.no-border-btm { border-bottom: 0 !important; }
+.no-border-left { border-bottom: 0 !important; }
+.no-border-right { border-bottom: 0 !important; }
+.no-border-radius { border-radius: 0 !important; }
+
+.border-radius { border-radius: var(--global-border-radius); }
+
+.float-left { float: left };
+.float-right { float: right };
+.centered { margin: 0 auto; }
+
+.fluid { display: flex; width: 100%; }
+
+.affix { position: fixed; }
+
+.m { margin: var(--global-spacing-margin); }
+.mt { margin-top: var(--global-spacing-margin); }
+.mr { margin-right: var(--global-spacing-margin); }
+.mb { margin-bottom: var(--global-spacing-margin); }
+.ml { margin-left: var(--global-spacing-margin); }
+
+.mt0 { margin-top: 0; }
+.mr0 { margin-right: 0; }
+.mb0 { margin-bottom: 0; }
+.ml0 { margin-left: 0; }
+
+.p { padding: var(--global-spacing-padding); }
+.pt { padding-top: var(--global-spacing-padding); }
+.pr { padding-right: var(--global-spacing-padding); }
+.pb { padding-bottom: var(--global-spacing-padding); }
+.pl { padding-left: var(--global-spacing-padding); }
+
+.p2x { padding: calc(var(--global-spacing-padding) * 2); }
+.pt2x { padding-top: calc(var(--global-spacing-padding) * 2); }
+.pr2x { padding-right: calc(var(--global-spacing-padding) * 2); }
+.pb2x { padding-bottom: calc(var(--global-spacing-padding) * 2); }
+.pl2x { padding-left: calc(var(--global-spacing-padding) * 2); }
+
+.p0  { padding: 0; }
+.pt0 { padding-top: 0; }
+.pr0 { padding-right: 0; }
+.pb0 { padding-bottom: 0; }
+.pl0 { padding-left: 0; }
+
+.xxl { font-size: 220% !important; }
+.xl  { font-size: 170% !important; }
+.l   { font-size: 140% !important; }
+.m   { font-size: 110% !important; }
+.s   { font-size: 80% !important; }
+
+.lowercase { text-transform: lowercase; }
+
+.disabled  { opacity: .35; }
+.is-hidden { display: none !important; }
+.is-visible { display: block !important; }
+.overflow-hidden { overflow: hidden !important; }
+.overflow-visible { overflow: visible !important; }
+.appearance-none { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+
+.ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: inline-block;
+  white-space: nowrap;
+}
+.nowrap {
+  white-space: nowrap;
+}
+.break-word {
+  -webkit-hyphens: auto;
+          hyphens: auto;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-all;
+  word-break: break-word;
+}
+.no-ellipsis { white-space: normal !important; }
+
+
+.no-pad { padding: 0; }
+.cursor { cursor: pointer; }
+
+.white { color: white; }
+.black { color: black; }
+
+/* messages */
+.accepted, .verified {
+  background: var(--global-messages-accepted-background);
+  color: var(--global-messages-accepted-color);
+}
+
+.attention {
+  background: var(--global-messages-attention-background);
+  color: var(--global-messages-attention-color);
+}
+
+.neutral {
+  background: var(--global-messages-neutral-background);
+  color: var(--global-messages-neutral-color);
+}
+
+.warning {
+  background: var(--global-messages-warning-background);
+  color: var(--global-messages-warning-color);
+}
+/* eof messages */
+
+.dead-center {
+  vertical-align: middle;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.pointer-events-none { pointer-events: none; }
+.sticky {
+  position: -webkit-sticky;
+  position: -moz-sticky;
+  position: -ms-sticky;
+  position: -o-sticky;
+  position: sticky;
+}
+
+@media (--mobile) {
+  .hidden-mobile {
+    display: none;
+  }
+}
+
+.horz-gradient { background: var(--components-header-background); }
+
+.scrollbar {
+  scroll-behavior: smooth;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: var(--global-scrollbar-background);
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background-color:  var(--global-scrollbar-thumb-background);
+}
+
+.scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: var(--global-scrollbar-hover-thumb-background);
+}
+
+.badge {
+  font-weight: bold;
+  background: var(--global-colors-primary);
+  color: white;
+  border-radius: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+  font-size: 12px;
+  flex-shrink: 0;
+  display: inline-flex;
+}
+
+/**
+ * Everything imported here goes into the global CSS scope.
+ * It's strongly discouraged to put anything into the global scope, unless
+ * entirely necessary. CSS belonging to components to be live in their
+ * component's folder.
+ */
+
+/* this must go last to overide other classes */
+
+
+
+/*===========================================================
+= Inputs                                                    =
+===========================================================*/
+
+.rrui__input-field,
+.rrui__select__button
+{
+	border        : none;
+	/*border-bottom : 1px solid #C5D2E0;*/
+	transition    : border 0.1s;
+}
+
+.rrui__input-field:focus,
+.rrui__select__button:focus,
+.rrui__select__native-expanded:focus + .rrui__select__button
+{
+	/*border-bottom-color: #03B2CB;*/
+}
+
+/*===========================================================
+= Input                                                     =
+===========================================================*/
+
+.rrui__input
+{
+	/* `position: relative` is for the floating label absolute positioning
+	   and also for `.rrui__select__options width` sizing */
+	position : relative;
+}
+
+.rrui__input:not(.rrui__input--multiline),
+.rrui__input-label
+{
+	height : 45px; /*calc(0.3rem * 6);*/
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+/* For native `<select/>` in Safari */
+.rrui__select__native
+{
+	min-height : calc(0.3rem * 6);
+}
+
+.rrui__input-error
+{
+	margin-top : calc(0.3rem);
+	color      : #D30F00;
+}
+
+/*===========================================================
+= Input field                                               =
+===========================================================*/
+
+.rrui__input-field
+{
+	outline       : none;
+	border-radius : 0;
+	/* Some web browsers add <input/> padding by default */
+	padding       : 0;
+	-webkit-appearance    : none;
+	   -moz-appearance    : none;
+	        appearance    : none;
+}
+
+.rrui__input-field--invalid,
+.rrui__input-field--invalid:focus
+{
+	border-color: #EB2010;
+}
+
+.rrui__input-field--disabled
+{
+	cursor: default;
+}
+
+/*===========================================================
+= Buttons                                                   =
+===========================================================*/
+
+/* Reset the default `<button/>` styles */
+.rrui__select__button,
+.rrui__select__option,
+.rrui__select__close
+{
+	margin      : 0;
+	padding     : 0;
+	white-space : nowrap;
+	outline     : none;
+	-webkit-appearance  : none;
+	   -moz-appearance  : none;
+	        appearance  : none;
+	border      : none;
+	background  : none;
+	cursor      : pointer;
+	font-size   : inherit;
+	font-family : inherit;
+	font-weight : inherit;
+	font-style  : inherit;
+}
+
+/*===========================================================
+= Select                                                    =
+===========================================================*/
+
+.rrui__expandable
+{
+	opacity : 0;
+	pointer-events : none;
+
+	transform        : scaleY(0);
+	transform-origin : 50% top 0px;
+
+	/* 250ms - too slow for short lists */
+	transition : all 50ms cubic-bezier(.76,.04,.46,.75) 0ms;
+
+	/* prevent white background showing through the transparent border */
+	/* http://stackoverflow.com/questions/7473200/transparent-border-expands-background-color-image */
+	background-clip         : padding-box;
+	-webkit-background-clip : padding-box;
+}
+
+.rrui__expandable--expanded
+{
+	opacity        : 1;
+	pointer-events : auto;
+
+	transform        : scaleY(1);
+	transform-origin : 50% top 0px;
+
+	transition : all 150ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+}
+
+.rrui__expandable--overlay
+{
+	position : absolute;
+	z-index  : 1;
+}
+
+.rrui__expandable__content
+{
+	/*
+	The inner block's `opacity` is animated too
+	(it fades in and out by itself too).
+	This is done to fade out the inner block when the dropdown is collapsed
+	therefore hiding an otherwise bizarre and unwanted visual clutter
+	*/
+	opacity: 0;
+
+	/* Mitigates inner content overlapping with itself creating a feeling of a mess */
+	transition: opacity 150ms ease-out;
+}
+
+.rrui__expandable__content--expanded
+{
+	opacity: 1;
+}
+
+.rrui__shadow
+{
+	box-shadow : 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.rrui__select
+{
+	-webkit-user-select : none;
+	   -moz-user-select : none;
+	        user-select : none;
+}
+
+.rrui__select--menu
+{
+	position : relative;
+}
+
+.rrui__select__options
+{
+	margin           : 0;
+	padding-left     : 0;
+	padding-top      : calc(2 * 0.3rem);
+	padding-bottom   : calc(2 * 0.3rem);
+	overflow-y       : auto;
+	background-color : white;
+	list-style-type  : none;
+	overflow-x       : hidden;
+	box-sizing       : border-box;
+}
+
+.rrui__expandable--left-aligned
+{
+	left : 0;
+}
+
+.rrui__expandable--right-aligned
+{
+	right : 0;
+}
+
+.rrui__select__options--left-aligned
+{
+	left : 0; /*calc(0.3rem * 4 * -1);*/
+}
+
+.rrui__select__options--right-aligned
+{
+	right : calc(0.3rem * 4 * -1);
+}
+
+.rrui__select__options:not(.rrui__select__options--menu)
+{
+	width : 100%; /*calc(100% + 0.3rem * 4 * 2);*/
+}
+
+.rrui__select__options--downward
+{
+	/* When an html page is overflown by a long list
+	   then this bottom margin helps to see that
+	   there's no more options left out being clipped or something */
+	margin-bottom : 1em;
+}
+
+.rrui__select__options--upward
+{
+	bottom : 100%;
+
+	/* When an html page is overflown by a long list
+	   then this bottom margin helps to see that
+	   there's no more options left out being clipped or something */
+	margin-top : 1em;
+}
+
+.rrui__select__option
+{
+	display : block;
+	width   : 100%;
+
+	padding-left  : calc(0.3rem * 4);
+	padding-right : calc(0.3rem * 4);
+
+	padding-top    : calc(0.3rem * 1);
+	padding-bottom : calc(0.3rem * 1);
+
+	box-sizing  : border-box;
+	text-align  : left;
+	white-space : nowrap;
+}
+
+.rrui__select__option:hover
+{
+	background-color : #FBFDFD;
+}
+
+.rrui__select__button--disabled,
+.rrui__select__option--disabled
+{
+	cursor : default;
+}
+
+.rrui__select__option-icon
+{
+	margin-right : calc(0.3rem * 3);
+}
+
+.rrui__select__options--upward
+{
+	transform-origin: 50% bottom 0px;
+}
+
+.rrui__select__option--focused
+{
+  background-color: #419bf9;
+  color: white;
+}
+
+.rrui__select__option--focused:hover
+{
+	background-color: #ccc;
+  color: #333;
+}
+
+.rrui__select__option:active
+{
+	background-color : #3678D1;
+	color            : white;
+}
+
+.rrui__select__option-icon
+{
+	margin-right: 0.5em
+}
+
+.rrui__select__toggler,
+.rrui__select__button,
+.rrui__select__autocomplete
+{
+	height     : 100%;
+	box-sizing : border-box;
+  padding-left: 15px;
+}
+
+.rrui__select__button
+{
+	/*border-bottom : 1px solid #C5D2E0;*/
+	transition    : border 0.1s;
+
+	/* Because Chrome adds `text-align: center` for all buttons */
+	text-align : left;
+}
+
+.rrui__select__button:focus,
+.rrui__select__native-expanded:focus + .rrui__select__button
+{
+	/*border-bottom-color: #03B2CB;*/
+}
+
+.rrui__select__button:active
+{
+	color: #03B2CB;
+}
+
+.rrui__select__button--expanded
+{
+	color: #3678D1;
+}
+
+.rrui__select__button--empty
+{
+	color: #888C91;
+}
+
+.rrui__select__button,
+.rrui__select__option
+{
+	/*color : inherit;*/
+}
+
+/* Not introducing an animation on `.rrui__select__option`
+   because it would introduce a little clutter due to
+   focused option animation in autocomplete mode */
+.rrui__select__button
+{
+	transition : color 30ms ease-out;
+}
+
+.rrui__select__selected-content
+{
+	display     : flex;
+	align-items : center;
+}
+
+.rrui__select__selected-label
+{
+	flex          : 1 0 auto;
+	overflow      : hidden;
+	text-overflow : ellipsis;
+}
+
+.rrui__select__arrow
+{
+	width  : 0;
+	height : 0;
+
+	margin-left   : 0.35em;
+	margin-top    : 0.1em;
+	margin-bottom : 0.1em;
+
+	opacity: 0.7;
+
+	transition: opacity 100ms ease-out;
+
+	/* border-width: arrow_height arrow_width/2 0 arrow_width/2 */
+	border-width : 0.35em 0.2em 0 0.2em;
+
+	border-style       : solid;
+	border-left-color  : transparent;
+	border-right-color : transparent;
+
+	color: #B8BDC4;
+}
+
+.rrui__select__arrow--expanded
+{
+	opacity: 0.3;
+}
+
+.rrui__select__native-expanded
+{
+	position : absolute;
+	left     : 0;
+	z-index  : 1;
+	opacity  : 0;
+	cursor   : pointer;
+}
+
+.rrui__select__close
+{
+	/*
+	Set `display` to `block` for fullscreen `.rrui__expandable` design.
+	display      : block;
+	*/
+	display      : none;
+	position     : fixed;
+	top          : 0;
+	right        : 0;
+	z-index      : 1;
+}
+
+.rrui__select__close-icon
+{
+	margin-top   : calc(0.3rem * 2 + 4px);
+	margin-right : calc(0.3rem * 2 + 4px);
+	width        : calc(0.3rem * 5);
+	height       : calc(0.3rem * 5);
+}
+
+.react-tel-input {
+  position: relative;
+}
+.react-tel-input .ad {
+  background-position: -16px 0;
+}
+.react-tel-input .ae {
+  background-position: -32px 0;
+}
+.react-tel-input .af {
+  background-position: -48px 0;
+}
+.react-tel-input .ag {
+  background-position: -64px 0;
+}
+.react-tel-input .ai {
+  background-position: -80px 0;
+}
+.react-tel-input .al {
+  background-position: -96px 0;
+}
+.react-tel-input .am {
+  background-position: -112px 0;
+}
+.react-tel-input .ao {
+  background-position: -128px 0;
+}
+.react-tel-input .ar {
+  background-position: -144px 0;
+}
+.react-tel-input .as {
+  background-position: -160px 0;
+}
+.react-tel-input .at {
+  background-position: -176px 0;
+}
+.react-tel-input .au {
+  background-position: -192px 0;
+}
+.react-tel-input .aw {
+  background-position: -208px 0;
+}
+.react-tel-input .az {
+  background-position: -224px 0;
+}
+.react-tel-input .ba {
+  background-position: -240px 0;
+}
+.react-tel-input .bb {
+  background-position: 0 -11px;
+}
+.react-tel-input .bd {
+  background-position: -16px -11px;
+}
+.react-tel-input .be {
+  background-position: -32px -11px;
+}
+.react-tel-input .bf {
+  background-position: -48px -11px;
+}
+.react-tel-input .bg {
+  background-position: -64px -11px;
+}
+.react-tel-input .bh {
+  background-position: -80px -11px;
+}
+.react-tel-input .bi {
+  background-position: -96px -11px;
+}
+.react-tel-input .bj {
+  background-position: -112px -11px;
+}
+.react-tel-input .bm {
+  background-position: -128px -11px;
+}
+.react-tel-input .bn {
+  background-position: -144px -11px;
+}
+.react-tel-input .bo {
+  background-position: -160px -11px;
+}
+.react-tel-input .br {
+  background-position: -176px -11px;
+}
+.react-tel-input .bs {
+  background-position: -192px -11px;
+}
+.react-tel-input .bt {
+  background-position: -208px -11px;
+}
+.react-tel-input .bw {
+  background-position: -224px -11px;
+}
+.react-tel-input .by {
+  background-position: -240px -11px;
+}
+.react-tel-input .bz {
+  background-position: 0 -22px;
+}
+.react-tel-input .ca {
+  background-position: -16px -22px;
+}
+.react-tel-input .cd {
+  background-position: -32px -22px;
+}
+.react-tel-input .cf {
+  background-position: -48px -22px;
+}
+.react-tel-input .cg {
+  background-position: -64px -22px;
+}
+.react-tel-input .ch {
+  background-position: -80px -22px;
+}
+.react-tel-input .ci {
+  background-position: -96px -22px;
+}
+.react-tel-input .ck {
+  background-position: -112px -22px;
+}
+.react-tel-input .cl {
+  background-position: -128px -22px;
+}
+.react-tel-input .cm {
+  background-position: -144px -22px;
+}
+.react-tel-input .cn {
+  background-position: -160px -22px;
+}
+.react-tel-input .co {
+  background-position: -176px -22px;
+}
+.react-tel-input .cr {
+  background-position: -192px -22px;
+}
+.react-tel-input .cu {
+  background-position: -208px -22px;
+}
+.react-tel-input .cv {
+  background-position: -224px -22px;
+}
+.react-tel-input .cw {
+  background-position: -240px -22px;
+}
+.react-tel-input .cy {
+  background-position: 0 -33px;
+}
+.react-tel-input .cz {
+  background-position: -16px -33px;
+}
+.react-tel-input .de {
+  background-position: -32px -33px;
+}
+.react-tel-input .dj {
+  background-position: -48px -33px;
+}
+.react-tel-input .dk {
+  background-position: -64px -33px;
+}
+.react-tel-input .dm {
+  background-position: -80px -33px;
+}
+.react-tel-input .do {
+  background-position: -96px -33px;
+}
+.react-tel-input .dz {
+  background-position: -112px -33px;
+}
+.react-tel-input .ec {
+  background-position: -128px -33px;
+}
+.react-tel-input .ee {
+  background-position: -144px -33px;
+}
+.react-tel-input .eg {
+  background-position: -160px -33px;
+}
+.react-tel-input .er {
+  background-position: -176px -33px;
+}
+.react-tel-input .es {
+  background-position: -192px -33px;
+}
+.react-tel-input .et {
+  background-position: -208px -33px;
+}
+.react-tel-input .fi {
+  background-position: -224px -33px;
+}
+.react-tel-input .fj {
+  background-position: -240px -33px;
+}
+.react-tel-input .fk {
+  background-position: 0 -44px;
+}
+.react-tel-input .fm {
+  background-position: -16px -44px;
+}
+.react-tel-input .fo {
+  background-position: -32px -44px;
+}
+.react-tel-input .fr,
+.react-tel-input .bl,
+.react-tel-input .mf {
+  background-position: -48px -44px;
+}
+.react-tel-input .ga {
+  background-position: -64px -44px;
+}
+.react-tel-input .gb {
+  background-position: -80px -44px;
+}
+.react-tel-input .gd {
+  background-position: -96px -44px;
+}
+.react-tel-input .ge {
+  background-position: -112px -44px;
+}
+.react-tel-input .gf {
+  background-position: -128px -44px;
+}
+.react-tel-input .gh {
+  background-position: -144px -44px;
+}
+.react-tel-input .gi {
+  background-position: -160px -44px;
+}
+.react-tel-input .gl {
+  background-position: -176px -44px;
+}
+.react-tel-input .gm {
+  background-position: -192px -44px;
+}
+.react-tel-input .gn {
+  background-position: -208px -44px;
+}
+.react-tel-input .gp {
+  background-position: -224px -44px;
+}
+.react-tel-input .gq {
+  background-position: -240px -44px;
+}
+.react-tel-input .gr {
+  background-position: 0 -55px;
+}
+.react-tel-input .gt {
+  background-position: -16px -55px;
+}
+.react-tel-input .gu {
+  background-position: -32px -55px;
+}
+.react-tel-input .gw {
+  background-position: -48px -55px;
+}
+.react-tel-input .gy {
+  background-position: -64px -55px;
+}
+.react-tel-input .hk {
+  background-position: -80px -55px;
+}
+.react-tel-input .hn {
+  background-position: -96px -55px;
+}
+.react-tel-input .hr {
+  background-position: -112px -55px;
+}
+.react-tel-input .ht {
+  background-position: -128px -55px;
+}
+.react-tel-input .hu {
+  background-position: -144px -55px;
+}
+.react-tel-input .id {
+  background-position: -160px -55px;
+}
+.react-tel-input .ie {
+  background-position: -176px -55px;
+}
+.react-tel-input .il {
+  background-position: -192px -55px;
+}
+.react-tel-input .in {
+  background-position: -208px -55px;
+}
+.react-tel-input .io {
+  background-position: -224px -55px;
+}
+.react-tel-input .iq {
+  background-position: -240px -55px;
+}
+.react-tel-input .ir {
+  background-position: 0 -66px;
+}
+.react-tel-input .is {
+  background-position: -16px -66px;
+}
+.react-tel-input .it {
+  background-position: -32px -66px;
+}
+.react-tel-input .jm {
+  background-position: -48px -66px;
+}
+.react-tel-input .jo {
+  background-position: -64px -66px;
+}
+.react-tel-input .jp {
+  background-position: -80px -66px;
+}
+.react-tel-input .ke {
+  background-position: -96px -66px;
+}
+.react-tel-input .kg {
+  background-position: -112px -66px;
+}
+.react-tel-input .kh {
+  background-position: -128px -66px;
+}
+.react-tel-input .ki {
+  background-position: -144px -66px;
+}
+.react-tel-input .km {
+  background-position: -160px -66px;
+}
+.react-tel-input .kn {
+  background-position: -176px -66px;
+}
+.react-tel-input .kp {
+  background-position: -192px -66px;
+}
+.react-tel-input .kr {
+  background-position: -208px -66px;
+}
+.react-tel-input .kw {
+  background-position: -224px -66px;
+}
+.react-tel-input .ky {
+  background-position: -240px -66px;
+}
+.react-tel-input .kz {
+  background-position: 0 -77px;
+}
+.react-tel-input .la {
+  background-position: -16px -77px;
+}
+.react-tel-input .lb {
+  background-position: -32px -77px;
+}
+.react-tel-input .lc {
+  background-position: -48px -77px;
+}
+.react-tel-input .li {
+  background-position: -64px -77px;
+}
+.react-tel-input .lk {
+  background-position: -80px -77px;
+}
+.react-tel-input .lr {
+  background-position: -96px -77px;
+}
+.react-tel-input .ls {
+  background-position: -112px -77px;
+}
+.react-tel-input .lt {
+  background-position: -128px -77px;
+}
+.react-tel-input .lu {
+  background-position: -144px -77px;
+}
+.react-tel-input .lv {
+  background-position: -160px -77px;
+}
+.react-tel-input .ly {
+  background-position: -176px -77px;
+}
+.react-tel-input .ma {
+  background-position: -192px -77px;
+}
+.react-tel-input .mc {
+  background-position: -208px -77px;
+}
+.react-tel-input .md {
+  background-position: -224px -77px;
+}
+.react-tel-input .me {
+  background-position: -112px -154px;
+  height: 12px;
+}
+.react-tel-input .mg {
+  background-position: 0 -88px;
+}
+.react-tel-input .mh {
+  background-position: -16px -88px;
+}
+.react-tel-input .mk {
+  background-position: -32px -88px;
+}
+.react-tel-input .ml {
+  background-position: -48px -88px;
+}
+.react-tel-input .mm {
+  background-position: -64px -88px;
+}
+.react-tel-input .mn {
+  background-position: -80px -88px;
+}
+.react-tel-input .mo {
+  background-position: -96px -88px;
+}
+.react-tel-input .mp {
+  background-position: -112px -88px;
+}
+.react-tel-input .mq {
+  background-position: -128px -88px;
+}
+.react-tel-input .mr {
+  background-position: -144px -88px;
+}
+.react-tel-input .ms {
+  background-position: -160px -88px;
+}
+.react-tel-input .mt {
+  background-position: -176px -88px;
+}
+.react-tel-input .mu {
+  background-position: -192px -88px;
+}
+.react-tel-input .mv {
+  background-position: -208px -88px;
+}
+.react-tel-input .mw {
+  background-position: -224px -88px;
+}
+.react-tel-input .mx {
+  background-position: -240px -88px;
+}
+.react-tel-input .my {
+  background-position: 0 -99px;
+}
+.react-tel-input .mz {
+  background-position: -16px -99px;
+}
+.react-tel-input .na {
+  background-position: -32px -99px;
+}
+.react-tel-input .nc {
+  background-position: -48px -99px;
+}
+.react-tel-input .ne {
+  background-position: -64px -99px;
+}
+.react-tel-input .nf {
+  background-position: -80px -99px;
+}
+.react-tel-input .ng {
+  background-position: -96px -99px;
+}
+.react-tel-input .ni {
+  background-position: -112px -99px;
+}
+.react-tel-input .nl,
+.react-tel-input .bq {
+  background-position: -128px -99px;
+}
+.react-tel-input .no {
+  background-position: -144px -99px;
+}
+.react-tel-input .np {
+  background-position: -160px -99px;
+}
+.react-tel-input .nr {
+  background-position: -176px -99px;
+}
+.react-tel-input .nu {
+  background-position: -192px -99px;
+}
+.react-tel-input .nz {
+  background-position: -208px -99px;
+}
+.react-tel-input .om {
+  background-position: -224px -99px;
+}
+.react-tel-input .pa {
+  background-position: -240px -99px;
+}
+.react-tel-input .pe {
+  background-position: 0 -110px;
+}
+.react-tel-input .pf {
+  background-position: -16px -110px;
+}
+.react-tel-input .pg {
+  background-position: -32px -110px;
+}
+.react-tel-input .ph {
+  background-position: -48px -110px;
+}
+.react-tel-input .pk {
+  background-position: -64px -110px;
+}
+.react-tel-input .pl {
+  background-position: -80px -110px;
+}
+.react-tel-input .pm {
+  background-position: -96px -110px;
+}
+.react-tel-input .pr {
+  background-position: -112px -110px;
+}
+.react-tel-input .ps {
+  background-position: -128px -110px;
+}
+.react-tel-input .pt {
+  background-position: -144px -110px;
+}
+.react-tel-input .pw {
+  background-position: -160px -110px;
+}
+.react-tel-input .py {
+  background-position: -176px -110px;
+}
+.react-tel-input .qa {
+  background-position: -192px -110px;
+}
+.react-tel-input .re {
+  background-position: -208px -110px;
+}
+.react-tel-input .ro {
+  background-position: -224px -110px;
+}
+.react-tel-input .rs {
+  background-position: -240px -110px;
+}
+.react-tel-input .ru {
+  background-position: 0 -121px;
+}
+.react-tel-input .rw {
+  background-position: -16px -121px;
+}
+.react-tel-input .sa {
+  background-position: -32px -121px;
+}
+.react-tel-input .sb {
+  background-position: -48px -121px;
+}
+.react-tel-input .sc {
+  background-position: -64px -121px;
+}
+.react-tel-input .sd {
+  background-position: -80px -121px;
+}
+.react-tel-input .se {
+  background-position: -96px -121px;
+}
+.react-tel-input .sg {
+  background-position: -112px -121px;
+}
+.react-tel-input .sh {
+  background-position: -128px -121px;
+}
+.react-tel-input .si {
+  background-position: -144px -121px;
+}
+.react-tel-input .sk {
+  background-position: -160px -121px;
+}
+.react-tel-input .sl {
+  background-position: -176px -121px;
+}
+.react-tel-input .sm {
+  background-position: -192px -121px;
+}
+.react-tel-input .sn {
+  background-position: -208px -121px;
+}
+.react-tel-input .so {
+  background-position: -224px -121px;
+}
+.react-tel-input .sr {
+  background-position: -240px -121px;
+}
+.react-tel-input .ss {
+  background-position: 0 -132px;
+}
+.react-tel-input .st {
+  background-position: -16px -132px;
+}
+.react-tel-input .sv {
+  background-position: -32px -132px;
+}
+.react-tel-input .sx {
+  background-position: -48px -132px;
+}
+.react-tel-input .sy {
+  background-position: -64px -132px;
+}
+.react-tel-input .sz {
+  background-position: -80px -132px;
+}
+.react-tel-input .tc {
+  background-position: -96px -132px;
+}
+.react-tel-input .td {
+  background-position: -112px -132px;
+}
+.react-tel-input .tg {
+  background-position: -128px -132px;
+}
+.react-tel-input .th {
+  background-position: -144px -132px;
+}
+.react-tel-input .tj {
+  background-position: -160px -132px;
+}
+.react-tel-input .tk {
+  background-position: -176px -132px;
+}
+.react-tel-input .tl {
+  background-position: -192px -132px;
+}
+.react-tel-input .tm {
+  background-position: -208px -132px;
+}
+.react-tel-input .tn {
+  background-position: -224px -132px;
+}
+.react-tel-input .to {
+  background-position: -240px -132px;
+}
+.react-tel-input .tr {
+  background-position: 0 -143px;
+}
+.react-tel-input .tt {
+  background-position: -16px -143px;
+}
+.react-tel-input .tv {
+  background-position: -32px -143px;
+}
+.react-tel-input .tw {
+  background-position: -48px -143px;
+}
+.react-tel-input .tz {
+  background-position: -64px -143px;
+}
+.react-tel-input .ua {
+  background-position: -80px -143px;
+}
+.react-tel-input .ug {
+  background-position: -96px -143px;
+}
+.react-tel-input .us {
+  background-position: -112px -143px;
+}
+.react-tel-input .uy {
+  background-position: -128px -143px;
+}
+.react-tel-input .uz {
+  background-position: -144px -143px;
+}
+.react-tel-input .va {
+  background-position: -160px -143px;
+}
+.react-tel-input .vc {
+  background-position: -176px -143px;
+}
+.react-tel-input .ve {
+  background-position: -192px -143px;
+}
+.react-tel-input .vg {
+  background-position: -208px -143px;
+}
+.react-tel-input .vi {
+  background-position: -224px -143px;
+}
+.react-tel-input .vn {
+  background-position: -240px -143px;
+}
+.react-tel-input .vu {
+  background-position: 0 -154px;
+}
+.react-tel-input .wf {
+  background-position: -16px -154px;
+}
+.react-tel-input .ws {
+  background-position: -32px -154px;
+}
+.react-tel-input .ye {
+  background-position: -48px -154px;
+}
+.react-tel-input .za {
+  background-position: -64px -154px;
+}
+.react-tel-input .zm {
+  background-position: -80px -154px;
+}
+.react-tel-input .zw {
+  background-position: -96px -154px;
+}
+.react-tel-input * {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+.react-tel-input .hide {
+  display: none;
+}
+.react-tel-input .v-hide {
+  visibility: hidden;
+}
+
+.large .react-tel-input input[type='text'],
+.large .react-tel-input input[type='tel'] {
+  line-height: 44px;
+  height: 44px;
+  font-size: 15px;
+}
+
+.medium .react-tel-input input[type='text'],
+.medium .react-tel-input input[type='tel'] {
+  line-height: 36px;
+  height: 36px;
+  font-size: 13px;
+}
+
+.react-tel-input input[type='text'],
+.react-tel-input input[type='tel'] {
+  position: relative;
+  z-index: 0;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-left: 50px;
+  margin-left: 0;
+  background: var(--components-form-reactTelInput-background);
+  color: var(--components-form-reactTelInput-color);
+  border-radius: 2px;
+
+  width: 100%;
+}
+.react-tel-input input[type='text']:focus,
+.react-tel-input input[type='tel']:focus {
+  border-color: #42bdff;
+  border-left-color: #cacaca;
+}
+.react-tel-input input[type='text'].invalid-number,
+.react-tel-input input[type='tel'].invalid-number {
+  border: 1px solid #d79f9f;
+  background-color: #faf0f0;
+  border-left-color: #cacaca;
+}
+.react-tel-input input[type='text'].invalid-number:focus,
+.react-tel-input input[type='tel'].invalid-number:focus {
+  border: 1px solid #d79f9f;
+  border-left-color: #cacaca;
+  background-color: #faf0f0;
+}
+.react-tel-input .flag-dropdown {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  padding: 0;
+  background-color: var(--components-form-reactTelInput-background);
+  border: 1px solid var(--components-form-reactTelInput-border);
+  border-radius: 3px 0 0 3px;
+}
+
+.react-tel-input .flag-dropdown {
+  outline: 0px solid transparent;
+}
+
+.react-tel-input .flag-dropdown.open-dropdown {
+  background: #fff;
+  border-bottom: 0;
+  border-radius: 3px 0 0 0;
+}
+.react-tel-input .flag-dropdown.open-dropdown .selected-flag {
+  background: #fff;
+  border-radius: 3px 0 0 0;
+}
+.react-tel-input .flag-dropdown:hover {
+  cursor: pointer;
+}
+.react-tel-input .flag-dropdown:hover .selected-flag {
+  background-color: #fff;
+}
+.react-tel-input input[disabled] + .flag-dropdown:hover {
+  cursor: default;
+}
+.react-tel-input input[disabled] + .flag-dropdown:hover .selected-flag {
+  background-color: transparent;
+}
+.react-tel-input .selected-flag {
+  z-index: 1;
+  position: relative;
+  width: 50px;
+  height: 34px;
+  padding: 0 0 0 15px;
+  border-radius: 3px 0 0 3px;
+}
+.react-tel-input .selected-flag .flag {
+  position: absolute;
+  top: 50%;
+  margin-top: -5px;
+  width: 16px;
+  height: 11px;
+}
+.react-tel-input .selected-flag .arrow {
+  position: relative;
+  top: 50%;
+  margin-top: -2px;
+  left: 20px;
+  width: 0;
+  height: 0;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-top: 4px solid #555;
+}
+.react-tel-input .selected-flag .arrow.up {
+  border-top: none;
+  border-bottom: 4px solid #555;
+}
+.react-tel-input .country-list {
+  list-style: none;
+  position: absolute;
+  z-index: 20;
+  padding: 0;
+  margin: -1px 0 0 -1px;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  border: 1px solid #ccc;
+  width: 400px;
+  /* max-height: 200px; */
+  overflow-y: scroll;
+  border-radius: 0 0 3px 3px;
+  top: 36px;
+}
+.react-tel-input .country-list .flag {
+  display: inline-block;
+  margin-right: 6px;
+  margin-top: 2px;
+  width: 16px;
+  height: 11px;
+}
+.react-tel-input .country-list .divider {
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #ccc;
+}
+.react-tel-input .country-list .country {
+  padding: 10px 10px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.react-tel-input .country-list .country .dial-code {
+  color: #999;
+}
+.react-tel-input .country-list .country:hover {
+  background-color: #e8f7fe;
+}
+.react-tel-input .country-list .country.highlight {
+  background-color: #c7e2f1;
+}
+
+.react-tel-input .country-list .country:hover span,
+.react-tel-input .country-list .country.highlight span {
+  color: black;
+}
+.react-tel-input .country-list .country-name {
+  margin-right: 6px;
+  color: black;
+}
+
+/* --------------------------------------------------- */
+/* SELECT SEARCH
+/* --------------------------------------------------- */
+
+/** The option list should not be visible by default */
+.select-search-box {
+  width: 100%;
+  position: relative;
+}
+
+.select-search-box--multiple {
+  border-radius: 8px 8px 10px 10px;
+}
+
+.select-search-box__value {
+  font-weight: bold;
+}
+
+.select-search-box__value .select-search-box__input {
+    font-size: 14px;
+    min-height: 40px;
+    width: 100%;
+    padding-left: 8px;
+    border: medium none currentcolor;
+    border: initial;
+    border: unset;
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.4);
+  }
+
+.select-search-box__option {
+  width: 100%;
+  text-align: left;
+}
+/* .select-search-box::after {
+  font-family: 'icomoon';
+  content: "\e912";
+  position: absolute;
+  color: #999;
+  top: 0;
+  right: 0;
+  width: 40px;
+  text-align: center;
+  line-height: 45px;
+  z-index: 1;
+} */
+
+.select-search-box--input::after {
+  /* display: none !important; */
+}
+
+.select-search-box__out {
+  /* display: none; */
+}
+
+.select-search-box__search {
+  display: block;
+  width: 100%;
+  height: 45px;
+  border: none;
+  outline: none;
+  background: var(--components-form-selectSearch-background);
+  /* font-size: 16px; */
+  padding: 0 15px;
+  -webkit-appearance: textfield;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+  font-family: sans-serif;
+  border-radius: 2px;
+  color: var(--components-form-selectSearch--color);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+input.select-search-box__search {
+}
+
+strong.select-search-box__search {
+  font-weight: 500;
+}
+
+.select-search-box--input .select-search-box__search {
+  cursor: text;
+}
+
+.select-search-box__search::-moz-placeholder {
+  color: var(--darkGray-3);
+}
+
+.select-search-box__search::placeholder {
+  color: var(--darkGray-3);
+}
+
+.select-search-box__search:focus {
+  cursor: text;
+}
+
+.select-search-box__search--placeholder {
+  font-weight: normal;
+  color: var(--gray);
+}
+
+.select-search-box input::-webkit-input-placeholder {
+  color: var(--gray);
+  font-weight: normal;
+}
+
+.select-search-box input::-moz-placeholder {
+  color: var(--gray);
+  font-style: italic;
+  font-weight: normal;
+}
+
+.select-search-box input:-moz-placeholder {
+  color: var(--gray);
+  font-style: italic;
+  font-weight: normal;
+}
+
+.select-search-box input:-ms-input-placeholder {
+  color: var(--gray);
+  font-style: italic;
+  font-weight: normal;
+}
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+.select-search-box__select {
+  /* display: none; */
+  position: absolute;
+  top: 46px;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-radius: 0 0 var(--global-border-radius) var(--global-border-radius);
+  overflow: auto;
+  /* border-top: 5px solid #e47168; */
+  box-shadow: 0 9px 25px rgba(0, 0, 0, 0.15);
+  z-index: 4;
+  /* min-height: 49px; */
+  width: calc(100% + 42px);
+  max-height: 550px;
+}
+
+.select-search-box--multiple .select-search-box__select {
+  display: block;
+  position: static;
+  box-shadow: none;
+  border: none;
+}
+
+.select-search-box__select--display {
+  display: block;
+}
+
+.select-search-box__option {
+  /* font-size: 16px; */
+  font-weight: 400;
+  color: var(--darkGray);
+  padding: 10px 20px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.select-search-box__option--hover,
+.select-search-box__option:hover {
+  background: var(--gray);
+}
+
+.select-search-box__option--selected {
+  background: var(--global-colors-tertiary);
+  color: #fff;
+}
+
+.select-search-box__option--selected:hover,
+.select-search-box__option--selected.select-search-box__option--hover {
+  background: var(--gray);
+}
+
+/* ---------------------------------------- *\
+ * Modifiers
+/* ---------------------------------------- */
+.large .select-search-box__search {
+  font-size: 15px;
+  line-height: 45px;
+}
+
+.large .select-search-box__option {
+  font-size: 15px;
+  padding: 8px 15px;
+}
+
+.medium .select-search-box__search {
+  height: 36px;
+  line-height: 36px;
+  padding: 0 15px;
+  font-size: 13px;
+}
+
+.medium .select-search-box__select {
+  /* top: calc(36px + 1px); */
+  /* min-height: 160px; */
+}
+
+.medium .select-search-box__option {
+  font-size: 13px;
+  padding: 8px 15px;
+}
+
+.side-bar {
+  /*overflow: auto;*/
+  background: linear-gradient(90deg, #0B1422 0%, #042D56 100%);
+}
+
+/**
+ * Side bar â change the width
+ */
+.side-bar-content.closed .side-bar  {
+  -webkit-transform: translate3d(calc(-100% - 60px), 0, 0); /* -256px */
+}
+
+/* this is needed to fix horizontal flex: nowrap content from creating
+   empty space on the side */
+.side-bar-content.closed .side-bar-panel {
+  max-width: 100%;
+  /*overflow: hidden;*/
+}
+
+.side-bar-content.opened .side-bar {
+  -webkit-transform: translate3d(0, 0, 0);
+}
+
+.side-bar-content.opened .side-bar-panel {
+  -webkit-transform: translate3d(calc(100% - 60px), 0, 0); /* 256px */
+}
+
+/**
+ * Fix misc. issues
+ */
+.side-bar-veil {
+  z-index: 11;
+}
+
+.side-bar-content.closed {
+  overflow: visible;
+  overflow: initial;
+}
+
+.side-bar-content.opened .side-bar-panel {
+  overflow: hidden;
+  max-height: 100vh;
+}
+
+.slider-slide {
+  width: 100% !important;
+}
+
+.grecaptcha-badge {
+  display: none;
+}
+
+/* ------------------------------------------------- */
+/* VENDOR OVERRIDES
+/* ------------------------------------------------- */
+
+[data-icon]:before {
+  font-family: 'icomoon';
+  content: attr(data-icon);
+  speak: none;
+  font-weight: normal;
+  font-feature-settings: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+

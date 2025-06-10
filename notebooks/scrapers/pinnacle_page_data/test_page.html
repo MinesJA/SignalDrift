@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pinnacle Test Page - Padres vs Brewers</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .event-header { background: #003d82; color: white; padding: 20px; margin-bottom: 20px; }
+        .market-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .bet-price { 
+            background: #e8f4fd; border: 1px solid #ccc; padding: 12px 20px; 
+            margin: 5px; border-radius: 4px; cursor: pointer; display: inline-block;
+            font-weight: bold; color: #003d82;
+        }
+        .bet-price:hover { background: #d0e8f7; }
+        .participant-row { display: flex; justify-content: space-between; align-items: center; margin: 15px 0; }
+        .participant-name { font-weight: bold; font-size: 16px; }
+        .odds-display { font-size: 18px; font-weight: bold; color: #003d82; }
+    </style>
+</head>
+<body>
+    <div class="event-header">
+        <h1 data-cy="event-title">San Diego Padres vs Milwaukee Brewers</h1>
+        <p>MLB - Match Winner</p>
+    </div>
+
+    <div class="market-container" data-cy="match-winner-market">
+        <h2>Match Winner</h2>
+
+        <div class="participant-row" data-cy="padres-participant">
+            <span class="participant-name">San Diego Padres</span>
+            <div class="bet-price" data-cy="padres-price">
+                <span class="odds-display">2.050</span>
+            </div>
+        </div>
+
+        <div class="participant-row" data-cy="brewers-participant">
+            <span class="participant-name">Milwaukee Brewers</span>
+            <div class="bet-price" data-cy="brewers-price">
+                <span class="odds-display">1.884</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional test elements -->
+    <div class="odds-container" data-cy="all-odds">
+        <button class="odds-button" data-cy="padres-odds">2.050</button>
+        <button class="odds-button" data-cy="brewers-odds">1.884</button>
+    </div>
+
+</body>
+</html>
+        

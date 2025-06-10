@@ -1,0 +1,1 @@
+var cookieName="Qualtrics_Cookie",cookieValue="123456".replace(/[^0-9]/g,""),expirationTime=2592E3;expirationTime*=1E3;var date=new Date,dateTimeNow=date.getTime();date.setTime(dateTimeNow+expirationTime);date=date.toUTCString();document.cookie=cookieName+"\x3d"+cookieValue+"; expires\x3d"+date+"; path\x3d/; domain\x3d."+location.hostname.split(".").slice(-2).join(".")+";secure";

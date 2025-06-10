@@ -1,0 +1,672 @@
+[
+  {
+    "index": 0,
+    "src": "https://bat.bing.com/p/insights/s/0.8.9",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 1,
+    "src": "https://bat.bing.com/p/insights/t/5751281",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 2,
+    "src": "https://www.googletagmanager.com/gtag/destination?id=DC-4898337&cx=c&gtm=45je5641v9169249244za200zb9167060891&tag_exp=101509157~102015666~103116026~103200004~103233427~103351869~103351871~104617976~104617978~104653070~104653072~104661466~104661468~104698127~104698129",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 3,
+    "src": "https://movableink.betfair.com/p/js/1.js",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 4,
+    "src": "https://tags.tiqcdn.com/libs/tealiumjs/latest/tealium_collect.min.js",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 5,
+    "src": "https://sc-static.net/scevent.min.js",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 6,
+    "src": "https://bat.bing.com/bat.js",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 7,
+    "src": "https://static.ads-twitter.com/uwt.js",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 8,
+    "src": "https://www.redditstatic.com/ads/pixel.js",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 9,
+    "src": "https://connect.facebook.net/signals/config/397373179852615?v=2.9.205&r=stable&domain=www.betfair.com&hme=91e1bfdb39aff53ea3a4a1f39ed64da8fd6f63253e5c24269dbb2994c8fed743&ex_m=74%2C128%2C113%2C117%2C65%2C6%2C106%2C73%2C19%2C101%2C93%2C55%2C58%2C11%2C184%2C205%2C212%2C208%2C209%2C211%2C32%2C107%2C57%2C81%2C210%2C179%2C182%2C51%2C50%2C206%2C207%2C192%2C140%2C45%2C197%2C194%2C195%2C37%2C152%2C18%2C54%2C201%2C200%2C142%2C21%2C44%2C2%2C47%2C69%2C70%2C71%2C75%2C97%2C20%2C17%2C100%2C96%2C95%2C114%2C56%2C116%2C42%2C115%2C33%2C98%2C43%2C90%2C29%2C180%2C183%2C149%2C14%2C15%2C16%2C8%2C9%2C28%2C25%2C26%2C61%2C66%2C68%2C79%2C105%2C108%2C30%2C80%2C12%2C10%2C84%2C52%2C24%2C110%2C109%2C111%2C102%2C13%2C23%2C4%2C41%2C78%2C22%2C162%2C136%2C77%2C1%2C99%2C60%2C88%2C36%2C31%2C86%2C87%2C92%2C40%2C7%2C94%2C85%2C48%2C35%2C38%2C0%2C72%2C118%2C91%2C5%2C89%2C249%2C177%2C126%2C165%2C158%2C3%2C39%2C67%2C46%2C112%2C49%2C83%2C64%2C63%2C34%2C103%2C62%2C59%2C53%2C82%2C76%2C27%2C104%2C119%2C215%2C214%2C216%2C221%2C222%2C223%2C219%2C203%2C141%2C175%2C202%2C204%2C251%2C178%2C129%2C169%2C154%2C138%2C248%2C123%2C145%2C130%2C160%2C137%2C193%2C122",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 10,
+    "src": "https://connect.facebook.net/signals/config/662132247186459?v=2.9.205&r=stable&domain=www.betfair.com&hme=91e1bfdb39aff53ea3a4a1f39ed64da8fd6f63253e5c24269dbb2994c8fed743&ex_m=74%2C128%2C113%2C117%2C65%2C6%2C106%2C73%2C19%2C101%2C93%2C55%2C58%2C11%2C184%2C205%2C212%2C208%2C209%2C211%2C32%2C107%2C57%2C81%2C210%2C179%2C182%2C51%2C50%2C206%2C207%2C192%2C140%2C45%2C197%2C194%2C195%2C37%2C152%2C18%2C54%2C201%2C200%2C142%2C21%2C44%2C2%2C47%2C69%2C70%2C71%2C75%2C97%2C20%2C17%2C100%2C96%2C95%2C114%2C56%2C116%2C42%2C115%2C33%2C98%2C43%2C90%2C29%2C180%2C183%2C149%2C14%2C15%2C16%2C8%2C9%2C28%2C25%2C26%2C61%2C66%2C68%2C79%2C105%2C108%2C30%2C80%2C12%2C10%2C84%2C52%2C24%2C110%2C109%2C111%2C102%2C13%2C23%2C4%2C41%2C78%2C22%2C162%2C136%2C77%2C1%2C99%2C60%2C88%2C36%2C31%2C86%2C87%2C92%2C40%2C7%2C94%2C85%2C48%2C35%2C38%2C0%2C72%2C118%2C91%2C5%2C89%2C249%2C177%2C126%2C165%2C158%2C3%2C39%2C67%2C46%2C112%2C49%2C83%2C64%2C63%2C34%2C103%2C62%2C59%2C53%2C82%2C76%2C27%2C104%2C119",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 11,
+    "src": "https://connect.facebook.net/en_US/fbevents.js",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 12,
+    "src": "https://www.googletagmanager.com/gtag/js?id=G-DQPFWC2D61&cx=c&gtm=45He5641v9167060891za200&tag_exp=101509157~103116026~103200004~103233427~103351869~103351871~104653070~104653072~104661466~104661468~104698127~104698129",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 13,
+    "src": "https://www.googletagmanager.com/gtm.js?id=GTM-NXGZ7RGV&gtm=45He5641v9167060891za200&tag_exp=101509157~103116026~103200004~103233427~103351869~103351871~104653070~104653072~104661466~104661468~104698127~104698129",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 14,
+    "src": "https://www.googletagmanager.com/gtm.js?id=GTM-MH2QMNWF&gtm=45He5641v9167060891za200&tag_exp=101509157~103116026~103200004~103233427~103351869~103351871~104653070~104653072~104661466~104661468~104698127~104698129",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 15,
+    "src": "https://www.googletagmanager.com/gtm.js?id=GTM-P32JX6",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 16,
+    "src": "https://www.googletagmanager.com/gtm.js?id=GTM-M2MWMLTZ",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 17,
+    "type": "",
+    "external": false,
+    "content_length": 370,
+    "content_preview": "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\n      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\n      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.asy..."
+  },
+  {
+    "index": 19,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/newrelic.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 20,
+    "src": "https://ie2-sscbf.cdnppb.net/static/all-81c347be299011bddcfee55b150c1728.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 21,
+    "src": "https://cdn-ukwest.onetrust.com/scripttemplates/202501.2.0/otBannerSdk.js",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 22,
+    "src": "https://bat.bing.com/p/action/5751281.js",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 23,
+    "src": "https://ie1-sscbf.cdnppb.net/static/all-81c347be299011bddcfee55b150c1728.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 24,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "\nwindow.ssc=window.ssc||function(){};ssc.imediateScript=ssc.imediateScript||function(node){(function sscEnableJsCaller(){var container=document.getElementById(node);if(container&&typeof container==='o..."
+  },
+  {
+    "index": 25,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 2251,
+    "content_preview": "\nssc.cookieSpace=(function(){var date=new Date(),expr,timestamp=new Date().getTime(),existingCookies,existingCookiesArray,cookie,cname=\"bfsd=\",cookieIsSet,minutes,path,bfSType,bfDomain,getCookie,hostn..."
+  },
+  {
+    "index": 28,
+    "type": "",
+    "external": false,
+    "content_length": 56,
+    "content_preview": "\nwindow.headerEnabledProducts.push('CASINO_FUN_BONUS');\n"
+  },
+  {
+    "index": 29,
+    "type": "",
+    "external": false,
+    "content_length": 57,
+    "content_preview": "\nwindow.headerEnabledProducts.push('CASINO_BONUS_CASH');\n"
+  },
+  {
+    "index": 33,
+    "type": "",
+    "external": false,
+    "content_length": 58,
+    "content_preview": "\nwindow.headerEnabledProducts.push('GAMING_BONUS_TOTAL');\n"
+  },
+  {
+    "index": 35,
+    "type": "",
+    "external": false,
+    "content_length": 56,
+    "content_preview": "\nwindow.headerEnabledProducts.push('SPORTSBOOK_BONUS');\n"
+  },
+  {
+    "index": 36,
+    "type": "",
+    "external": false,
+    "content_length": 65,
+    "content_preview": "\nwindow.headerEnabledProducts.push('SPORTSBOOK_BONUS_WAGERING');\n"
+  },
+  {
+    "index": 37,
+    "type": "",
+    "external": false,
+    "content_length": 61,
+    "content_preview": "\nwindow.headerEnabledProducts.push('SPORTSBOOK_BONUS_CASH');\n"
+  },
+  {
+    "index": 40,
+    "type": "",
+    "external": false,
+    "content_length": 57,
+    "content_preview": "\nwindow.headerEnabledProducts.push('MONEY_BACK_TOKENS');\n"
+  },
+  {
+    "index": 43,
+    "type": "",
+    "external": false,
+    "content_length": 56,
+    "content_preview": "\nwindow.headerEnabledProducts.push('CASINO_FUN_BONUS');\n"
+  },
+  {
+    "index": 44,
+    "type": "",
+    "external": false,
+    "content_length": 57,
+    "content_preview": "\nwindow.headerEnabledProducts.push('CASINO_BONUS_CASH');\n"
+  },
+  {
+    "index": 46,
+    "type": "",
+    "external": false,
+    "content_length": 58,
+    "content_preview": "\nwindow.headerEnabledProducts.push('CASINO_BONUS_TOTAL');\n"
+  },
+  {
+    "index": 48,
+    "type": "",
+    "external": false,
+    "content_length": 59,
+    "content_preview": "\nwindow.headerEnabledProducts.push('EXCHANGE_BONUS_CASH');\n"
+  },
+  {
+    "index": 52,
+    "src": "https://regstat.betfair.com/fp/tags.js?org_id=9ghwyvdk&session_id=4e372387-7c15-4eef-baa4-e06b3c14811b&pageid=1",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 53,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 75,
+    "content_preview": "\ndocument.getElementById(\"ssc-mgr-GAMING\").style.display = \"inline-block\";\n"
+  },
+  {
+    "index": 54,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 73,
+    "content_preview": "\ndocument.getElementById(\"ssc-nmgr-VEGAS_SLOTS\").style.display = \"none\";\n"
+  },
+  {
+    "index": 55,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 67,
+    "content_preview": "\ndocument.getElementById(\"ssc-nmgr-MACAU\").style.display = \"none\";\n"
+  },
+  {
+    "index": 56,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "\nwindow.ssc=window.ssc||function(){};ssc.imediateScript=ssc.imediateScript||function(node){(function sscEnableJsCaller(){var container=document.getElementById(node);if(container&&typeof container==='o..."
+  },
+  {
+    "index": 57,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 14150,
+    "content_preview": "\nwindow.ssc = window.ssc || function () {};\n//after review, we need to minify this code.\nvar newPlatformConfig = {\"toggles\":[],\"page\":{\"config\":{\"isAjaxRequest\":false,\"pageLoadTimeout\":8000,\"enableGtm..."
+  },
+  {
+    "index": 58,
+    "type": "",
+    "external": false,
+    "content_length": 52916,
+    "content_preview": "\n          window.__PRELOADED_STATE__ = {\"boot\":{\"exchangeEnabled\":false,\"showExcOnboarding\":false},\"entities\":{\"productId\":\"90\",\"appkey\":\"K61C39rIC0WKzoQ7\",\"appkeytype\":\"DESKTOP\",\"appversion\":{\"ios\":..."
+  },
+  {
+    "index": 59,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/translations-en_GB-f12cdff8f48b85eb.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 60,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/vendors-react-dom~app-b9417382393bc2a2.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 61,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/vendors-apollo~app-b01939e7ee2be988.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 62,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/vendors~app-888c2e986e216b12.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 63,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/vendors-colors-tokens~app-7b4fd61b88a5fdcd.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 64,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/runtime-3744776f53d1ad17.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 65,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/app-c6d7241c16f3fcd7.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 66,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/Header-550e5a5d29672d78.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 67,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/BottomBar-6bb59618c5978a82.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 68,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/GenericSwitcherCard-bb85826c86128658.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 69,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/SportsbookMarket-cccad392cb5d1370.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 70,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/BottomBar-6bb59618c5978a82.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 71,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/LeftSidebar-4befe71830061acc.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 72,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/QuicklinksGridCardGroup-84756d060c1c5ec3.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 73,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/GenericViewLinkCard-d723cbf072e1c734.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 74,
+    "src": "https://www.betfair.com/betting/ie1/tbd/assets/QuickLinksCard-1e04745ea5b92d78.js",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 75,
+    "type": "",
+    "external": false,
+    "content_length": 335,
+    "content_preview": "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=..."
+  },
+  {
+    "index": 76,
+    "src": "https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015",
+    "type": "",
+    "external": true
+  },
+  {
+    "index": 77,
+    "type": "application/ld+json",
+    "external": false,
+    "content_length": 427,
+    "content_preview": "[{\"@context\":\"https://schema.org\",\"@type\":\"SportsEvent\",\"name\":\"San Diego Padres @ Milwaukee Brewers\",\"startDate\":\"2025-06-08T17:06:00.000Z\",\"endDate\":\"2025-06-08T20:06:00.000Z\",\"url\":\"https://www.bet..."
+  },
+  {
+    "index": 78,
+    "type": "application/ld+json",
+    "external": false,
+    "content_length": 1740,
+    "content_preview": "{\"@context\":\"https://schema.org\",\"@type\":\"FAQPage\",\"mainEntity\":[{\"@type\":\"Question\",\"name\":\"<h2>Where Can I Find San Diego Padres @ Milwaukee Brewers Betting Odds?</h2>\",\"acceptedAnswer\":{\"@type\":\"An..."
+  },
+  {
+    "index": 79,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 80,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 81,
+    "src": "https://ga4.cdnppb.net/analytics-wrapper.prd.js",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 82,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 83,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 84,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 85,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 86,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 87,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 88,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 89,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 90,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 91,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 92,
+    "src": "https://cdn-ukwest.onetrust.com/scripttemplates/otSDKStub.js",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 93,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 476,
+    "content_preview": "function OptanonWrapper(){if(window.location!==window.parent.location)try{document.getElementById(\"onetrust-consent-sdk\").style.display=\"none\"}catch(a){}}function ReopenOptanonConsent(){var a=new RegE..."
+  },
+  {
+    "index": 94,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 876,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 95,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 96,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 97,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 98,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 99,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 1240,
+    "content_preview": "function cookieConsentIdBuilder(){function d(){var b=\"undefined\"==typeof google_tag_manager[\"rm\"][\"963940\"](110)||null===google_tag_manager[\"rm\"][\"963940\"](111)?\"\":google_tag_manager[\"rm\"][\"963940\"](1..."
+  },
+  {
+    "index": 100,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 101,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 102,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 103,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 104,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 1240,
+    "content_preview": "function cookieConsentIdBuilder(){function d(){var b=\"undefined\"==typeof google_tag_manager[\"rm\"][\"963940\"](117)||null===google_tag_manager[\"rm\"][\"963940\"](118)?\"\":google_tag_manager[\"rm\"][\"963940\"](1..."
+  },
+  {
+    "index": 105,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 876,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 106,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 107,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 108,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 109,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 503,
+    "content_preview": "function deleteCookie(c){var b=[\".betfair.com\"];b.forEach(function(a){document.cookie=c+\"\\x3d; expires\\x3dThu, 01 Jan 1970 00:00:00 UTC; path\\x3d/; domain\\x3d\"+a+\";\"})}function checkCookie(c){for(var ..."
+  },
+  {
+    "index": 110,
+    "src": "https://js.adsrvr.org/up_loader.1.1.0.js",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 111,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 351,
+    "content_preview": "(function(a,e,f,g,b,c,d){typeof a.MovableInkTrack===\"undefined\"&&(a.MovableInkTrack=b,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.type=\"text/javascript\",c.async=!0,c.src=\"//\"+g+\"/p/js/1.js\",..."
+  },
+  {
+    "index": 112,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 314,
+    "content_preview": "var ftRandom=Math.random()*1E6;document.write('\\x3ciframe style\\x3d\"position:absolute; visibility:hidden; width:1px; height:1px;\" src\\x3d\"https://servedby.flashtalking.com/container/3246;137256;2798;i..."
+  },
+  {
+    "index": 113,
+    "src": "https://js.adsrvr.org/up_loader.1.1.0.js",
+    "type": "text/javascript",
+    "external": true
+  },
+  {
+    "index": 114,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 1240,
+    "content_preview": "function cookieConsentIdBuilder(){function d(){var b=\"undefined\"==typeof google_tag_manager[\"rm\"][\"963940\"](137)||null===google_tag_manager[\"rm\"][\"963940\"](138)?\"\":google_tag_manager[\"rm\"][\"963940\"](1..."
+  },
+  {
+    "index": 115,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 382,
+    "content_preview": "var cookieName=\"Qualtrics_Cookie\",cookieValue=\"123456\".replace(/[^0-9]/g,\"\"),expirationTime=2592E3;expirationTime*=1E3;var date=new Date,dateTimeNow=date.getTime();date.setTime(dateTimeNow+expirationT..."
+  },
+  {
+    "index": 116,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 172,
+    "content_preview": "ttd_dom_ready(function(){if(typeof TTDUniversalPixelApi===\"function\"){var a=new TTDUniversalPixelApi;a.init(\"8qk87mz\",[\"syn1kn6\"],\"https://insight.adsrvr.org/track/up\")}});"
+  },
+  {
+    "index": 117,
+    "type": "text/javascript",
+    "external": false,
+    "content_length": 172,
+    "content_preview": "ttd_dom_ready(function(){if(typeof TTDUniversalPixelApi===\"function\"){var a=new TTDUniversalPixelApi;a.init(\"gs4bbvt\",[\"jttf0pz\"],\"https://insight.adsrvr.org/track/up\")}});"
+  }
+]

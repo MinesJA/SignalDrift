@@ -19,6 +19,7 @@ source venv/bin/activate
 echo "Installing required packages..."
 pip install -r requirements.txt
 
-# Start Jupyter notebook
-echo "Starting Jupyter notebook..."
-jupyter notebook 
+# Install the package in development mode
+echo "Installing SignalDrift package in development mode..."
+pip install -e .
+

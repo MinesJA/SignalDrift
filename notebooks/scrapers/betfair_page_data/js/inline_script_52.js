@@ -1,0 +1,1 @@
+(function(a,e,f,g,b,c,d){typeof a.MovableInkTrack==="undefined"&&(a.MovableInkTrack=b,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.type="text/javascript",c.async=!0,c.src="//"+g+"/p/js/1.js",a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},d.parentNode.insertBefore(c,d))})(window,document,"script","movableink.betfair.com","mitr");

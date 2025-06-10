@@ -1,0 +1,266 @@
+.mobileList-ZObjyzDPAN li i {
+  color: var(--layout-sidebar-icon-color);
+}
+
+.sportsList-l9lPqWJr9o li a:hover {
+  border-radius: var(--global-border-radius);
+  background-color: var(--layout-sidebar-item-hover-background);
+}
+
+.favouriteHeading-Bw_kYekW6t {
+  display: flex;
+  justify-content: space-between;
+}
+
+.favouriteExpandIcon-cJnwOI1GXN {
+  border: 0px;
+}
+
+.emptyMsg-DDikYzraBm {
+  font-size: 1.3rem;
+  text-align: center;
+  padding: 1em;
+}
+
+/**
+ * List items
+ */
+.listItem-bCjRRzjRdV {
+  position: relative;
+  border-bottom: 1px solid var(--global-border-color);
+}
+.listItem-bCjRRzjRdV:hover .icon-3DMfq9phVw {
+      margin-right: -10px;
+    }
+.listItem-bCjRRzjRdV > a {
+    line-height: 28px;
+    text-align: start;
+    display: flex;
+    flex-direction: row;
+    vertical-align: middle;
+    transition: none;
+  }
+.listItem-bCjRRzjRdV * {
+    cursor: pointer;
+  }
+.listItem-bCjRRzjRdV {
+  font-size: 14px;
+
+  /* &.noLeftIcon {
+      padding-left: 20px;
+    } */
+}
+.list-VPbbm5F3Qv.padding-sbvUaeddtL li a {
+    padding: 0 15px;
+  }
+.list-VPbbm5F3Qv.default-fWykD8fkXX a {
+    line-height: 40px;
+  }
+.list-VPbbm5F3Qv.compact-vxVq2pmCqR a {
+    line-height: 30px;
+  }
+.list-VPbbm5F3Qv.compact-vxVq2pmCqR label {
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: calc(100% - 10px);
+    text-overflow: ellipsis;
+  }
+.list-VPbbm5F3Qv.compact-vxVq2pmCqR.noLeftIcon-g4nDaUm8Md {
+    padding-left: 14px;
+  }
+.list-VPbbm5F3Qv.compact-vxVq2pmCqR .listItem-bCjRRzjRdV {
+    font-size: 12px;
+  }
+.listItem-bCjRRzjRdV label {
+  width: 90%;
+  max-width: calc(100% - 10px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.listItem-bCjRRzjRdV .inlineLabel-USJ7Nhaldk {
+  width: auto;
+}
+.count-BBoGYHnRaZ {
+  float: right;
+  color: var(--components-list-item-count-color);
+  min-height: 28px;
+  font-weight: 300;
+  padding: 0 var(--global-spacing-padding);
+}
+.count-BBoGYHnRaZ.left-mfyKAhnTzS {
+    float: none;
+  }
+.count-BBoGYHnRaZ + div,
+.count-BBoGYHnRaZ + i {
+  float: right;
+  display: inline-flex;
+}
+.empty-RBAWNk9Wtz {
+  padding: 1.5em;
+  text-align: center;
+  cursor: default;
+}
+.listItem-bCjRRzjRdV .empty-RBAWNk9Wtz {
+  cursor: default;
+}
+.listItem-bCjRRzjRdV .empty-RBAWNk9Wtz span {
+  cursor: default;
+}
+.listItem-bCjRRzjRdV i,
+.listItem-bCjRRzjRdV > div {
+  width: 42px;
+  min-width: 42px;
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  transition: all 100ms;
+}
+.listItem-bCjRRzjRdV i svg, .listItem-bCjRRzjRdV > div svg {
+    width: 45px;
+  }
+/* .listItem :global .icon {
+  height: 100%;
+  width: 44px;
+  min-width: 44px;
+  display: flex;
+  flex-grow: 0;
+  align-items: center;
+  justify-content: center;
+  transition: all 100ms;
+
+  & svg {
+    width: 45px;
+  }
+}  */
+.listItem-bCjRRzjRdV label + div {
+  margin-left: auto;
+  position: relative;
+  max-width: 44px;
+}
+.starSelected-IS6Kh0qNb0 {
+  color: #f5a623;
+}
+.supportFavoritesRow-tLziWPASJU {
+  display: flex;
+}
+.supportFavoritesList-VimiQqhyKL {
+  display: inline-flex;
+  width: calc(100% - 44px);
+  align-items: center;
+}
+.supportFavoritesList-VimiQqhyKL + div,
+.supportFavoritesList-VimiQqhyKL + i {
+  display: inline-flex;
+}
+.listItem-bCjRRzjRdV .supportFavoritesRow-tLziWPASJU {
+  width: 100%;
+  width: 100%;
+}
+.listItem-bCjRRzjRdV .supportFavoritesRow-tLziWPASJU:hover {
+  background-color: var(--components-list-item-hover-background);
+}
+.arrow-AgxxbI6Kgg {
+  display: inline-block;
+  transition: all 100ms;
+  transform: rotate(90deg);
+}
+.arrow-AgxxbI6Kgg.expanded-V58FGiDS0r {
+    transform: rotate(-90deg);
+    color: var(--layout-sidebar-icon-hover-color) !important;
+  }
+.expandIcon-rsT8w83pln {
+  display: inline-flex;
+  border-left: 1px solid var(--layout-sidebar-divider-color);
+  justify-content: center;
+}
+.expandIcon-rsT8w83pln {
+  display: inline-flex;
+  border-left: 1px solid var(--layout-sidebar-divider-color);
+  justify-content: center;
+}
+.expandIcon-rsT8w83pln i {
+  color: var(--layout-sidebar-icon-color);
+}
+.leaguesList-p6okU3w4BU {
+  background: var(--layout-background);
+}
+.leagueItem-RXJTxjAfFB label {
+  padding-left: 40px;
+}
+/* reveal full text on hover */
+.hoverReveal-UPlWDsFOS4 label {
+  width: 90%;
+  max-width: calc(100% - 10px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  transform: translateZ(0);
+}
+.hoverReveal-UPlWDsFOS4:hover label span {
+  white-space: nowrap;
+  transform: translateX(0);
+  transition: 1s;
+}
+.hoverReveal-UPlWDsFOS4:hover label span {
+  transform: translateX(calc(90px - 100%));
+  position: absolute;
+}
+.leagueActive-pX2xeTewFm span {
+  color: var(--orange);
+}
+.leaguesList-p6okU3w4BU.default-fWykD8fkXX li:first-child {
+    border-top: 1px solid var(--global-border-color);
+  }
+.list-VPbbm5F3Qv.default-fWykD8fkXX li a:hover {
+    background-color: transparent;
+  }
+.list-VPbbm5F3Qv.default-fWykD8fkXX .active-wThfy73tqs i {
+    color: var(--layout-sidebar-icon-hover-color);
+  }
+.list-VPbbm5F3Qv.default-fWykD8fkXX .expandIcon-rsT8w83pln {
+    margin-left: auto;
+  }
+.list-VPbbm5F3Qv.default-fWykD8fkXX .active-wThfy73tqs label {
+    width: auto;
+  }
+.list-VPbbm5F3Qv.compact-vxVq2pmCqR .expandIcon-rsT8w83pln i:hover {
+    color: var(--layout-sidebar-icon-hover-color);
+  }
+.subListItem-lg1rkht5x3 {
+  box-shadow: none !important;
+}
+.subListItem-lg1rkht5x3:hover > a {
+      box-shadow: var(--components-container-shadow);
+      border-radius: var(--global-border-radius);
+    }
+.loading-moD3oXAly5 {
+  text-align: center;
+}
+.loading-moD3oXAly5 i {
+    margin: 0 auto;
+    color: var(--components-loading-icon-color) !important;
+  }
+.accordion-p7cHkx8qW8 span.expandIcon-rsT8w83pln{
+      display: none;
+    }
+.hoverAnim-ctRdgaIqIj:hover span.count-BBoGYHnRaZ{
+      display: none;
+    }
+.hoverAnim-ctRdgaIqIj:hover span.expandIcon-rsT8w83pln{
+      display: inline-flex;
+    }
+.activeSportMobile-saPTrY0s0D {
+  background: var(--components-breadCrumb-dropdown-activeSportMobile);
+  border: medium none currentcolor;
+  border: initial;
+  border: unset;
+}
+.activeSportDesktop-_4EmnRZfef {
+  background: var(--components-breadCrumb-dropdown-activeSport);
+  border: medium none currentcolor;
+  border: initial;
+  border: unset;
+}

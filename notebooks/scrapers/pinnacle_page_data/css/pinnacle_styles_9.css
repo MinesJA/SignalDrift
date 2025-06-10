@@ -1,0 +1,198 @@
+
+.container-yQvneg4QGa {
+  padding: 0 var(--global-spacing-padding);
+  font-weight: 500;
+}
+
+.container-V_Lj_0lLiC {
+  display: flex;
+}
+
+.flag-ttAQZv9Fd_ {
+  width: 16px;
+  height: 12px;
+  background-size: cover;
+  display: inline-flex;
+  vertical-align: middle;
+  /* margin-top: -2px; */
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+.i18nBtn-mOWZZ3GAz4 {
+  padding-left: 15px;
+}
+
+.i18nPopup-C6Luil2Ubv {
+  width: 400px;
+  right: -60px;
+  top: 45px;
+  color: var(--components-miscOptions-color);
+  background: var(--components-miscOptions-background);
+}
+
+.helpDropdown-Ya4V6n48Ft {
+  width: 200px;
+  right: 0px;
+  top: 45px;
+  color: var(--components-miscOptions-color);
+  background: var(--components-miscOptions-background);
+  padding: 10px;
+}
+
+.fullWidth-aEeNRzfri1 {
+  width: 100%;
+}
+
+.iconSelfExclusion-VPhcdymPNB {
+  font-size: 23px;
+  padding-left: 7px;
+  padding-top: 5px;
+}
+
+.iconBlack-hg0oPxeNbD {
+  color: var(--components-oddsDisplayWarning-warningIconOval-backgroundColor);
+}
+
+.iconBlack-hg0oPxeNbD::before {
+    color: var(--components-oddsDisplayWarning-warningIconOval-backgroundColor);
+  }
+
+.icon-unavailable-2-gF_fhGtV6V {
+  color: var(--components-oddsDisplayWarning-warningIconOval-backgroundColor);
+}
+
+.iconWidth-CgTVN0Gx1z {
+  width: 40px;
+}
+
+.capitalize-f1hkwObT7y {
+  text-transform: capitalize;
+}
+
+.i18nPopup-C6Luil2Ubv::after {
+  right: 71px;
+  border-color: var(--components-miscOptions-background) transparent transparent;
+}
+
+/* padding-right: 0; */
+
+.help-NhbwJlpVHS:hover i {
+      opacity: 1;
+    }
+
+/**
+ * Hide game clock at certain widths
+ */
+
+@media (max-width: 1160px) {
+  html[lang="ru"] .clock-mf9pKWf2VN {
+    display: none;
+  }
+}
+
+@media (max-width: 1105px) {
+  html[lang="pt"] .clock-mf9pKWf2VN {
+    display: none;
+  }
+}
+
+@media (max-width: 1090px) {
+  html[lang="cs"] .clock-mf9pKWf2VN {
+    display: none;
+  }
+}
+
+@media (max-width: 1070px) {
+  html[lang="zh-CN"] .clock-mf9pKWf2VN {
+    display: none;
+  }
+}
+
+@media (max-width: 1020px) {
+  html[lang="fi"] .clock-mf9pKWf2VN,
+  html[lang="de"] .clock-mf9pKWf2VN,
+  html[lang="pl"] .clock-mf9pKWf2VN,
+  html[lang="es"] .clock-mf9pKWf2VN {
+    display: none;
+  }
+}
+
+@media (max-width: 980px) {
+  html[lang="it"] .clock-mf9pKWf2VN,
+  html[lang="ja"] .clock-mf9pKWf2VN,
+  html[lang="no"] .clock-mf9pKWf2VN {
+    display: none;
+  }
+}
+
+@media (max-width: 950px) {
+  html[lang="fr"] .clock-mf9pKWf2VN {
+    display: none;
+  }
+}
+
+@media (max-width: 920px) {
+  html[lang="en"] .clock-mf9pKWf2VN,
+  html[lang="sv"] .clock-mf9pKWf2VN {
+    display: none;
+  }
+}
+
+@media (max-width: 890px) {
+  html[lang="zh-TW"] .clock-mf9pKWf2VN,
+  html[lang="ko"] .clock-mf9pKWf2VN {
+    display: none;
+  }
+}
+
+/**
+ * Hide help button at certain widths
+ */
+
+@media (max-width: 1024px) {
+  html[lang="ru"] .help-NhbwJlpVHS {
+    display: none;
+  }
+}
+
+@media (max-width: 965px) {
+  html[lang="pt"] .help-NhbwJlpVHS {
+    display: none;
+  }
+}
+
+@media (max-width: 950px) {
+  html[lang="cs"] .help-NhbwJlpVHS {
+    display: none;
+  }
+}
+
+@media (max-width: 880px) {
+  html[lang="fi"] .help-NhbwJlpVHS,
+  html[lang="de"] .help-NhbwJlpVHS,
+  html[lang="pl"] .help-NhbwJlpVHS,
+  html[lang="es"] .help-NhbwJlpVHS {
+    display: none;
+  }
+}
+
+@media (max-width: 840px) {
+  html[lang="zh-CN"] .help-NhbwJlpVHS,
+  html[lang="it"] .help-NhbwJlpVHS,
+  html[lang="ja"] .help-NhbwJlpVHS,
+  html[lang="no"] .help-NhbwJlpVHS {
+    display: none;
+  }
+}
+
+@media (max-width: 805px) {
+  html[lang="fr"] .help-NhbwJlpVHS {
+    display: none;
+  }
+}
+
+.icon-unavailable-2-gF_fhGtV6V {
+  color: red;
+}
+

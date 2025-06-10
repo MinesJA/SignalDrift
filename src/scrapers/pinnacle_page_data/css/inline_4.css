@@ -1,0 +1,8 @@
+.embeddedServiceHelpButton { visibility: hidden; } .embeddedServiceSidebar { visibility: hidden; } .embeddedServiceSidebarMinimizedDefaultUI { visibility: hidden; }
+    .undefined .helpButton .uiButton .salesForceChatBotWidget {
+      background-color: #2574A9; font-family: Roboto,Helvetica,Arial,sans-serif !important;;
+    }
+    .embeddedServiceHelpButton .helpButton .uiButton:focus {
+      outline: 1px solid #FA8648 !important;
+    }
+    

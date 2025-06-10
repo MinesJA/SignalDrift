@@ -1,0 +1,1 @@
+ttd_dom_ready(function(){if(typeof TTDUniversalPixelApi==="function"){var a=new TTDUniversalPixelApi;a.init("8qk87mz",["syn1kn6"],"https://insight.adsrvr.org/track/up")}});

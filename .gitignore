@@ -1,0 +1,48 @@
+# Credentials & API Keys
+*.yml
+proxy-details.*
+**/cookies.*
+**/*credentials*
+
+# Environment files
+.env*
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Jupyter Notebook checkpoints
+**/.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Python package metadata
+*.egg-info/
+build/
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Chrome profile data (scrapers)
+**/chrome_profile/
+
+# Temporary files
+*.tmp
+*.temp

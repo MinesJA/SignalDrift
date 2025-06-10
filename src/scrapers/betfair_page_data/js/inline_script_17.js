@@ -1,0 +1,2 @@
+
+window.ssc=window.ssc||function(){};ssc.imediateScript=ssc.imediateScript||function(node){(function sscEnableJsCaller(){var container=document.getElementById(node);if(container&&typeof container==='object'){container.className=container.className.replace('ssc-no-js','').replace(' ',' ');container.className+=' ssc-js';}else{setTimeout(sscEnableJsCaller, 300);}}());if(node==="ssc-header-container"){window.ssc.earlyConfig={windowLocSearch:window.location.search,windowLocHash:window.location.hash}}};

@@ -1,0 +1,33 @@
+{
+  "url": "https://sportsbook.fanduel.com/baseball/mlb/san-diego-padres-@-milwaukee-brewers-34394252",
+  "site": "FanDuel",
+  "title": "San Diego Padres @ Milwaukee Brewers: Jun 7 Betting Odds At FanDuel Sportsbook",
+  "timestamp": "2025-06-07 13:26:26",
+  "page_structure": {
+    "total_elements": 1542,
+    "data_test_ids": 0,
+    "bet_buttons": 0,
+    "odds_containers": 0,
+    "moneyline_elements": 0,
+    "team_elements": 0
+  },
+  "odds_elements": [],
+  "useful_selectors": {
+    "game_info": {
+      "selector": "h1, h2, [data-test-id*='game'], [data-test-id*='event']",
+      "count": 2,
+      "samples": [
+        "San Diego Padres @ Milwaukee Brewers Odds",
+        "San Diego Padres @ Milwaukee Brewers Odds"
+      ]
+    },
+    "american_odds_found": {
+      "pattern": "[+-]\\d{2,4}",
+      "samples": [
+        "-800",
+        "+548",
+        "-800"
+      ]
+    }
+  }
+}

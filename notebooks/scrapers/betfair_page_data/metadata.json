@@ -1,0 +1,67 @@
+{
+  "url": "https://www.betfair.com/betting/baseball/major-league-baseball/san-diego-padres-%40-milwaukee-brewers/e-34397195",
+  "title": "San Diego Padres @ Milwaukee Brewers Odds & Betting - Betfair\u2122 Sportsbook",
+  "timestamp": "2025-06-07 20:10:13",
+  "proxy_used": false,
+  "proxy_server": null,
+  "page_structure": {
+    "total_elements": 1847,
+    "divs": 797,
+    "buttons": 104,
+    "spans": 129,
+    "classes_with_odd": 0,
+    "classes_with_bet": 18,
+    "classes_with_price": 0,
+    "data_testids": 1,
+    "tables": 1,
+    "forms": 1
+  },
+  "odds_elements": [
+    {
+      "selector": "[class*='bet']",
+      "count": 18,
+      "sample_texts": [
+        "San Diego Padres\n11/8",
+        "Milwaukee Brewers\n8/13",
+        "Over\n+8.5\n19/20",
+        "Under\n+8.5\n17/20"
+      ]
+    },
+    {
+      "selector": "[class*='runner']",
+      "count": 73,
+      "sample_texts": [
+        "San Diego Padres\n11/8\nMilwaukee Brewers\n8/13",
+        "San Diego Padres (+1)\n5/4\nTie (-1)\n4/1\nMilwaukee Brewers (-1)\n5/4",
+        "San Diego Padres (+1)\n5/4",
+        "San Diego Padres (+1)",
+        "San Diego Padres (+1)"
+      ]
+    },
+    {
+      "selector": "[class*='back']",
+      "count": 1,
+      "sample_texts": []
+    }
+  ],
+  "useful_selectors": {
+    "teams": {
+      "selector": "[class*='runner']",
+      "count": 73,
+      "samples": [
+        "San Diego Padres\n11/8\nMilwaukee Brewers\n8/13",
+        "San Diego Padres (+1)\n5/4\nTie (-1)\n4/1\nMilwaukee B",
+        "San Diego Padres (+1)\n5/4"
+      ]
+    },
+    "markets": {
+      "selector": "[class*='market']",
+      "count": 20,
+      "samples": [
+        "San Diego Padres\n11/8\nMilwaukee Brewers\n8/13",
+        "San Diego Padres\n11/8",
+        "Milwaukee Brewers\n8/13"
+      ]
+    }
+  }
+}

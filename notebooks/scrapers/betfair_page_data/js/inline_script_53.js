@@ -1,0 +1,1 @@
+var ftRandom=Math.random()*1E6;document.write('\x3ciframe style\x3d"position:absolute; visibility:hidden; width:1px; height:1px;" src\x3d"https://servedby.flashtalking.com/container/3246;137256;2798;iframe/?spotName\x3dBetfair_PID_Test\x26U20\x3dundefined/null\x26cachebuster\x3d'+ftRandom+'"\x3e\x3c/iframe\x3e');

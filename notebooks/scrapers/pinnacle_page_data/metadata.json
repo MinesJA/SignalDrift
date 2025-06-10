@@ -1,0 +1,83 @@
+{
+  "url": "https://www.pinnacle.com/en/baseball/mlb/san-diego-padres-vs-milwaukee-brewers/1610489833/#all",
+  "site": "Pinnacle",
+  "title": "San Diego Padres vs Milwaukee Brewers Betting Odds | MLB Odds",
+  "timestamp": "2025-06-07 11:41:18",
+  "page_structure": {
+    "total_elements": 1145,
+    "data_cy_elements": 0,
+    "bet_price_elements": 19,
+    "odds_buttons": 0,
+    "market_elements": 84,
+    "participant_elements": 7
+  },
+  "odds_elements": [
+    {
+      "selector": "[class*='market']",
+      "count": 84,
+      "sample_texts": [
+        "MORE\nALLGAME1ST HALF1ST INNINGHITS + RUNS + ERRORS",
+        "Money Line \u2013 Game\nShow All\nSan Diego Padres\n2.040\n",
+        "Money Line \u2013 Game\nShow All\nSan Diego Padres\n2.040\n"
+      ],
+      "sample_attributes": [
+        {
+          "data-cy": null,
+          "class": "market-filters container-jTI0ySWQwv",
+          "role": null
+        },
+        {
+          "data-cy": null,
+          "class": "marketGroups-HjCkfKkLNt matchup-market-groups",
+          "role": null
+        }
+      ]
+    },
+    {
+      "selector": "[class*='participant']",
+      "count": 6,
+      "sample_texts": [
+        "San Diego Padres",
+        "San Diego Padres",
+        "San Diego Padres"
+      ],
+      "sample_attributes": [
+        {
+          "data-cy": null,
+          "class": "participant-DgQFzvml3p removeMaxWidth-EHDeqMYr8B",
+          "role": null
+        },
+        {
+          "data-cy": null,
+          "class": "participantNameWrapper-WZ_XTyDMfi",
+          "role": null
+        }
+      ]
+    }
+  ],
+  "useful_selectors": {
+    "game_info": {
+      "selector": "h1, h2, [class*='event'], [class*='match']",
+      "count": 8,
+      "samples": [
+        "Baseball\nMLB\nSan Diego Padres @ Milwaukee Brewers\n",
+        "Money Line \u2013 Game\nShow All\nSan Diego Padres\n2.040\n"
+      ]
+    },
+    "decimal_odds_found": {
+      "pattern": "\\\\b\\\\d+\\\\.\\\\d{2,3}\\\\b",
+      "samples": [
+        "2.040",
+        "1.884",
+        "1.492",
+        "2.800",
+        "1.943",
+        "1.943",
+        "2.180",
+        "1.724",
+        "1.757",
+        "2.130"
+      ]
+    }
+  }
+}

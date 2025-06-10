@@ -1,0 +1,67 @@
+.container-PEr_bDf8i5 {
+  height: 25px;
+  width: 52px;
+  display: flex;
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+
+  color: var(--global-font-color);
+  background: var(--components-searchBar-themeToggleButton-background);
+}
+
+.tooltip-AsFaGtzaOh {
+  opacity: 0;
+  visibility: hidden;
+  transition: all 250ms;
+  width: 180px;
+  left: -120%;
+}
+
+.container-PEr_bDf8i5:hover .tooltip-AsFaGtzaOh {
+    opacity: 1;
+    visibility: visible;
+  }
+
+.day-fcCkmofr6g:hover {
+    background: rgba(0, 0, 0, .15);
+  }
+
+.night-MQgCWeR47x:hover {
+    background: rgba(255, 255, 255, .25);
+  }
+
+.iconSun-TOQ4ZLWNFn, .iconMoon-lELBArRjEu {
+  font-size: 14px;
+  position: absolute;
+}
+
+.iconSun-TOQ4ZLWNFn {
+  top: 5px;
+  left: 8px;
+}
+
+.iconMoon-lELBArRjEu {
+  top: 5px;
+  right: 7px;
+}
+
+.switch-eKbUHAM8JH {
+  position: absolute;
+  background: white;
+  border-radius: 2px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .35);
+  width: 21px;
+  height: 21px;
+  top: 2px;
+  transition: all 250ms;
+}
+
+.night-MQgCWeR47x .switch-eKbUHAM8JH {
+  transform: translate3d(29px, 0, 0);
+}
+
+.day-fcCkmofr6g .switch-eKbUHAM8JH {
+  left: 2px;
+}
+
