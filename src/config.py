@@ -23,6 +23,7 @@ class Config:
     # API Base URLs
     POLYMARKET_GAMMA_API: str = os.getenv('POLYMARKET_GAMMA_API', 'https://gamma-api.polymarket.com')
     POLYMARKET_CLOB_API: str = os.getenv('POLYMARKET_CLOB_API', 'https://clob.polymarket.com')
+    POLYMARKET_WEBSOCKET_URL: str = os.getenv('POLYMARKET_WEBSOCKET_URL', 'wss://ws-subscriptions-clob.polymarket.com')
     
     # Proxy Configuration
     PROXY_USERNAME: Optional[str] = os.getenv('PROXY_USERNAME')

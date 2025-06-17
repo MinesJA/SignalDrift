@@ -12,3 +12,4 @@ plotly>=5.0.0
 ipywidgets>=8.0.0
 nest-asyncio>=1.5.0
 python-dotenv>=1.0.0
+websockets>=12.0
