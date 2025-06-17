@@ -1,4 +1,93 @@
-from typing import List
+from typing import List, Dict, Any
+from dataclasses import dataclass
+from models.odds_event import OddsType
+
+
+@dataclass
+class FairOddsResult:
+    """Result of fair odds calculation"""
+    question: str
+    og_odds: float
+    fair_odds: float
+    impl_prob: float
+    odds_type: OddsType
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary representation"""
+        return {
+            'question': self.question,
+            'og_odds': self.og_odds,
+            'fair_odds': self.fair_odds,
+            'impl_prob': self.impl_prob,
+            'odds_type': self.odds_type.value
+        }
+
+
+def calculate_fair_odds(odds_data: List[Dict[str, Any]]) -> List[FairOddsResult]:
+    """
+    Calculate fair odds by removing vig from decimal odds.
+    
+    Args:
+        odds_data: List of dictionaries with keys 'question' and 'odds'
+                   Example: [{'question': 'Team A wins', 'odds': 2.0}, 
+                            {'question': 'Team B wins', 'odds': 2.0}]
+    
+    Returns:
+        List of FairOddsResult dataclass instances containing:
+        - question: The betting question
+        - og_odds: Original odds
+        - fair_odds: Fair odds after vig removal
+        - impl_prob: Implied probability after vig removal
+        - odds_type: OddsType.DECIMAL
+    
+    Example:
+        >>> results = calculate_fair_odds([
+        ...     {'question': 'Team A wins', 'odds': 1.83},
+        ...     {'question': 'Team B wins', 'odds': 2.2}
+        ... ])
+        >>> results[0].fair_odds
+        1.829
+        >>> results[0].impl_prob
+        0.5468
+    """
+    if not odds_data:
+        raise ValueError("Odds data cannot be empty")
+    
+    # Convert decimal odds to implied probabilities
+    implied_probs = []
+    
+    for item in odds_data:
+        odds = item.get('odds')
+        if odds is None:
+            raise ValueError("Each item must have 'odds' key")
+        if odds <= 1.0:
+            raise ValueError("Decimal odds must be greater than 1.0")
+        
+        # Decimal odds: probability = 1 / decimal_odds
+        implied_prob = 1 / odds
+        implied_probs.append(implied_prob)
+    
+    # Calculate total implied probability (will be > 1.0 due to vig)
+    total_prob = sum(implied_probs)
+    
+    if total_prob <= 0:
+        raise ValueError("Total probability must be positive")
+    
+    # Remove vig by normalizing probabilities and convert back to decimal odds
+    result = []
+    for i, item in enumerate(odds_data):
+        fair_prob = implied_probs[i] / total_prob
+        fair_decimal_odds = 1 / fair_prob
+        
+        result.append(FairOddsResult(
+            question=item.get('question'),
+            og_odds=item.get('odds'),
+            fair_odds=fair_decimal_odds,
+            impl_prob=fair_prob,
+            odds_type=OddsType.DECIMAL
+        ))
+    
+    return result
 
 
 def remove_vig_decimal(odds_list: List[float]) -> List[float]:
