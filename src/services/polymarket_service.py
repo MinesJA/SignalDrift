@@ -1,7 +1,7 @@
 import requests
 import json
 from datetime import datetime
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, List, Union
 import logging
 from ..config import config
 
@@ -98,7 +98,123 @@ class PolymarketService:
             logger.error(f"Error fetching market data: {e}")
             return None
 
+    def place_single_order(self, order_data: Dict[str, Any], order_type: str = "GTC") -> Optional[Dict[str, Any]]:
+        """
+        Place a single order on Polymarket.
+        
+        Args:
+            order_data: Dictionary containing order details:
+                - order: Signed order object with all required fields
+                - owner: API key of order owner
+            order_type: Order type ("FOK", "GTC", "GTD", "FAK")
+            
+        Returns:
+            Dictionary containing:
+            - success: Boolean indicating success
+            - orderId: Unique order identifier
+            - orderHashes: Settlement transaction hashes
+            - errorMsg: Error message if applicable
+        """
+        try:
+            url = f"{self.clob_api_base}/order"
+            
+            payload = {
+                "order": order_data["order"],
+                "owner": order_data["owner"],
+                "orderType": order_type
+            }
+            
+            headers = {**self.headers, "Content-Type": "application/json"}
+            
+            response = requests.post(url, json=payload, headers=headers)
+            response.raise_for_status()
+            
+            result = response.json()
+            
+            if result.get("success"):
+                logger.info(f"Successfully placed order: {result.get('orderId')}")
+            else:
+                logger.error(f"Order placement failed: {result.get('errorMsg')}")
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"Error placing single order: {e}")
+            return {
+                "success": False,
+                "errorMsg": str(e),
+                "orderId": None,
+                "orderHashes": None
+            }
+
+    def place_multiple_orders(self, orders_data: List[Dict[str, Any]], order_type: str = "GTC") -> Optional[Dict[str, Any]]:
+        """
+        Place multiple orders in a batch on Polymarket.
+        
+        Args:
+            orders_data: List of order dictionaries, each containing:
+                - order: Signed order object with all required fields
+                - owner: API key of order owner
+            order_type: Order type for all orders ("FOK", "GTC", "GTD", "FAK")
+            
+        Returns:
+            Dictionary containing:
+            - success: Boolean indicating success
+            - orderId: ID of the batch order
+            - orderHashes: Settlement transaction hashes
+            - errorMsg: Error message if applicable
+            
+        Note:
+            Maximum of 5 orders per batch request
+        """
+        try:
+            if len(orders_data) > 5:
+                error_msg = "Maximum of 5 orders per batch request"
+                logger.error(error_msg)
+                return {
+                    "success": False,
+                    "errorMsg": error_msg,
+                    "orderId": None,
+                    "orderHashes": None
+                }
+            
+            url = f"{self.clob_api_base}/orders"
+            
+            # Format orders for batch request
+            formatted_orders = []
+            for order_data in orders_data:
+                formatted_orders.append({
+                    "order": order_data["order"],
+                    "owner": order_data["owner"],
+                    "orderType": order_type
+                })
+            
+            headers = {**self.headers, "Content-Type": "application/json"}
+            
+            response = requests.post(url, json=formatted_orders, headers=headers)
+            response.raise_for_status()
+            
+            result = response.json()
+            
+            if result.get("success"):
+                logger.info(f"Successfully placed batch order: {result.get('orderId')}")
+            else:
+                logger.error(f"Batch order placement failed: {result.get('errorMsg')}")
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"Error placing multiple orders: {e}")
+            return {
+                "success": False,
+                "errorMsg": str(e),
+                "orderId": None,
+                "orderHashes": None
+            }
+
 
 # Create a module-level instance for convenience
 _service = PolymarketService()
 fetch_current_price = _service.fetch_current_price
+place_single_order = _service.place_single_order
+place_multiple_orders = _service.place_multiple_orders
