@@ -1,11 +1,14 @@
 import pytest
 from calculators.decimal_odds import (
     remove_vig_decimal, 
+    calculate_fair_odds,
+    FairOddsResult,
     calculate_vig_decimal, 
     fair_prob_to_decimal,
     decimal_to_american,
     american_to_decimal
 )
+from models.odds_event import OddsType
 
 
 class TestDecimalOdds:
@@ -167,3 +170,112 @@ class TestDecimalOdds:
         assert abs(sum(fair_probs) - 1.0) < 0.0001
         assert all(p > 0 for p in fair_probs)
         assert all(p < 1 for p in fair_probs)
+
+
+class TestCalculateFairOdds:
+    
+    def test_calculate_fair_odds_even(self):
+        """Test fair odds calculation for even odds."""
+        odds_data = [
+            {'question': 'Team A wins', 'odds': 2.0},
+            {'question': 'Team B wins', 'odds': 2.0}
+        ]
+        result = calculate_fair_odds(odds_data)
+        
+        assert len(result) == 2
+        assert all(isinstance(item, FairOddsResult) for item in result)
+        
+        # Check all attributes exist
+        assert result[0].question == 'Team A wins'
+        assert result[0].og_odds == 2.0
+        assert result[0].odds_type == OddsType.DECIMAL
+        
+        # Fair odds should still be 2.0 for even odds with no vig
+        assert abs(result[0].fair_odds - 2.0) < 0.0001
+        assert abs(result[1].fair_odds - 2.0) < 0.0001
+        
+        # Implied probabilities should be 0.5 each
+        assert abs(result[0].impl_prob - 0.5) < 0.0001
+        assert abs(result[1].impl_prob - 0.5) < 0.0001
+    
+    def test_calculate_fair_odds_with_vig(self):
+        """Test fair odds calculation with vig."""
+        odds_data = [
+            {'question': 'Team A wins', 'odds': 1.83},
+            {'question': 'Team B wins', 'odds': 2.2}
+        ]
+        result = calculate_fair_odds(odds_data)
+        
+        assert len(result) == 2
+        
+        # Check structure
+        assert result[0].question == 'Team A wins'
+        assert result[0].og_odds == 1.83
+        assert result[1].question == 'Team B wins'
+        assert result[1].og_odds == 2.2
+        
+        # Fair odds should be higher than original odds (vig removed)
+        assert result[0].fair_odds > result[0].og_odds
+        assert result[1].fair_odds > result[1].og_odds
+        
+        # Check approximate fair odds values
+        assert abs(result[0].fair_odds - 1.829) < 0.01
+        assert abs(result[1].fair_odds - 2.206) < 0.01
+        
+        # Check implied probabilities
+        assert abs(result[0].impl_prob - 0.5468) < 0.001
+        assert abs(result[1].impl_prob - 0.4532) < 0.001
+    
+    def test_calculate_fair_odds_three_way(self):
+        """Test fair odds calculation for three-way market."""
+        # Using more realistic odds with vig
+        odds_data = [
+            {'question': 'Home wins', 'odds': 2.3},
+            {'question': 'Draw', 'odds': 3.2},
+            {'question': 'Away wins', 'odds': 3.5}
+        ]
+        result = calculate_fair_odds(odds_data)
+        
+        assert len(result) == 3
+        
+        # Check that all results are FairOddsResult instances
+        for item in result:
+            assert isinstance(item, FairOddsResult)
+            assert item.odds_type == OddsType.DECIMAL
+        
+        # Verify probabilities sum to 1
+        total_prob = sum(item.impl_prob for item in result)
+        assert abs(total_prob - 1.0) < 0.0001
+        
+        # Check that the structure is preserved
+        assert result[0].question == 'Home wins'
+        assert result[1].question == 'Draw'
+        assert result[2].question == 'Away wins'
+        
+        # Check original odds are preserved
+        assert result[0].og_odds == 2.3
+        assert result[1].og_odds == 3.2
+        assert result[2].og_odds == 3.5
+    
+    def test_calculate_fair_odds_empty_list(self):
+        """Test that empty odds data raises an error."""
+        with pytest.raises(ValueError, match="Odds data cannot be empty"):
+            calculate_fair_odds([])
+    
+    def test_calculate_fair_odds_missing_odds_key(self):
+        """Test that missing odds key raises an error."""
+        odds_data = [
+            {'question': 'Team A wins'},  # Missing 'odds' key
+            {'question': 'Team B wins', 'odds': 2.0}
+        ]
+        with pytest.raises(ValueError, match="Each item must have 'odds' key"):
+            calculate_fair_odds(odds_data)
+    
+    def test_calculate_fair_odds_invalid_odds(self):
+        """Test that invalid odds raise an error."""
+        odds_data = [
+            {'question': 'Team A wins', 'odds': 0.5},  # Invalid odds <= 1.0
+            {'question': 'Team B wins', 'odds': 2.0}
+        ]
+        with pytest.raises(ValueError, match="Decimal odds must be greater than 1.0"):
+            calculate_fair_odds(odds_data)
