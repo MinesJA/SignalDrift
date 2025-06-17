@@ -6,8 +6,8 @@ build:
 	@./setup.sh
 
 start:
-	@echo "Starting Jupyter notebook..."
-	@source venv/bin/activate && jupyter notebook
+	@echo "Starting SignalDrift..."
+	@source venv/bin/activate && python ./src/main.py
 
 notebooks:
 	@echo "Starting Jupyter notebook"
