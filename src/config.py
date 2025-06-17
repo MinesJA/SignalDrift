@@ -39,6 +39,17 @@ class Config:
     DEBUG: bool = os.getenv('DEBUG', 'False').lower() in ('true', '1', 'yes')
     LOG_LEVEL: str = os.getenv('LOG_LEVEL', 'INFO').upper()
     
+    # Database Configuration
+    DATABASE_URL: str = os.getenv('DATABASE_URL', 'postgresql://signaldrift:signaldrift_dev_password@localhost:5432/signaldrift')
+    DATABASE_TEST_URL: str = os.getenv('DATABASE_TEST_URL', 'postgresql://signaldrift_test:signaldrift_test_password@localhost:5433/signaldrift_test')
+    DATABASE_HOST: str = os.getenv('DATABASE_HOST', 'localhost')
+    DATABASE_PORT: int = int(os.getenv('DATABASE_PORT', '5432'))
+    DATABASE_NAME: str = os.getenv('DATABASE_NAME', 'signaldrift')
+    DATABASE_USER: str = os.getenv('DATABASE_USER', 'signaldrift')
+    DATABASE_PASSWORD: str = os.getenv('DATABASE_PASSWORD', 'signaldrift_dev_password')
+    DATABASE_POOL_SIZE: int = int(os.getenv('DATABASE_POOL_SIZE', '5'))
+    DATABASE_MAX_OVERFLOW: int = int(os.getenv('DATABASE_MAX_OVERFLOW', '10'))
+    
     # Cookie configurations loaded from YAML files
     FANDUEL_COOKIES: List[Dict[str, Any]] = []
     
