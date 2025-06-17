@@ -12,3 +12,7 @@ plotly>=5.0.0
 ipywidgets>=8.0.0
 nest-asyncio>=1.5.0
 python-dotenv>=1.0.0
+# Database dependencies
+psycopg2-binary>=2.9.0
+sqlalchemy>=2.0.0
+alembic>=1.13.0

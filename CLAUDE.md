@@ -19,6 +19,13 @@ make start      # Starts Jupyter notebook server (full project access)
 make notebooks  # Starts Jupyter notebook server (restricted to /notebooks directory)
 make test       # Runs all tests using pytest
 
+# Database setup
+make db-setup       # Start development database (PostgreSQL 17 + TimescaleDB)
+make db-test-setup  # Start test database
+make db-down        # Stop databases
+make db-clean       # Clean up databases and volumes
+make db-logs        # View database logs
+
 # Clean environment
 make clean      # Removes venv, __pycache__, and .ipynb_checkpoints
 ```
@@ -90,6 +97,46 @@ The project uses `.env` files for configuration. Key variables include:
 5. Implement basic risk management - Position sizing and exposure limits
 6. Build monitoring and alerting - System health and opportunity notifications
 
+## Database Architecture
+
+### TimescaleDB with PostgreSQL 17
+The project uses TimescaleDB, a time-series extension for PostgreSQL 17, optimized for streaming odds and order data.
+
+#### Key Features:
+- **Hypertables**: Automatically partition time-series data for faster queries
+- **Continuous aggregates**: Pre-compute common analytics for odds trends
+- **Compression**: Reduces storage by 90%+ for historical data
+- **Data retention**: Automatically expires old data based on policies
+
+#### Database Setup:
+```bash
+# Start development database
+make db-setup
+
+# Start test database  
+make db-test-setup
+
+# View logs
+make db-logs
+
+# Clean up
+make db-clean
+```
+
+#### Connection Details:
+- **Development DB**: localhost:5432, database: signaldrift, user: signaldrift
+- **Test DB**: localhost:5433, database: signaldrift_test, user: signaldrift_test
+
+#### Models:
+- **OddsEvent**: Time-series data for betting odds from various sources
+- **OrderEvent**: Time-series data for order signals and executions
+
+#### Migrations:
+Located in `/migrations/` directory:
+- `001_init_timescaledb.sql`: Enable TimescaleDB and create enums
+- `002_create_odds_events.sql`: Create odds_events hypertable with indexes
+- `003_create_order_events.sql`: Create order_events hypertable with indexes
+
 ## Key Dependencies
 
 - **py-clob-client**: Polymarket API integration
@@ -101,6 +148,9 @@ The project uses `.env` files for configuration. Key variables include:
 - **plotly/ipywidgets**: Interactive visualizations
 - **python-dotenv**: Environment variable management
 - **pytest**: Testing framework
+- **psycopg2-binary**: PostgreSQL adapter for Python
+- **sqlalchemy**: SQL toolkit and ORM
+- **alembic**: Database migration tool
 
 ## Development Notes
 
