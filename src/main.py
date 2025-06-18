@@ -2,9 +2,12 @@ import asyncio
 from datetime import datetime
 from uuid import UUID, uuid4
 from calculators import decimal_odds
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from models import OddsEvent, OddsSource, OddsType, OrderEvent, OrderSignal
 import statistics
+import json
+
+from services import WebSocketOrderBook, PolymarketService
 
 # Mock
 async def mock_get_betfair_odds(timestamp: datetime, request_id: UUID) -> Dict[str, List[OddsEvent]]:
@@ -71,17 +74,17 @@ def calculate_z(data: Dict[str, Any]) -> Dict[str, float]:
         return {}
 
 
-def strategy_a(data: Dict[str, Any]) -> List[OrderEvent]:
-    now = datetime.now()
+#def strategy_a(data: Dict[str, Any]) -> List[OrderEvent]:
+#    now = datetime.now()
+#
+#    if data.get('avg_impl_prob_mult', 0) > 0.25:
+#        return [ OrderEvent(timestamp=now, price=0.25, order_signal=OrderSignal.LIMIT_BUY),
+#                 OrderEvent(timestamp=now, price=0.35, order_signal=OrderSignal.LIMIT_SELL) ]
+#    else:
+#        return [OrderEvent(timestamp=now, price=0.55, order_signal=OrderSignal.LIMIT_SELL)]
 
-    if data.get('avg_impl_prob_mult', 0) > 0.25:
-        return [ OrderEvent(timestamp=now, price=0.25, order_signal=OrderSignal.LIMIT_BUY),
-                 OrderEvent(timestamp=now, price=0.35, order_signal=OrderSignal.LIMIT_SELL) ]
-    else:
-        return [OrderEvent(timestamp=now, price=0.55, order_signal=OrderSignal.LIMIT_SELL)]
 
-
-def executor(orders: List[OrderEvent]):
+#def executor(orders: List[OrderEvent]):
 
 
 
@@ -134,6 +137,76 @@ async def main():
     #for r in results:
     #    print(r)
 
-if __name__ == "__main__":
-    asyncio.run(main())
+from py_clob_client.client import ClobClient
+from config import config
 
+def connect():
+    host = config.POLYMARKET_CLOB_API
+    #This is your Private Key. Export from reveal.polymarket.com or from your Web3 Application
+    key = config.POLYMARKET_PRIVATE_KEY
+    address = config.POLYMARKET_PROXY_ADDRESS
+    chain_id: int = 137 #No need to adjust this
+
+    #This is the address you deposit/send USDC to to FUND your Polymarket account.
+    print(address)
+    print(key)
+    ### Initialization of a client using a Polymarket Proxy associated with a Browser Wallet(Metamask, Coinbase Wallet, etc)
+
+    if address and key:
+        client = ClobClient(host, key=key, chain_id=chain_id, signature_type=2, funder=address)
+        k = client.derive_api_key()
+        print(k)
+
+        return k
+
+
+    #if __name__ == "__main__":
+    #    #asyncio.run(main())
+    #    connect()
+
+
+def market_message_callback(message) -> Optional[OrderEvent]:
+    event_type = message.get("event_type", "")
+    if event_type  == "book":
+
+    if event_type == "price_change":
+
+
+if __name__ == "__main__":
+    slug = "mlb-phi-mia-2025-06-17"
+    event = PolymarketService().get_market_by_slug(slug)
+
+    if event:
+        y = [
+                {'asset_id': token_id, 'outcome': outcome}
+                for token_id, outcome in
+                zip(
+                    json.loads(event['clobTokenIds']),
+                    json.loads(event['outcomes'])
+                )
+        ]
+        #ids = m.get('clobTokenIds')
+        #outcomes = m.get('outcomes')
+        print(y)
+
+        #asset_ids = [ "109681959945973300464568698402968596289258214226684818748321941747028805721376", ]
+        asset_ids = [i['asset_id'] for i in y]
+
+        url = config.POLYMARKET_WEBSOCKET_URL
+
+        #Complete these by exporting them from your initialized client.
+        x = connect()
+        if x:
+            condition_ids = [] # no really need to filter by this one
+
+            auth = {"apiKey": x.api_key, "secret": x.api_secret, "passphrase": x.api_passphrase}
+
+            market_connection = WebSocketOrderBook(
+                "market", url, asset_ids, auth, None, True
+            )
+            #user_connection = WebSocketOrderBook(
+            #    "market", url, condition_ids, auth, None, True
+            #)
+
+            market_connection.run()
+    # user_connection.run()
