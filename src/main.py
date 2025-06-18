@@ -1,179 +1,127 @@
-import asyncio
+import traceback
 from datetime import datetime
-from uuid import UUID, uuid4
-from calculators import decimal_odds
-from typing import Dict, Any, List, Optional
-from models import OddsEvent, OddsSource, OddsType, OrderEvent, OrderSignal
-import statistics
+from typing import Dict, Any, List
+import os
+import os.path
 import json
-
+import csv
+from strategies import build_orders
 from services import WebSocketOrderBook, PolymarketService
-
-# Mock
-async def mock_get_betfair_odds(timestamp: datetime, request_id: UUID) -> Dict[str, List[OddsEvent]]:
-    await asyncio.sleep(0.2)
-
-    result = [{"odds": 2.2, "question": "marlins"}, {"odds": 1.7, "question": "pirates"}]
-
-    odds = decimal_odds.calculate_fair_odds(result)
-    odds = [{   **odd.to_dict(),
-                "timestamp": timestamp,
-                "request_id": request_id,
-                "source": OddsSource.BETFAIR,
-            } for odd in odds]
-
-    return {"betfair_odds": [OddsEvent(**odd) for odd in odds]}
-
-async def mock_get_pinnacle_odds(timestamp: datetime, request_id: UUID) -> Dict[str, List[OddsEvent]]:
-    await asyncio.sleep(0.4)
-
-    result = [{"odds": 2.0, "question": "marlins"}, {"odds": 1.9, "question": "pirates"}]
-
-    # TODO: Have multiple conversions from dicts to objects back to dicts
-    #   Maybe rethink
-    odds = decimal_odds.calculate_fair_odds(result)
-    odds = [{   **odd.to_dict(),
-                "timestamp": timestamp,
-                "request_id": request_id,
-                "source": OddsSource.PINNACLE,
-            } for odd in odds]
-
-    return {"pinnacle_odds": [OddsEvent(**odd) for odd in odds]}
-
-async def mock_get_polymarket_odds(timestamp: datetime, request_id: UUID) -> Dict[str, List[OddsEvent]]:
-    await asyncio.sleep(0.4)
-
-    result = [{"odds": 0.4, "question": "marlins"}, {"odds": 0.6, "question": "pirates"}]
-
-    # NOTE: There may be some implied_odds calculations we need to do but for now
-    # we just take what Polymarket gives us.
-    odds = [{   "question": odd["question"],
-                "og_odds": odd["odds"],
-                "fair_odds": odd["odds"],
-                "impl_prob": odd["odds"],
-                "odds_type": OddsType.EXCHANGE,
-                "timestamp": timestamp,
-                "request_id": request_id,
-                "source": OddsSource.POLYMARKET,
-            } for odd in result]
-
-    return {"polymarket_odds": [OddsEvent(**odd) for odd in odds]}
-
-
-def calculate_avg_impl_prob(data: Dict[str, Any]) -> Dict[str, float]:
-    x = [odd.impl_prob for odd in (data.get("betfair_odds", []) + data.get("pinnacle_odds", []))]
-    return {"avg_impl_prob": statistics.mean(x)}
-
-
-# Depends on avg_impl_prob
-def calculate_z(data: Dict[str, Any]) -> Dict[str, float]:
-    a = data.get("avg_impl_prob")
-    if a:
-        return {"avg_impl_prob_mult": a * 8}
-    else:
-        return {}
-
-
-#def strategy_a(data: Dict[str, Any]) -> List[OrderEvent]:
-#    now = datetime.now()
-#
-#    if data.get('avg_impl_prob_mult', 0) > 0.25:
-#        return [ OrderEvent(timestamp=now, price=0.25, order_signal=OrderSignal.LIMIT_BUY),
-#                 OrderEvent(timestamp=now, price=0.35, order_signal=OrderSignal.LIMIT_SELL) ]
-#    else:
-#        return [OrderEvent(timestamp=now, price=0.55, order_signal=OrderSignal.LIMIT_SELL)]
-
-
-#def executor(orders: List[OrderEvent]):
-
-
-
-
-
-async def main():
-    timestamp = datetime.now()
-    request_id = uuid4()
-
-    # Gather data
-    results = await asyncio.gather(
-        mock_get_betfair_odds(timestamp, request_id),
-        mock_get_pinnacle_odds(timestamp, request_id),
-        mock_get_polymarket_odds(timestamp, request_id)
-    )
-
-    data = {k: v for d in results for k, v in d.items()}
-
-    for calculator in [calculate_avg_impl_prob, calculate_z]:
-        data = data | calculator(data)
-
-    print(data)
-
-    orders = [strategy(data) for strategy in [strategy_a]]
-
-    flattened_list = [item for sublist in orders for item in sublist]
-
-    print("\n")
-
-    print(flattened_list)
-
-
-
-
-
-
-
-
-    #more_data = [calculator(**data) for calculator in [calculate_y]]
-
-    #data = {**calculator(**data) for calculator in [calculate_y]}
-    #more_data = dict(i for i in calculator.items() for d in [calculator_y]}
-
-     #{
-     # "betfair_odds": [{}],
-     # "polymarket_odds": [{}],
-     # "pinnacle_odds": [{}]
-     #}
-
-    #for r in results:
-    #    print(r)
-
 from py_clob_client.client import ClobClient
+from py_clob_client.clob_types import OrderArgs, OrderType, PostOrdersArgs, PartialCreateOrderOptions
+from py_clob_client.order_builder.constants import BUY
 from config import config
 
-def connect():
-    host = config.POLYMARKET_CLOB_API
-    #This is your Private Key. Export from reveal.polymarket.com or from your Web3 Application
-    key = config.POLYMARKET_PRIVATE_KEY
-    address = config.POLYMARKET_PROXY_ADDRESS
-    chain_id: int = 137 #No need to adjust this
 
-    #This is the address you deposit/send USDC to to FUND your Polymarket account.
-    print(address)
-    print(key)
-    ### Initialization of a client using a Polymarket Proxy associated with a Browser Wallet(Metamask, Coinbase Wallet, etc)
+def setup_csvs(slug):
+    data_dir = "data"
+    os.makedirs(data_dir, exist_ok=True)
 
-    if address and key:
-        client = ClobClient(host, key=key, chain_id=chain_id, signature_type=2, funder=address)
-        k = client.derive_api_key()
-        print(k)
+    trades_file = os.path.join('data', f"polymarket_trades_{slug}.csv")
+    price_change_file = os.path.join('data', f"poly_market_price_change_event_{slug}.csv")
+    orderbook_file = os.path.join('data', f"order_book_{slug}.csv")
 
-        return k
+    if not os.path.isfile(trades_file):
+        print("Setting up trades csv")
+        with open(trades_file, 'w', newline='') as csvfile:
+            fieldnames=['asset_id', 'price', 'size', 'side', 'timestamp']
+            writer = csv.writer(csvfile, delimiter=',')
+            writer.writerow(fieldnames)
+
+    if not os.path.isfile(price_change_file):
+        print("Setting up price change csv")
+        with open(price_change_file, 'w', newline='') as csvfile:
+            fieldnames=['asset_id', 'event_type', 'hash', 'market', 'price', 'side', 'size', 'timestamp']
+            writer = csv.writer(csvfile, delimiter=',')
+            writer.writerow(fieldnames)
+
+    if not os.path.isfile(orderbook_file):
+        print("Setting up orderbook csv")
+        with open(orderbook_file, 'w', newline='') as csvfile:
+            fieldnames=['asset_id', 'price', 'size', 'side', 'timestamp']
+            writer = csv.writer(csvfile, delimiter=',')
+            writer.writerow(fieldnames)
 
 
-    #if __name__ == "__main__":
-    #    #asyncio.run(main())
-    #    connect()
 
 
-def market_message_callback(message) -> Optional[OrderEvent]:
-    event_type = message.get("event_type", "")
-    if event_type  == "book":
+#if __name__ == "__main__":
+#
+#
+#    client = connect()
+#    ## Create and sign a limit order buying 100 YES tokens for 0.50c each
+#    #Refer to the Markets API documentation to locate a tokenID: https://docs.polymarket.com/developers/gamma-markets-api/get-markets
+#
+#    if client:
+#        client.set_api_creds(client.create_or_derive_api_creds())
+#
+#        slug="mlb-cle-sf-2025-06-17"
+#        setup_csvs(slug)
+#        market = PolymarketService().get_market_by_slug(slug)
+#
+#        if market:
+#            y = [
+#                    {'asset_id': token_id, 'outcome': outcome}
+#                    for token_id, outcome in zip(
+#                        json.loads(market['clobTokenIds']),
+#                        json.loads(market['outcomes'])
+#                    )
+#                ]
+#
+#            asset_ids = [i['asset_id'] for i in y]
+#            print(asset_ids)
+#            #ord = client.create_order(OrderArgs(
+#            #    price=args.price,
+#            #    size=args.size,
+#            #    side=args.side,
+#            #    token_id=args.token_id,
+#            #    expiration=args.expiration
+#            #), PartialCreateOrderOptions(
+#            #    neg_risk=args.neg_risk
+#            #))
+#
+#            #resp = client.post_order(ord, order_type)
+#
+#            resp = client.post_orders([
+#                PostOrdersArgs(
+#                    # Create and sign a limit order buying 100 YES tokens for 0.50 each
+#                    order=client.create_order(
+#                        OrderArgs(
+#                            price=0.01,
+#                            size=5,
+#                            side=BUY,
+#                            token_id="10703298184509502202740464237528733764769030979577941510093170241051283757018",
+#                        ),
+#                        PartialCreateOrderOptions(neg_risk=False)
+#                    ),
+#                    #orderType=OrderType.GTC,
+#                ),
+#                #PostOrdersArgs(
+#                #    # Create and sign a limit order selling 200 NO tokens for 0.25 each
+#                #    order=client.create_order(
+#                #        OrderArgs(
+#                #            price=0.03,
+#                #            size=5,
+#                #            side=BUY,
+#                #            token_id=asset_ids[1],
+#                #        ),
+#                #        PartialCreateOrderOptions(neg_risk=False)
+#                #    ),
+#                #   orderType=OrderType.GTC,
+#                #)
+#            ])
+#            print(resp)
 
-    if event_type == "price_change":
+
 
 
 if __name__ == "__main__":
-    slug = "mlb-phi-mia-2025-06-17"
+    #slug = "mlb-phi-mia-2025-06-17"
+    #slug = "mlb-mil-chc-2025-06-17"
+    #slug="mlb-cle-sf-2025-06-17"
+    slug="mlb-sd-lad-2025-06-17"
+    setup_csvs(slug)
+
     event = PolymarketService().get_market_by_slug(slug)
 
     if event:
@@ -185,28 +133,35 @@ if __name__ == "__main__":
                     json.loads(event['outcomes'])
                 )
         ]
-        #ids = m.get('clobTokenIds')
-        #outcomes = m.get('outcomes')
-        print(y)
 
-        #asset_ids = [ "109681959945973300464568698402968596289258214226684818748321941747028805721376", ]
         asset_ids = [i['asset_id'] for i in y]
 
         url = config.POLYMARKET_WEBSOCKET_URL
 
-        #Complete these by exporting them from your initialized client.
-        x = connect()
-        if x:
-            condition_ids = [] # no really need to filter by this one
+        def execute_write_market_event(message):
+            write_market_event(slug, message):
 
-            auth = {"apiKey": x.api_key, "secret": x.api_secret, "passphrase": x.api_passphrase}
+        order_book = PolymarketOrderBook()
+
+        def update_order_book(message):
+            order_book.update(slug, message)
+
+k
+
+        #Complete these by exporting them from your initialized client.
+        client = connect()
+        if client:
+            key = client.derive_api_key()
+
+            auth = {"apiKey": key.api_key, "secret": key.api_secret, "passphrase": key.api_passphrase}
+
+            order_book = OrderBook(slug)
 
             market_connection = WebSocketOrderBook(
-                "market", url, asset_ids, auth, None, True
+                "market", url, asset_ids, auth, order_book, True
             )
-            #user_connection = WebSocketOrderBook(
-            #    "market", url, condition_ids, auth, None, True
-            #)
 
+
+            market_connection = PolymarketOrderBookService.connect("market", asset_ids, callback)
             market_connection.run()
-    # user_connection.run()
+            # user_connection.run()
