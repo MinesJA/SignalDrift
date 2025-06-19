@@ -4,15 +4,13 @@ from typing import List, Dict, Any
 import os
 import csv
 
-import logging
+from src.utils import setup_logging
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = setup_logging(__name__)
 
 FIELD_NAMES = ['market_slug', 'asset_id', 'market_id', 'outcome_name', 'price', 'size', 'side',  'timestamp']
 
 def write_orderBookStore(market_slug: str, datetime: datetime, orderBook_store: OrderBookStore):
-    logger.info("Writing order book")
     csv_filename = os.path.join('data', f"{datetime.strftime("%Y%m%d")}-{market_slug}-synthetic_orders.csv")
 
     rows = []
@@ -20,7 +18,9 @@ def write_orderBookStore(market_slug: str, datetime: datetime, orderBook_store: 
     for book in orderBook_store.books:
         rows.extend(book.to_orders_dicts())
 
+    logger.info(f"Writing {len(rows)} synthetic order records to CSV for market_slug: {market_slug}")
     _write_to_csv(csv_filename, rows)
+    logger.info(f"Successfully wrote synthetic orders to {csv_filename}")
 
 
 def _write_to_csv(csv_filename, rows: List[Dict[str, Any]]):

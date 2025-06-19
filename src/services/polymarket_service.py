@@ -2,11 +2,10 @@ import requests
 import json
 from datetime import datetime
 from typing import Dict, Optional, Any
-import logging
 from config import config
+from src.utils import setup_logging
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = setup_logging(__name__)
 
 
 class PolymarketService:

@@ -9,9 +9,9 @@ from config import config
 
 from abc import ABC, abstractmethod
 
-import logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from src.utils import setup_logging
+
+logger = setup_logging(__name__)
 
 class WebsocketConnection(ABC):
     def __init__(self, channel_type):
@@ -38,11 +38,11 @@ class WebsocketConnection(ABC):
         pass
 
     def on_error(self, ws, error):
-        print("Error: ", error)
+        logger.error(f"WebSocket error: {error}")
         exit(1)
 
     def on_close(self, ws, close_status_code, close_msg):
-        print("closing")
+        logger.info(f"WebSocket closing - Status: {close_status_code}, Message: {close_msg}")
         exit(0)
 
     def ping(self, ws):
