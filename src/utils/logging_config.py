@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from src.config import Config
+from config import config
 
 
 def setup_logging(name: Optional[str] = None) -> logging.Logger:
@@ -20,7 +20,7 @@ def setup_logging(name: Optional[str] = None) -> logging.Logger:
         Configured logger instance.
     """
     # Get log level from config
-    log_level = getattr(logging, Config.LOG_LEVEL, logging.INFO)
+    log_level = getattr(logging, config.LOG_LEVEL, logging.INFO)
     
     # Configure root logger only once
     if not logging.getLogger().handlers:
@@ -41,7 +41,7 @@ def setup_logging(name: Optional[str] = None) -> logging.Logger:
         root_logger.addHandler(console_handler)
         
         # Optionally add file handler for production
-        if not Config.DEBUG:
+        if not config.DEBUG:
             log_dir = Path(__file__).parent.parent.parent / 'logs'
             log_dir.mkdir(exist_ok=True)
             

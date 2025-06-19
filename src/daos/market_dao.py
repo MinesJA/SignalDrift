@@ -4,7 +4,7 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime
 import traceback
 
-from src.utils import setup_logging
+from utils import setup_logging
 
 logger = setup_logging(__name__)
 

@@ -4,7 +4,7 @@ from typing import List, Dict, Any
 import os
 import csv
 
-from src.utils import setup_logging
+from utils import setup_logging
 
 logger = setup_logging(__name__)
 

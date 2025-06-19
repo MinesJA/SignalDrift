@@ -3,7 +3,7 @@ import csv
 from typing import List, Dict, Any
 from datetime import datetime
 from models import Order
-from src.utils import setup_logging
+from utils import setup_logging
 
 logger = setup_logging(__name__)
 

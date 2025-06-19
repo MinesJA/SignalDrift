@@ -91,6 +91,9 @@ class PolymarketMarketEventsService(WebsocketConnection):
         return "market"
 
     def on_message(self, ws, message):
+        if message == "PONG":
+            return
+            
         try:
             data = json.loads(message)
             for handler in self.event_handlers:
