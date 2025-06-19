@@ -3,21 +3,20 @@ import csv
 from typing import List, Dict, Any
 from datetime import datetime
 from models import Order
-import logging
+from utils import setup_logging
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = setup_logging(__name__)
 
 FIELD_NAMES = ['market_slug', 'asset_id', 'price', 'size', 'timestamp']
 
 def write_orders(market_slug: str, datetime: datetime, orders: List[Order]):
-
-    logger.info("Writing orders")
     csv_filename = os.path.join('data', f"{datetime.strftime("%Y%m%d")}-{market_slug}_orders.csv")
 
     rows = [order.asdict() for order in orders]
 
+    logger.info(f"Writing {len(rows)} order records to CSV for market_slug: {market_slug}")
     _write_to_csv(csv_filename, rows)
+    logger.info(f"Successfully wrote orders to {csv_filename}")
 
 
 # TODO: This can prob be abstracted into csv utils
