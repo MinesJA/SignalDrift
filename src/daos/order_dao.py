@@ -10,7 +10,7 @@ logger = setup_logging(__name__)
 FIELD_NAMES = ['market_slug', 'asset_id', 'price', 'size', 'timestamp']
 
 def write_orders(market_slug: str, datetime: datetime, orders: List[Order]):
-    csv_filename = os.path.join('data', f"{datetime.strftime("%Y%m%d")}-{market_slug}_orders.csv")
+    csv_filename = os.path.join('data', f"{datetime.strftime("%Y%m%d-%H")}-{market_slug}_orders.csv")
 
     rows = [order.asdict() for order in orders]
 

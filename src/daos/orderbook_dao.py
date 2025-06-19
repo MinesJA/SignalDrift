@@ -11,7 +11,7 @@ logger = setup_logging(__name__)
 FIELD_NAMES = ['market_slug', 'asset_id', 'market_id', 'outcome_name', 'price', 'size', 'side',  'timestamp']
 
 def write_orderBookStore(market_slug: str, datetime: datetime, orderBook_store: OrderBookStore):
-    csv_filename = os.path.join('data', f"{datetime.strftime("%Y%m%d")}-{market_slug}-synthetic_orders.csv")
+    csv_filename = os.path.join('data', f"{datetime.strftime("%Y%m%d-%H")}-{market_slug}-synthetic_orders.csv")
 
     rows = []
 
