@@ -1,4 +1,5 @@
-from .websocket_order_book import PolymarketWebSocketOrderBook
 from .polymarket_service import PolymarketService
+from .polymarket_clob_client import PolymarketClobClient
+from .polymarket_websocket_events_service import PolymarketUserEventsService, PolymarketMarketEventsService
 
-__all__ = ['WebSocketOrderBook', 'PolymarketService']
+__all__ = ['PolymarketService', 'PolymarketClobClient', 'PolymarketMarketEventsService', 'PolymarketUserEventsService']

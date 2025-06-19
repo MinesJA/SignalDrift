@@ -35,4 +35,8 @@ class PolymarketClobClient:
 
         return cls(client)
 
+    def derive_auth(self):
+        key = self.client.derive_api_key
+        return {"apiKey": key.api_key, "secret": key.api_secret, "passphrase": key.api_passphrase}
+
 

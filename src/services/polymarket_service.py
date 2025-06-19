@@ -1,9 +1,7 @@
 import requests
 import json
-import asyncio
-import websockets
 from datetime import datetime
-from typing import Dict, Optional, Any, List, Union, Callable, Set
+from typing import Dict, Optional, Any
 import logging
 from config import config
 
@@ -14,7 +12,6 @@ logger = logging.getLogger(__name__)
 class PolymarketService:
     def __init__(self):
         self.gamma_api_base = config.POLYMARKET_GAMMA_API
-        self.websocket_url = config.POLYMARKET_WEBSOCKET_URL
         self.headers = {}
 
         # WebSocket connection state
@@ -103,103 +100,3 @@ class PolymarketService:
             return None
 
 
-
-
-    def remove_event_handler(self, event_type: str, handler: Callable[[Dict[str, Any]], None]):
-        """
-        Remove an event handler for specific event types.
-
-        Args:
-            event_type: Type of event ('book', 'price_change', 'tick_size_change')
-            handler: Callback function to remove
-        """
-        if event_type in self.event_handlers and handler in self.event_handlers[event_type]:
-            self.event_handlers[event_type].remove(handler)
-            logger.info(f"Removed event handler for {event_type}")
-
-    async def _handle_websocket_message(self, message: str):
-        """
-        Handle incoming WebSocket messages and trigger appropriate event handlers.
-
-        Args:
-            message: Raw message string from WebSocket
-        """
-        try:
-            data = json.loads(message)
-            event_type = data.get('event_type')
-
-            if event_type in self.event_handlers:
-                # Call all registered handlers for this event type
-                for handler in self.event_handlers[event_type]:
-                    try:
-                        handler(data)
-                    except Exception as e:
-                        logger.error(f"Error in event handler for {event_type}: {e}")
-            else:
-                logger.debug(f"Unhandled event type: {event_type}")
-
-        except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse WebSocket message: {e}")
-        except Exception as e:
-            logger.error(f"Error handling WebSocket message: {e}")
-
-    async def start_consuming_events(self):
-        """
-        Start consuming events from the WebSocket connection.
-        This method will run indefinitely until the connection is closed.
-        """
-        if not self.is_connected or not self.websocket:
-            logger.error("WebSocket not connected. Call connect_websocket() first.")
-            return
-
-        logger.info("Starting to consume WebSocket events...")
-
-        try:
-            async for message in self.websocket:
-                await self._handle_websocket_message(message)
-
-        except websockets.exceptions.ConnectionClosed:
-            logger.info("WebSocket connection closed")
-            self.is_connected = False
-        except Exception as e:
-            logger.error(f"Error consuming WebSocket events: {e}")
-            self.is_connected = False
-
-    async def subscribe_and_start_consuming(self, asset_ids: List[str]) -> bool:
-        """
-        Convenience method to connect, subscribe to market channel, and start consuming events.
-
-        Args:
-            asset_ids: List of asset/token IDs to subscribe to
-
-        Returns:
-            bool: True if setup successful, False otherwise
-        """
-        # Connect to WebSocket
-        if not await self.connect_websocket():
-            return False
-
-        # Subscribe to market channel
-        if not await self.subscribe_to_market_channel(asset_ids):
-            await self.disconnect_websocket()
-            return False
-
-        # Start consuming events (this will run indefinitely)
-        await self.start_consuming_events()
-        return True
-
-
-# Create a module-level instance for convenience
-_service = PolymarketService()
-fetch_current_price = _service.fetch_current_price
-place_single_order = _service.place_single_order
-place_multiple_orders = _service.place_multiple_orders
-get_market_by_slug = _service.get_market_by_slug
-# WebSocket functions
-connect_websocket = _service.connect_websocket
-disconnect_websocket = _service.disconnect_websocket
-subscribe_to_market_channel = _service.subscribe_to_market_channel
-add_event_handler = _service.add_event_handler
-remove_event_handler = _service.remove_event_handler
-start_consuming_events = _service.start_consuming_events
-subscribe_and_start_consuming = _service.subscribe_and_start_consuming

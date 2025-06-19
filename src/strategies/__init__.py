@@ -1,3 +1,3 @@
-from .polymarket_arb import build_orders
+from .polymarket_arb import calculate_orders
 
-__all__ = ['build_orders']
+__all__ = ['calculate_orders']

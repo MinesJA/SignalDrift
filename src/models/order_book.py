@@ -6,7 +6,7 @@ import os.path
 import csv
 from strategies import build_orders
 
-class OrderBook:
+class SyntheticOrderBook:
     """
     Represents an odds event from various betting sources.
 
@@ -22,6 +22,8 @@ class OrderBook:
         meta: Additional metadata specific to source data
     """
     def __init__(self, slug):
+        self.market = market
+        self.book_a
         self.orders = {}
         self.market_slug = slug
 
