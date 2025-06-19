@@ -4,18 +4,15 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime
 import traceback
 
-import logging
+from utils import setup_logging
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = setup_logging(__name__)
 
 # TODO: Should this be defined in MarketEvent?
 FIELD_NAMES = ['market_slug', 'asset_id', 'market_id', 'event_type', 'price', 'side', 'size', 'hash', 'timestamp']
 
 def write_marketMessages(market_slug: str, datetime: datetime, market_messages: List[Dict[str, Any]]):
-    logger.info("Writing market messages")
-
-    csv_filename = os.path.join('data', f"{datetime.strftime("%Y%m%d")}-{market_slug}-polymarket_market_events.csv")
+    csv_filename = os.path.join('data', f"{datetime.strftime("%Y%m%d-%H")}-{market_slug}-polymarket_market_events.csv")
 
     rows = []
     for event in market_messages:
@@ -25,9 +22,14 @@ def write_marketMessages(market_slug: str, datetime: datetime, market_messages: 
 
     try:
         if len(rows) > 0:
+            logger.info(f"Writing {len(rows)} market event records to CSV for market_slug: {market_slug}")
             _write_to_csv(csv_filename, rows)
-    except Exception:
-        logger.error(f"Failed to write rows in market_writer")
+            logger.info(f"Successfully wrote market events to {csv_filename}")
+        else:
+            logger.warning(f"No market event records to write for market_slug: {market_slug}")
+    except Exception as e:
+        logger.error(f"Failed to write {len(rows)} market event records for market_slug: {market_slug} - Error: {e}")
+        logger.error(f"Full traceback: {traceback.format_exc()}")
 
 def _write_to_csv(csv_filename, rows: List[Dict[str, Any]]):
     if not os.path.isfile(csv_filename):

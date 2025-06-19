@@ -107,7 +107,8 @@ if __name__ == "__main__":
        "mlb-kc-tex-2025-06-19",
        "mlb-ari-tor-2025-06-19",
        "mlb-cle-sf-2025-06-19",
-       "mlb-pit-det-2025-06-19"
+       "mlb-pit-det-2025-06-19",
+       "mlb-stl-cws-2025-06-19"
     ]
 
     # Create thread pool with max workers equal to number of markets

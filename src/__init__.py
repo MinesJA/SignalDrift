@@ -1,4 +1,5 @@
-# SignalDrift source code
-from .models import OddsEvent, OddsSource, OddsType, OrderEvent
+"""
+SignalDrift - Sports betting arbitrage and market-making system
+"""
 
-__all__ = ['OddsEvent', 'OddsSource', 'OddsType', 'OrderEvent']
+__version__ = "0.1.0"
