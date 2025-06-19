@@ -17,7 +17,6 @@ def write_orderBookStore(market_slug: str, datetime: datetime, orderBook_store: 
 
     rows = []
 
-
     for book in orderBook_store.books:
         rows.extend(book.to_orders_dicts())
 

@@ -15,7 +15,6 @@ class SyntheticOrderBook:
 
     @property
     def orders(self) -> List[SyntheticOrder]:
-        print(self.orders_lookup)
         return list(self.orders_lookup.values())
 
     def add_entries(self, orders: List[Dict[str, Any]]):

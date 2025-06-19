@@ -77,8 +77,9 @@ class PolymarketMarketEventsService(WebsocketConnection):
     Attributes:
         channel_type: ...
     """
-    def __init__(self, asset_ids, event_handlers):
+    def __init__(self,market_slug, asset_ids, event_handlers):
         super().__init__("market")
+        self.market_slug = market_slug
         self.asset_ids = asset_ids
         self.event_handlers = event_handlers
 
@@ -106,9 +107,9 @@ class PolymarketMarketEventsService(WebsocketConnection):
             pass
 
     def on_open(self, ws):
-        print(self.payload)
         ws.send(json.dumps(self.payload))
 
         thr = threading.Thread(target=self.ping, args=(ws,))
+        print(f"\n STARTING {self.market_slug} \n")
         thr.start()
 

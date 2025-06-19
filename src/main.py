@@ -70,21 +70,32 @@ if __name__ == "__main__":
     #slug = "mlb-mil-chc-2025-06-17"
     #slug="mlb-cle-sf-2025-06-17"
     #market_slug="mlb-sd-lad-2025-06-17"
-    market_slug="mlb-min-cin-2025-06-19"
 
-    market_metadata = PolymarketService().get_market_by_slug(market_slug)
+    market_slugs = [
+       "mlb-min-cin-2025-06-19"
+       "mlb-laa-nyy-2025-06-19",
+       "mlb-col-wsh-2025-06-19",
+       "mlb-mil-chc-2025-06-19",
+       "mlb-kc-tex-2025-06-19",
+       "mlb-ari-tor-2025-06-19",
+       "mlb-cle-sf-2025-06-19",
+       "mlb-pit-det-2025-06-19"
+    ]
 
-    if market_metadata:
-        books = [
-            SyntheticOrderBook(market_slug, market_metadata['id'], outcome, token_id)
-            for token_id, outcome
-            in zip( json.loads(market_metadata['clobTokenIds']), json.loads(market_metadata['outcomes']))
-        ]
+    for market_slug in market_slugs:
+        market_metadata = PolymarketService().get_market_by_slug(market_slug)
 
-        book_store = OrderBookStore(market_slug, books)
-        order_store = OrdersStore()
-        message_handler = get_order_message_register(book_store, order_store)
+        if market_metadata:
+            books = [
+                SyntheticOrderBook(market_slug, market_metadata['id'], outcome, token_id)
+                for token_id, outcome
+                in zip( json.loads(market_metadata['clobTokenIds']), json.loads(market_metadata['outcomes']))
+            ]
 
-        market_connection = PolymarketMarketEventsService(book_store.asset_ids, [message_handler])
-        market_connection.run()
+            book_store = OrderBookStore(market_slug, books)
+            order_store = OrdersStore()
+            message_handler = get_order_message_register(book_store, order_store)
+
+            market_connection = PolymarketMarketEventsService(market_slug, book_store.asset_ids, [message_handler])
+            market_connection.run()
 
