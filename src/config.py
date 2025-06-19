@@ -19,6 +19,8 @@ class Config:
     POLYMARKET_API_KEY: Optional[str] = os.getenv('POLYMARKET_API_KEY')
     POLYMARKET_PRIVY_TOKEN: Optional[str] = os.getenv('POLYMARKET_PRIVY_TOKEN')
     POLYMARKET_PRIVY_ID_TOKEN: Optional[str] = os.getenv('POLYMARKET_PRIVY_ID_TOKEN')
+    POLYMARKET_PRIVATE_KEY: Optional[str] = os.getenv('POLYMARKET_PRIVATE_KEY')
+    POLYMARKET_PROXY_ADDRESS: Optional[str] = os.getenv('POLYMARKET_PROXY_ADDRESS')
     
     # API Base URLs
     POLYMARKET_GAMMA_API: str = os.getenv('POLYMARKET_GAMMA_API', 'https://gamma-api.polymarket.com')

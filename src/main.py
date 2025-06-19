@@ -1,139 +1,90 @@
-import asyncio
+from collections.abc import Callable
 from datetime import datetime
-from uuid import UUID, uuid4
-from calculators import decimal_odds
 from typing import Dict, Any, List
-from models import OddsEvent, OddsSource, OddsType, OrderEvent, OrderSignal
-import statistics
+import json
+from strategies import calculate_orders
+from services import PolymarketService, PolymarketMarketEventsService
+from models import EventType, SyntheticOrderBook, OrderBookStore, Order
+from daos import write_marketMessages, write_orderBookStore, write_orders
+import traceback
 
-# Mock
-async def mock_get_betfair_odds(timestamp: datetime, request_id: UUID) -> Dict[str, List[OddsEvent]]:
-    await asyncio.sleep(0.2)
+class OrdersStore:
+    def __init__(self):
+        self.orders = []
 
-    result = [{"odds": 2.2, "question": "marlins"}, {"odds": 1.7, "question": "pirates"}]
+    def add_order(self, order: Order):
+        self.orders.append(order)
 
-    odds = decimal_odds.calculate_fair_odds(result)
-    odds = [{   **odd.to_dict(),
-                "timestamp": timestamp,
-                "request_id": request_id,
-                "source": OddsSource.BETFAIR,
-            } for odd in odds]
-
-    return {"betfair_odds": [OddsEvent(**odd) for odd in odds]}
-
-async def mock_get_pinnacle_odds(timestamp: datetime, request_id: UUID) -> Dict[str, List[OddsEvent]]:
-    await asyncio.sleep(0.4)
-
-    result = [{"odds": 2.0, "question": "marlins"}, {"odds": 1.9, "question": "pirates"}]
-
-    # TODO: Have multiple conversions from dicts to objects back to dicts
-    #   Maybe rethink
-    odds = decimal_odds.calculate_fair_odds(result)
-    odds = [{   **odd.to_dict(),
-                "timestamp": timestamp,
-                "request_id": request_id,
-                "source": OddsSource.PINNACLE,
-            } for odd in odds]
-
-    return {"pinnacle_odds": [OddsEvent(**odd) for odd in odds]}
-
-async def mock_get_polymarket_odds(timestamp: datetime, request_id: UUID) -> Dict[str, List[OddsEvent]]:
-    await asyncio.sleep(0.4)
-
-    result = [{"odds": 0.4, "question": "marlins"}, {"odds": 0.6, "question": "pirates"}]
-
-    # NOTE: There may be some implied_odds calculations we need to do but for now
-    # we just take what Polymarket gives us.
-    odds = [{   "question": odd["question"],
-                "og_odds": odd["odds"],
-                "fair_odds": odd["odds"],
-                "impl_prob": odd["odds"],
-                "odds_type": OddsType.EXCHANGE,
-                "timestamp": timestamp,
-                "request_id": request_id,
-                "source": OddsSource.POLYMARKET,
-            } for odd in result]
-
-    return {"polymarket_odds": [OddsEvent(**odd) for odd in odds]}
+    def add_orders(self, orders: List[Order]):
+        self.orders.extend(orders)
 
 
-def calculate_avg_impl_prob(data: Dict[str, Any]) -> Dict[str, float]:
-    x = [odd.impl_prob for odd in (data.get("betfair_odds", []) + data.get("pinnacle_odds", []))]
-    return {"avg_impl_prob": statistics.mean(x)}
+def update_book(orderbook_store: OrderBookStore, order_message: List[Dict[str, Any]]) -> OrderBookStore:
+
+    for order in order_message:
+        synth_orderbook = orderbook_store.lookup(order["asset_id"])
+        # TODO: Was trying to match on ENUM but that doesnt work
+        # will probably have to change those to constants
+        match order["event_type"]:
+            case 'event_type':
+                synth_orderbook.add_entries(order["changes"])
+            case 'book':
+                synth_orderbook.replace_entries(order["asks"])
+
+    return orderbook_store
 
 
-# Depends on avg_impl_prob
-def calculate_z(data: Dict[str, Any]) -> Dict[str, float]:
-    a = data.get("avg_impl_prob")
-    if a:
-        return {"avg_impl_prob_mult": a * 8}
-    else:
-        return {}
+def get_arb_strategy(orderbook_store: OrderBookStore, order_store: OrdersStore) -> Callable:
+    def handler(_order_message: List[Dict[str, Any]]):
+        book_a, book_b = orderbook_store.books
+        orders = calculate_orders(book_a, book_b)
+        order_store.add_orders(orders)
+
+    return handler
 
 
-def strategy_a(data: Dict[str, Any]) -> List[OrderEvent]:
-    now = datetime.now()
+def get_order_message_register(orderBook_store: OrderBookStore, order_store: OrdersStore) -> Callable:
+    def handler(market_message: List[Dict[str, Any]]):
+        try:
+            now = datetime.now()
 
-    if data.get('avg_impl_prob_mult', 0) > 0.25:
-        return [ OrderEvent(timestamp=now, price=0.25, order_signal=OrderSignal.LIMIT_BUY),
-                 OrderEvent(timestamp=now, price=0.35, order_signal=OrderSignal.LIMIT_SELL) ]
-    else:
-        return [OrderEvent(timestamp=now, price=0.55, order_signal=OrderSignal.LIMIT_SELL)]
+            update_book(orderBook_store, market_message)
+            book_a, book_b = book_store.books
 
+            # TODO: Rename to make it clear this is strategy execution
+            orders = calculate_orders(book_a, book_b)
+            order_store.add_orders(orders)
 
-def executor(orders: List[OrderEvent]):
+            write_marketMessages(orderBook_store.market_slug, now, market_message)
+            write_orderBookStore(orderBook_store.market_slug, now, orderBook_store)
+            write_orders(orderBook_store.market_slug, now, orders)
+        except Exception:
+            print("ERROR ERROR ERROR")
+            print(traceback.format_exc())
 
+    return handler
 
-
-
-
-async def main():
-    timestamp = datetime.now()
-    request_id = uuid4()
-
-    # Gather data
-    results = await asyncio.gather(
-        mock_get_betfair_odds(timestamp, request_id),
-        mock_get_pinnacle_odds(timestamp, request_id),
-        mock_get_polymarket_odds(timestamp, request_id)
-    )
-
-    data = {k: v for d in results for k, v in d.items()}
-
-    for calculator in [calculate_avg_impl_prob, calculate_z]:
-        data = data | calculator(data)
-
-    print(data)
-
-    orders = [strategy(data) for strategy in [strategy_a]]
-
-    flattened_list = [item for sublist in orders for item in sublist]
-
-    print("\n")
-
-    print(flattened_list)
-
-
-
-
-
-
-
-
-    #more_data = [calculator(**data) for calculator in [calculate_y]]
-
-    #data = {**calculator(**data) for calculator in [calculate_y]}
-    #more_data = dict(i for i in calculator.items() for d in [calculator_y]}
-
-     #{
-     # "betfair_odds": [{}],
-     # "polymarket_odds": [{}],
-     # "pinnacle_odds": [{}]
-     #}
-
-    #for r in results:
-    #    print(r)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    #slug = "mlb-phi-mia-2025-06-17"
+    #slug = "mlb-mil-chc-2025-06-17"
+    #slug="mlb-cle-sf-2025-06-17"
+    #market_slug="mlb-sd-lad-2025-06-17"
+    market_slug="mlb-min-cin-2025-06-19"
+
+    market_metadata = PolymarketService().get_market_by_slug(market_slug)
+
+    if market_metadata:
+        books = [
+            SyntheticOrderBook(market_slug, market_metadata['id'], outcome, token_id)
+            for token_id, outcome
+            in zip( json.loads(market_metadata['clobTokenIds']), json.loads(market_metadata['outcomes']))
+        ]
+
+        book_store = OrderBookStore(market_slug, books)
+        order_store = OrdersStore()
+        message_handler = get_order_message_register(book_store, order_store)
+
+        market_connection = PolymarketMarketEventsService(book_store.asset_ids, [message_handler])
+        market_connection.run()
 
