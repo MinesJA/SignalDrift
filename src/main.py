@@ -2,6 +2,8 @@ from collections.abc import Callable
 from datetime import datetime
 from typing import Dict, Any, List
 import json
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from strategies import calculate_orders
 from services import PolymarketService, PolymarketMarketEventsService
 from models import EventType, SyntheticOrderBook, OrderBookStore, Order
@@ -49,7 +51,7 @@ def get_order_message_register(orderBook_store: OrderBookStore, order_store: Ord
             now = datetime.now()
 
             update_book(orderBook_store, market_message)
-            book_a, book_b = book_store.books
+            book_a, book_b = orderBook_store.books
 
             # TODO: Rename to make it clear this is strategy execution
             orders = calculate_orders(book_a, book_b)
@@ -65,26 +67,65 @@ def get_order_message_register(orderBook_store: OrderBookStore, order_store: Ord
     return handler
 
 
+def run_market_connection(market_slug: str):
+    """Run a single market connection in its own thread"""
+    try:
+        print(f"Starting market connection for {market_slug}")
+        market_metadata = PolymarketService().get_market_by_slug(market_slug)
+
+        if market_metadata:
+            books = [
+                SyntheticOrderBook(market_slug, market_metadata['id'], outcome, token_id)
+                for token_id, outcome
+                in zip(json.loads(market_metadata['clobTokenIds']), json.loads(market_metadata['outcomes']))
+            ]
+
+            book_store = OrderBookStore(market_slug, books)
+            order_store = OrdersStore()
+            message_handler = get_order_message_register(book_store, order_store)
+
+            market_connection = PolymarketMarketEventsService(market_slug, book_store.asset_ids, [message_handler])
+            market_connection.run()
+        else:
+            print(f"No metadata found for market {market_slug}")
+    except Exception as e:
+        print(f"Error in market connection {market_slug}: {e}")
+        traceback.print_exc()
+
+
 if __name__ == "__main__":
     #slug = "mlb-phi-mia-2025-06-17"
     #slug = "mlb-mil-chc-2025-06-17"
     #slug="mlb-cle-sf-2025-06-17"
     #market_slug="mlb-sd-lad-2025-06-17"
-    market_slug="mlb-min-cin-2025-06-19"
 
-    market_metadata = PolymarketService().get_market_by_slug(market_slug)
+    market_slugs = [
+       "mlb-min-cin-2025-06-19",
+       "mlb-laa-nyy-2025-06-19",
+       "mlb-col-wsh-2025-06-19",
+       "mlb-mil-chc-2025-06-19",
+       "mlb-kc-tex-2025-06-19",
+       "mlb-ari-tor-2025-06-19",
+       "mlb-cle-sf-2025-06-19",
+       "mlb-pit-det-2025-06-19"
+    ]
 
-    if market_metadata:
-        books = [
-            SyntheticOrderBook(market_slug, market_metadata['id'], outcome, token_id)
-            for token_id, outcome
-            in zip( json.loads(market_metadata['clobTokenIds']), json.loads(market_metadata['outcomes']))
-        ]
+    # Create thread pool with max workers equal to number of markets
+    with ThreadPoolExecutor(max_workers=len(market_slugs)) as executor:
+        # Submit all market connections to run concurrently
+        futures = []
+        for market_slug in market_slugs:
+            future = executor.submit(run_market_connection, market_slug)
+            futures.append(future)
 
-        book_store = OrderBookStore(market_slug, books)
-        order_store = OrdersStore()
-        message_handler = get_order_message_register(book_store, order_store)
+        print(f"Started {len(futures)} market connections")
 
-        market_connection = PolymarketMarketEventsService(book_store.asset_ids, [message_handler])
-        market_connection.run()
+        # Keep main thread alive while workers are running
+        try:
+            # Wait for all threads to complete (they won't unless there's an error)
+            for future in futures:
+                future.result()
+        except KeyboardInterrupt:
+            print("\nShutting down market connections...")
+            executor.shutdown(wait=False)
 
