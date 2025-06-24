@@ -9,7 +9,7 @@ import json
 from unittest.mock import patch, Mock, AsyncMock
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 
-from src.services.polymarket_service import PolymarketService, fetch_current_price, place_single_order, place_multiple_orders
+from src.services.polymarket_service import PolymarketService
 from pprint import pprint
 
 
