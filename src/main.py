@@ -45,7 +45,7 @@ def get_arb_strategy(orderbook_store: OrderBookStore, order_store: OrdersStore) 
     return handler
 
 
-def get_order_message_register(orderBook_store: OrderBookStore, order_store: OrdersStore) -> Callable:
+def get_order_message_register(orderBook_store: OrderBookStore, order_store: OrdersStore, market_id: str) -> Callable:
     def handler(market_message: List[Dict[str, Any]]):
         try:
             now = datetime.now()
@@ -57,7 +57,14 @@ def get_order_message_register(orderBook_store: OrderBookStore, order_store: Ord
             orders = calculate_orders(book_a, book_b)
             order_store.add_orders(orders)
 
-            write_marketMessages(orderBook_store.market_slug, now, market_message)
+            # Add market_id to each message before writing
+            messages_with_market_id = []
+            for msg in market_message:
+                msg_copy = msg.copy()
+                msg_copy['market_id'] = market_id
+                messages_with_market_id.append(msg_copy)
+
+            write_marketMessages(orderBook_store.market_slug, now, messages_with_market_id)
             write_orderBookStore(orderBook_store.market_slug, now, orderBook_store)
             write_orders(orderBook_store.market_slug, now, orders)
         except Exception:
@@ -82,7 +89,7 @@ def run_market_connection(market_slug: str):
 
             book_store = OrderBookStore(market_slug, books)
             order_store = OrdersStore()
-            message_handler = get_order_message_register(book_store, order_store)
+            message_handler = get_order_message_register(book_store, order_store, market_metadata['id'])
 
             market_connection = PolymarketMarketEventsService(market_slug, book_store.asset_ids, [message_handler])
             market_connection.run()
