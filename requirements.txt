@@ -3,6 +3,7 @@ notebook==7.0.7
 numpy==1.26.4
 pandas==2.2.1
 matplotlib==3.8.3
+seaborn>=0.12.0
 py-clob-client
 pytest==8.3.2
 selenium==4.25.0
