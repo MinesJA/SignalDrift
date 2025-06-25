@@ -65,8 +65,37 @@ class PolymarketUserEventsService(WebsocketConnection):
         self.asset_ids = asset_ids
         self.message_callbacks = message_callbacks
 
+    def channel_type(self):
+        return "user"
+    
     def payload(self):
         return {"markets": self.asset_ids, "type": self.channel_type(), "auth": self.auth}
+    
+    def on_open(self, ws):
+        ws.send(json.dumps(self.payload()))
+        
+        thr = threading.Thread(target=self.ping, args=(ws,))
+        logger.info(f"Starting user events service")
+        thr.start()
+    
+    def on_message(self, ws, message):
+        # Handle PONG messages
+        if message == "PONG":
+            logger.debug("Received PONG from server")
+            return
+            
+        try:
+            data = json.loads(message)
+            for callback in self.message_callbacks:
+                try:
+                    callback(data)
+                except Exception as e:
+                    logger.error(f"Error in message callback: {e}. Message: {data}")
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse WebSocket message: {e}")
+            logger.error(message)
+        except Exception as e:
+            logger.error(f"Error handling WebSocket message: {e}")
 
 
 class PolymarketMarketEventsService(WebsocketConnection):
@@ -91,6 +120,11 @@ class PolymarketMarketEventsService(WebsocketConnection):
         return "market"
 
     def on_message(self, ws, message):
+        # Handle PONG messages
+        if message == "PONG":
+            logger.debug("Received PONG from server")
+            return
+            
         try:
             data = json.loads(message)
             for handler in self.event_handlers:
