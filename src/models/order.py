@@ -10,13 +10,16 @@ class OrderType(Enum):
 class Order:
     asset_id: int
     #market: str
-    #market_slug: str
+    market_slug: str
     order_type: OrderType
     price: float
     size: float
     timestamp: int
 
     def asdict(self) -> Dict[str, Any]:
-        return asdict(self)
+        data = asdict(self)
+        # Convert OrderType enum to its string value
+        data['order_type'] = self.order_type.value
+        return data
 
 
