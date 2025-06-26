@@ -26,6 +26,8 @@ def get_arb_strategy(orderbook_store: OrderBookStore, order_store: OrdersStore) 
         orders = calculate_orders(book_a, book_b)
         order_store.add_orders(orders)
 
+        return order_store
+
     return handler
 
 
