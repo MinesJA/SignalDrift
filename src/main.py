@@ -1,14 +1,13 @@
+import asyncio
 from collections.abc import Callable
 from datetime import datetime
 from typing import Dict, Any, List
 import json
-import threading
-from concurrent.futures import ThreadPoolExecutor
+import traceback
 from strategies import calculate_orders
-from services import PolymarketService, PolymarketMarketEventsService
+from services import PolymarketService, AsyncPolymarketMarketEventsService
 from models import EventType, SyntheticOrderBook, OrderBookStore, Order
 from daos import write_marketMessages, write_orderBookStore, write_orders
-import traceback
 
 class OrdersStore:
     def __init__(self):
@@ -67,8 +66,8 @@ def get_order_message_register(orderBook_store: OrderBookStore, order_store: Ord
     return handler
 
 
-def run_market_connection(market_slug: str):
-    """Run a single market connection in its own thread"""
+async def run_market_connection(market_slug: str):
+    """Run a single market connection asynchronously"""
     try:
         print(f"Starting market connection for {market_slug}")
         market_metadata = PolymarketService().get_market_by_slug(market_slug)
@@ -84,8 +83,12 @@ def run_market_connection(market_slug: str):
             order_store = OrdersStore()
             message_handler = get_order_message_register(book_store, order_store)
 
-            market_connection = PolymarketMarketEventsService(market_slug, book_store.asset_ids, [message_handler])
-            market_connection.run()
+            market_connection = AsyncPolymarketMarketEventsService(
+                market_slug, 
+                book_store.asset_ids, 
+                [message_handler]
+            )
+            await market_connection.run()
         else:
             print(f"No metadata found for market {market_slug}")
     except Exception as e:
@@ -93,12 +96,7 @@ def run_market_connection(market_slug: str):
         traceback.print_exc()
 
 
-if __name__ == "__main__":
-    #slug = "mlb-phi-mia-2025-06-17"
-    #slug = "mlb-mil-chc-2025-06-17"
-    #slug="mlb-cle-sf-2025-06-17"
-    #market_slug="mlb-sd-lad-2025-06-17"
-
+async def main():
     market_slugs = [
        "mlb-min-cin-2025-06-19",
        "mlb-laa-nyy-2025-06-19",
@@ -110,22 +108,26 @@ if __name__ == "__main__":
        "mlb-pit-det-2025-06-19"
     ]
 
-    # Create thread pool with max workers equal to number of markets
-    with ThreadPoolExecutor(max_workers=len(market_slugs)) as executor:
-        # Submit all market connections to run concurrently
-        futures = []
-        for market_slug in market_slugs:
-            future = executor.submit(run_market_connection, market_slug)
-            futures.append(future)
+    print(f"Starting {len(market_slugs)} market connections using asyncio")
+    
+    # Create tasks for all market connections
+    tasks = [
+        asyncio.create_task(run_market_connection(market_slug))
+        for market_slug in market_slugs
+    ]
+    
+    try:
+        # Run all tasks concurrently using gather
+        await asyncio.gather(*tasks)
+    except KeyboardInterrupt:
+        print("\nShutting down market connections...")
+        # Cancel all tasks
+        for task in tasks:
+            task.cancel()
+        # Wait for tasks to complete cancellation
+        await asyncio.gather(*tasks, return_exceptions=True)
 
-        print(f"Started {len(futures)} market connections")
 
-        # Keep main thread alive while workers are running
-        try:
-            # Wait for all threads to complete (they won't unless there's an error)
-            for future in futures:
-                future.result()
-        except KeyboardInterrupt:
-            print("\nShutting down market connections...")
-            executor.shutdown(wait=False)
+if __name__ == "__main__":
+    asyncio.run(main())
 
