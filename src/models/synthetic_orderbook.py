@@ -8,7 +8,6 @@ class SyntheticOrderBook:
     def __init__(self, market_slug, market_id, outcome_name: str, asset_id: str):
         self.orders_lookup: Dict[str, SyntheticOrder] = {}
         self.market_slug = market_slug
-        # TODO: Come back to this. conditionId? id from
         self.market_id = market_id
         self.outcome_name = outcome_name
         self.asset_id = asset_id
@@ -17,8 +16,7 @@ class SyntheticOrderBook:
     def orders(self) -> List[SyntheticOrder]:
         return list(self.orders_lookup.values())
 
-    def add_entries(self, orders: List[Dict[str, Any]]):
-        timestamp = round(datetime.now().timestamp() * 1000)
+    def add_entries(self, orders: List[Dict[str, Any]], timestamp):
         for order in orders:
             if order["side"] == "SELL":
                 size = float(order["size"])
@@ -32,8 +30,7 @@ class SyntheticOrderBook:
                         timestamp=timestamp
                     )
 
-    def replace_entries(self, orders: List[Dict[str, Any]]):
-        timestamp = round(datetime.now().timestamp() * 1000)
+    def replace_entries(self, orders: List[Dict[str, Any]], timestamp):
         self.orders_lookup = {
             order["price"]: SyntheticOrder(
                 side="ask",

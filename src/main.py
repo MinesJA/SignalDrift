@@ -22,16 +22,15 @@ class OrdersStore:
 
 
 def update_book(orderbook_store: OrderBookStore, order_message: List[Dict[str, Any]]) -> OrderBookStore:
-
     for order in order_message:
         synth_orderbook = orderbook_store.lookup(order["asset_id"])
         # TODO: Was trying to match on ENUM but that doesnt work
         # will probably have to change those to constants
         match order["event_type"]:
             case 'event_type':
-                synth_orderbook.add_entries(order["changes"])
+                synth_orderbook.add_entries(order["changes"], order["timestamp"])
             case 'book':
-                synth_orderbook.replace_entries(order["asks"])
+                synth_orderbook.replace_entries(order["asks"], order["timestamp"])
 
     return orderbook_store
 
@@ -50,16 +49,16 @@ def get_order_message_register(orderBook_store: OrderBookStore, order_store: Ord
         try:
             now = datetime.now()
 
-            update_book(orderBook_store, market_message)
-            book_a, book_b = orderBook_store.books
+            book_store = update_book(orderBook_store, market_message)
+            book_a, book_b = book_store.books
 
             # TODO: Rename to make it clear this is strategy execution
             orders = calculate_orders(book_a, book_b)
             order_store.add_orders(orders)
 
-            write_marketMessages(orderBook_store.market_slug, now, market_message)
-            write_orderBookStore(orderBook_store.market_slug, now, orderBook_store)
-            write_orders(orderBook_store.market_slug, now, orders)
+            write_marketMessages(book_store.market_slug, now, market_message)
+            write_orderBookStore(book_store.market_slug, now, book_store)
+            write_orders(book_store.market_slug, now, orders)
         except Exception:
             print("ERROR ERROR ERROR")
             print(traceback.format_exc())
@@ -109,8 +108,6 @@ if __name__ == "__main__":
     #   "mlb-cle-sf-2025-06-19",
     #   "mlb-pit-det-2025-06-19"
     #
-
-
     #]
 
     market_slugs=[

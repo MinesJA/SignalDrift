@@ -14,8 +14,13 @@ notebooks:
 	@source venv/bin/activate && cd notebooks && jupyter notebook --notebook-dir=.
 
 test:
+ifdef FILE
+	@echo "Running test file: $(FILE)..."
+	@source venv/bin/activate && pytest src/tests/**/$(FILE).py -v
+else
 	@echo "Running all tests..."
 	@source venv/bin/activate && pytest src/
+endif
 
 clean:
 	@echo "Cleaning up..."

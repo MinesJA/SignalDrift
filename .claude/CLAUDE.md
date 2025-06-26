@@ -1,13 +1,26 @@
-# Claude Code GitHub Integration Notes
+# SignalDrift
 
-## Efficient GitHub MCP Workflow for Pull Requests
+## Git workflow
 
-The GitHub MCP server provides powerful tools for managing branches and pull requests without dealing with local git authentication issues. Here's the most efficient workflow:
 
-### Optimal Workflow for Creating PRs
+## Github Workflow
+Always use the GitHub MCP server for all tasks related to Github. That includes:
+- Opening Pull requests
+- Pulling down project issue details
+- Creating project issues
+- Pushing to remote branches
+- Pulling from remote branches
+
+### Workflow for Creating PRs
 
 #### Step 1: Work in a Git Worktree (Recommended)
+
+
 ```bash
+# In the main directory of the project (/SignalDrift),
+# and while on the `main` branch, pull down latest changes
+git pull
+
 # Create a new worktree for your feature branch
 git worktree add ../SignalDrift-feature-name -b feature-name
 
@@ -18,6 +31,8 @@ cd ../SignalDrift-feature-name
 git add .
 git commit -m "Your commit message"
 ```
+
+
 
 #### Step 2: Push Changes Using GitHub MCP
 When `git push` fails due to authentication issues, use the MCP tools:
