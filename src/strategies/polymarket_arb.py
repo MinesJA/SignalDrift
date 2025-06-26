@@ -52,7 +52,8 @@ def _recurs_build_orders(market_slug: str, a_assetId: str, a_orders: List[Synthe
     return orders
 
 def _build_order(market_slug, size, asset_id, price, timestamp):
-    return Order(market_slug=market_slug, order_type=OrderType.LIMIT_BUY, size=size, asset_id=asset_id, price=price, timestamp=timestamp)
+    return Order(asset_id=asset_id, market_slug=market_slug, order_type=OrderType.LIMIT_BUY, price=price, size=size, timestamp=timestamp)
+
 
 
 
