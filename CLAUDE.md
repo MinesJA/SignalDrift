@@ -16,6 +16,9 @@ SignalDrift is a sophisticated sports betting arbitrage and market-making system
 make build                          # Creates virtual environment and installs dependencies
 make setup                          # Alias for build (backwards compatibility)
 make clean                          # Removes venv, __pycache__, and .ipynb_checkpoints
+
+# IMPORTANT: When starting work on a new issue or branch, always run:
+make clean && make build && make test  # Clean environment, rebuild, and run all tests
 ```
 
 ### Running the System
