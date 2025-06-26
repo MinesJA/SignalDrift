@@ -13,10 +13,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up Python 3.11
+    - name: Set up Python 3.13
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: '3.13'
         
     - name: Cache pip dependencies
       uses: actions/cache@v4
@@ -31,9 +31,24 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         
+    - name: Debug environment
+      run: |
+        echo "Python version:"
+        python --version
+        echo "Pytest version:"
+        pytest --version
+        echo "Working directory:"
+        pwd
+        echo "Python path:"
+        python -c "import sys; print('\n'.join(sys.path))"
+        echo "Directory contents:"
+        ls -la
+        echo "Source directory contents:"
+        ls -la src/
+        
     - name: Run tests with pytest
       run: |
-        pytest src/ -v --tb=short
+        PYTHONPATH=src pytest src/
         
     - name: Upload test results
       if: always()
