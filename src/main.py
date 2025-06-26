@@ -99,17 +99,30 @@ if __name__ == "__main__":
     #slug="mlb-cle-sf-2025-06-17"
     #market_slug="mlb-sd-lad-2025-06-17"
 
-    market_slugs = [
-       "mlb-min-cin-2025-06-19",
-       "mlb-laa-nyy-2025-06-19",
-       "mlb-col-wsh-2025-06-19",
-       "mlb-mil-chc-2025-06-19",
-       "mlb-kc-tex-2025-06-19",
-       "mlb-ari-tor-2025-06-19",
-       "mlb-cle-sf-2025-06-19",
-       "mlb-pit-det-2025-06-19"
-    ]
+    #market_slugs = [
+    #   "mlb-min-cin-2025-06-19",
+    #   "mlb-laa-nyy-2025-06-19",
+    #   "mlb-col-wsh-2025-06-19",
+    #   "mlb-mil-chc-2025-06-19",
+    #   "mlb-kc-tex-2025-06-19",
+    #   "mlb-ari-tor-2025-06-19",
+    #   "mlb-cle-sf-2025-06-19",
+    #   "mlb-pit-det-2025-06-19"
+    #
 
+
+    #]
+
+    market_slugs=[
+        "mlb-tex-bal-2025-06-25",
+        "mlb-oak-det-2025-06-25",
+        "mlb-tor-cle-2025-06-25",
+        "mlb-atl-nym-2025-06-25",
+        "mlb-nyy-cin-2025-06-25",
+        "mlb-sea-min-2025-06-25",
+        "mlb-tb-kc-2025-06-25",
+        "mlb-chc-stl-2025-06-25"
+    ]
     # Create thread pool with max workers equal to number of markets
     with ThreadPoolExecutor(max_workers=len(market_slugs)) as executor:
         # Submit all market connections to run concurrently
