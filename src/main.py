@@ -43,7 +43,10 @@ def get_order_message_register(orderBook_store: OrderBookStore, order_store: Ord
             orders = calculate_orders(book_a, book_b)
             order_store.add_orders(orders)
 
-            write_marketMessages(book_store.market_slug, now, market_message)
+            # Get market_id from the first book (all books should have the same market_id)
+            market_id = book_store.books[0].market_id if book_store.books else None
+            
+            write_marketMessages(book_store.market_slug, now, market_message, market_id)
             write_orderBookStore(book_store.market_slug, now, book_store)
             write_orders(book_store.market_slug, now, orders)
         except Exception:
@@ -125,4 +128,3 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             print("\nShutting down market connections...")
             executor.shutdown(wait=False)
-

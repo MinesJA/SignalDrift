@@ -12,14 +12,14 @@ logger = logging.getLogger(__name__)
 # TODO: Should this be defined in MarketEvent?
 FIELD_NAMES = ['market_slug', 'asset_id', 'market_id', 'event_type', 'price', 'side', 'size', 'hash', 'timestamp']
 
-def write_marketMessages(market_slug: str, datetime: datetime, market_messages: List[Dict[str, Any]]):
+def write_marketMessages(market_slug: str, datetime: datetime, market_messages: List[Dict[str, Any]], market_id: str = None):
     logger.info("Writing market messages")
 
     csv_filename = os.path.join('data', f"{datetime.strftime("%Y%m%d")}-{market_slug}-polymarket_market_events.csv")
 
     rows = []
     for event in market_messages:
-        event_rows = _create_rows(market_slug, event)
+        event_rows = _create_rows(market_slug, event, market_id)
         if event_rows:
             rows.extend(event_rows)
 
@@ -54,28 +54,29 @@ def _setup_csv(csv_filename: str):
         writer.writerow(FIELD_NAMES)
 
 
-def _create_price_change_rows(market_slug, event):
+def _create_price_change_rows(market_slug, event, market_id=None):
     rows = [{
                 **event,
                 **change,
                 "market_slug": market_slug,
+                "market_id": market_id,
                 "side": "bid" if change['side'] == 'BUY' else 'ask'
             } for change in event["changes"]]
 
     return [{key: row.get(key) for key in FIELD_NAMES} for row in rows]
 
 
-def _create_book_rows(market_slug, event):
-    asks = [{**event, **ask, "side": "ask", "market_slug": market_slug} for ask in event["asks"]]
-    bids = [{**event, **bid, "side": "bid", "market_slug": market_slug} for bid in event["bids"]]
+def _create_book_rows(market_slug, event, market_id=None):
+    asks = [{**event, **ask, "side": "ask", "market_slug": market_slug, "market_id": market_id} for ask in event["asks"]]
+    bids = [{**event, **bid, "side": "bid", "market_slug": market_slug, "market_id": market_id} for bid in event["bids"]]
     rows = asks + bids
 
     return [{key: row.get(key) for key in FIELD_NAMES} for row in rows]
 
 
-def _create_rows(market_slug, event) -> Optional[List[Dict[str, Any]]]:
+def _create_rows(market_slug, event, market_id=None) -> Optional[List[Dict[str, Any]]]:
     match event['event_type']:
         case 'price_change':
-            return _create_price_change_rows(market_slug, event)
+            return _create_price_change_rows(market_slug, event, market_id)
         case 'book':
-            return _create_book_rows(market_slug, event)
+            return _create_book_rows(market_slug, event, market_id)
