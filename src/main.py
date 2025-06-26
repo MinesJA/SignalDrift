@@ -2,7 +2,6 @@ from collections.abc import Callable
 from datetime import datetime
 from typing import Dict, Any, List
 import json
-import threading
 from concurrent.futures import ThreadPoolExecutor
 from strategies import calculate_orders
 from services import PolymarketService, PolymarketMarketEventsService

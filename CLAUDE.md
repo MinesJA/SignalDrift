@@ -31,8 +31,16 @@ make notebooks FILE={notebook_name} # Run a specific notebook (without .ipynb ex
 
 ### Testing
 ```bash
-make test                           # Runs all tests using pytest
-make test FILE={test_name}          # Run a specific test file (without test_ prefix or .py extension)
+make test                                    # Runs all tests using pytest
+make test FILE={test_name}                   # Run a specific test file (without test_ prefix or .py extension)
+make test ARGS="{pytest_options}"           # Run all tests with additional pytest options
+make test FILE={test_name} ARGS="{options}" # Run specific test with additional options
+
+# Common debugging examples:
+make test FILE=test_order_book_store ARGS="-s"           # Disable output capture for breakpoint() debugging
+make test FILE=test_order_book_store ARGS="-s --pdb"     # Auto-drop into debugger on failures
+make test ARGS="--maxfail=1"                             # Stop after first failure
+make test ARGS="-x --tb=short"                           # Stop on first failure with short traceback
 ```
 
 ## Architecture Overview

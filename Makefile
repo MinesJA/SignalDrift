@@ -21,10 +21,11 @@ endif
 test:
 ifdef FILE
 	@echo "Running test file: $(FILE)..."
-	@source venv/bin/activate && pytest src/tests/**/$(FILE).py -v
+	@source venv/bin/activate && pytest -k "$(FILE)" src/tests/ -v $(ARGS) || \
+	source venv/bin/activate && pytest $$(find src/tests -name "*$(FILE).py" -type f) -v $(ARGS)
 else
 	@echo "Running all tests..."
-	@source venv/bin/activate && pytest src/
+	@source venv/bin/activate && pytest src/ $(ARGS)
 endif
 
 clean:
