@@ -11,9 +11,10 @@ logger = logging.getLogger(__name__)
 
 FIELD_NAMES = ['market_slug', 'asset_id', 'market_id', 'outcome_name', 'price', 'size', 'side',  'timestamp']
 
-def write_orderBookStore(market_slug: str, datetime: datetime, orderBook_store: OrderBookStore):
+def write_orderBookStore(market_slug: str, datetime: datetime, orderBook_store: OrderBookStore, test_mode: bool = False):
     logger.info("Writing order book")
-    csv_filename = os.path.join('data', f"{datetime.strftime('%Y%m%d')}-{market_slug}-synthetic_orders.csv")
+    test_suffix = "-test" if test_mode else ""
+    csv_filename = os.path.join('data', f"{datetime.strftime('%Y%m%d')}-{market_slug}{test_suffix}-synthetic_orders.csv")
 
     rows = []
 
