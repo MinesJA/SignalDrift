@@ -10,8 +10,13 @@ start:
 	@source venv/bin/activate && python ./src/main.py
 
 notebooks:
+ifdef FILE
+	@echo "Running notebook: $(FILE)..."
+	@source venv/bin/activate && jupyter nbconvert --execute --to notebook --inplace notebooks/$(FILE).ipynb
+else
 	@echo "Starting Jupyter notebook"
 	@source venv/bin/activate && cd notebooks && jupyter notebook --notebook-dir=.
+endif
 
 test:
 ifdef FILE

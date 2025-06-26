@@ -21,20 +21,6 @@ class OrdersStore:
         self.orders.extend(orders)
 
 
-def update_book(orderbook_store: OrderBookStore, order_message: List[Dict[str, Any]]) -> OrderBookStore:
-    for order in order_message:
-        synth_orderbook = orderbook_store.lookup(order["asset_id"])
-        # TODO: Was trying to match on ENUM but that doesnt work
-        # will probably have to change those to constants
-        match order["event_type"]:
-            case 'event_type':
-                synth_orderbook.add_entries(order["changes"], order["timestamp"])
-            case 'book':
-                synth_orderbook.replace_entries(order["asks"], order["timestamp"])
-
-    return orderbook_store
-
-
 def get_arb_strategy(orderbook_store: OrderBookStore, order_store: OrdersStore) -> Callable:
     def handler(_order_message: List[Dict[str, Any]]):
         book_a, book_b = orderbook_store.books
@@ -49,7 +35,7 @@ def get_order_message_register(orderBook_store: OrderBookStore, order_store: Ord
         try:
             now = datetime.now()
 
-            book_store = update_book(orderBook_store, market_message)
+            book_store = orderBook_store.update_book(market_message)
             book_a, book_b = book_store.books
 
             # TODO: Rename to make it clear this is strategy execution
