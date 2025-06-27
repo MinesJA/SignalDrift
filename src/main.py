@@ -83,16 +83,16 @@ def run_market_connection(market_slug: str, csv_file_path: Optional[str] = None)
             order_store = OrdersStore()
             message_handler = get_order_message_register(book_store, order_store, test_mode=test_mode)
             
-            # Write metadata at the start of the run
-            run_at = datetime.now()
-            write_metadata(
-                market_slug=market_slug,
-                market_id=market_metadata['id'],
-                books=books,
-                run_at=run_at,
-                market_metadata=market_metadata,
-                test_mode=test_mode
-            )
+            # Write metadata at the start of the run (only for live system, not CSV mode)
+            if not test_mode:
+                executed_at = datetime.now()
+                write_metadata(
+                    market_slug=market_slug,
+                    market_id=market_metadata['id'],
+                    books=books,
+                    executed_at=executed_at,
+                    market_metadata=market_metadata
+                )
 
             if test_mode:
                 # Run from CSV file

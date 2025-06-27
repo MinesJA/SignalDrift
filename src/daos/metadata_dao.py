@@ -6,25 +6,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-FIELD_NAMES = ['market_slug', 'market_id', 'asset_id', 'outcome_name', 'run_at', 'game_start_at', 'game_end_at']
+FIELD_NAMES = ['market_slug', 'market_id', 'asset_id', 'outcome_name', 'executed_at', 'game_start_timestamp']
 
-def _get_file_path(market_slug: str, test_mode: bool = False) -> str:
+def _get_file_path(market_slug: str, executed_at: datetime) -> str:
     """Get the file path for the metadata CSV file."""
-    file_name = f"metadata_{market_slug}"
-    
-    if test_mode:
-        file_name = f"{file_name}_test"
-    
-    file_name = f"{file_name}.csv"
-    
-    # Get the data directory path (parent of src)
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    data_dir = os.path.join(current_dir, '..', '..', 'data')
-    
-    # Create data directory if it doesn't exist
-    os.makedirs(data_dir, exist_ok=True)
-    
-    return os.path.join(data_dir, file_name)
+    csv_filename = os.path.join('data', f"{executed_at.strftime('%Y%m%d')}_{market_slug}_market-metadata.csv")
+    return csv_filename
 
 def _setup_csv(file_path: str) -> None:
     """Set up the CSV file with headers if it doesn't exist."""
@@ -44,9 +31,8 @@ def write_metadata(
     market_slug: str,
     market_id: int,
     books: List[Any],  # List of SyntheticOrderBook objects
-    run_at: datetime,
-    market_metadata: Dict[str, Any],
-    test_mode: bool = False
+    executed_at: datetime,
+    market_metadata: Dict[str, Any]
 ) -> None:
     """
     Write market metadata to CSV file.
@@ -55,18 +41,16 @@ def write_metadata(
         market_slug: The market slug identifier
         market_id: The market ID
         books: List of SyntheticOrderBook objects containing asset and outcome info
-        run_at: Timestamp when SignalDrift executed
+        executed_at: Timestamp when SignalDrift executed
         market_metadata: Full market metadata from Polymarket API
-        test_mode: Whether to use test file suffix
     """
     try:
-        file_path = _get_file_path(market_slug, test_mode)
+        file_path = _get_file_path(market_slug, executed_at)
         _setup_csv(file_path)
         
-        # Extract game start and end times from market metadata
+        # Extract game start time from market metadata
         # Polymarket typically has these fields, but they might be named differently
-        game_start_at = None
-        game_end_at = None
+        game_start_timestamp = None
         
         # Try to extract start time from various possible fields
         for field in ['startDate', 'start_date', 'startTime', 'start_time', 'eventStartDate']:
@@ -74,24 +58,13 @@ def write_metadata(
                 try:
                     # Convert to epoch timestamp
                     start_dt = datetime.fromisoformat(market_metadata[field].replace('Z', '+00:00'))
-                    game_start_at = int(start_dt.timestamp())
+                    game_start_timestamp = int(start_dt.timestamp())
                     break
                 except:
                     pass
         
-        # Try to extract end time from various possible fields
-        for field in ['endDate', 'end_date', 'endTime', 'end_time', 'eventEndDate', 'closeDate']:
-            if field in market_metadata and market_metadata[field]:
-                try:
-                    # Convert to epoch timestamp
-                    end_dt = datetime.fromisoformat(market_metadata[field].replace('Z', '+00:00'))
-                    game_end_at = int(end_dt.timestamp())
-                    break
-                except:
-                    pass
-        
-        # Convert run_at to epoch timestamp
-        run_at_timestamp = int(run_at.timestamp())
+        # Convert executed_at to epoch timestamp
+        executed_at_timestamp = int(executed_at.timestamp())
         
         # Create a row for each asset/outcome
         rows = []
@@ -101,9 +74,8 @@ def write_metadata(
                 'market_id': market_id,
                 'asset_id': book.asset_id,
                 'outcome_name': book.outcome_name,
-                'run_at': run_at_timestamp,
-                'game_start_at': game_start_at or '',
-                'game_end_at': game_end_at or ''
+                'executed_at': executed_at_timestamp,
+                'game_start_timestamp': game_start_timestamp or ''
             }
             rows.append(row)
         
