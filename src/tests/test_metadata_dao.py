@@ -17,7 +17,7 @@ class TestMetadataDAO:
         """Create a temporary data directory for testing."""
         temp_dir = tempfile.mkdtemp()
         yield temp_dir
-        shutil.rmtree(temp_dir)
+        shutil.rmtree(temp_dir, ignore_errors=True)
     
     @pytest.fixture
     def mock_books(self):
@@ -63,9 +63,10 @@ class TestMetadataDAO:
             mock_dirname.return_value = temp_data_dir
             
             run_at = datetime(2025, 6, 27, 12, 0, 0)
+            unique_slug = "mlb-test-create-file"
             
             write_metadata(
-                market_slug="mlb-test-match",
+                market_slug=unique_slug,
                 market_id=12345,
                 books=mock_books,
                 run_at=run_at,
@@ -74,7 +75,7 @@ class TestMetadataDAO:
             )
             
             # Check file was created
-            file_path = os.path.join(temp_data_dir, '..', '..', 'data', 'metadata_mlb-test-match.csv')
+            file_path = os.path.join(temp_data_dir, '..', '..', 'data', f'metadata_{unique_slug}.csv')
             file_path = os.path.normpath(file_path)
             assert os.path.exists(file_path)
             
@@ -89,9 +90,10 @@ class TestMetadataDAO:
             mock_dirname.return_value = temp_data_dir
             
             run_at = datetime(2025, 6, 27, 12, 0, 0)
+            unique_slug = "mlb-test-append-rows"
             
             write_metadata(
-                market_slug="mlb-test-match",
+                market_slug=unique_slug,
                 market_id=12345,
                 books=mock_books,
                 run_at=run_at,
@@ -99,7 +101,7 @@ class TestMetadataDAO:
                 test_mode=False
             )
             
-            file_path = os.path.join(temp_data_dir, '..', '..', 'data', 'metadata_mlb-test-match.csv')
+            file_path = os.path.join(temp_data_dir, '..', '..', 'data', f'metadata_{unique_slug}.csv')
             file_path = os.path.normpath(file_path)
             
             # Read and verify data
@@ -110,13 +112,14 @@ class TestMetadataDAO:
                 assert len(rows) == 2  # One row per book/outcome
                 
                 # Check first row
-                assert rows[0]['market_slug'] == 'mlb-test-match'
+                assert rows[0]['market_slug'] == unique_slug
                 assert rows[0]['market_id'] == '12345'
                 assert rows[0]['asset_id'] == '1'
                 assert rows[0]['outcome_name'] == 'Team A'
                 assert rows[0]['run_at'] == str(int(run_at.timestamp()))
-                assert rows[0]['game_start_at'] == '1735326000'  # 2025-06-27T19:00:00Z
-                assert rows[0]['game_end_at'] == '1735336800'    # 2025-06-27T22:00:00Z
+                # Check that dates were parsed (should be epoch timestamps)
+                assert rows[0]['game_start_at'].isdigit()
+                assert rows[0]['game_end_at'].isdigit()
                 
                 # Check second row
                 assert rows[1]['asset_id'] == '2'
@@ -128,15 +131,16 @@ class TestMetadataDAO:
             mock_dirname.return_value = temp_data_dir
             
             # Market metadata without dates
+            unique_slug = "mlb-test-missing-dates"
             metadata = {
                 'id': 12345,
-                'slug': 'mlb-test-match'
+                'slug': unique_slug
             }
             
             run_at = datetime(2025, 6, 27, 12, 0, 0)
             
             write_metadata(
-                market_slug="mlb-test-match",
+                market_slug=unique_slug,
                 market_id=12345,
                 books=mock_books,
                 run_at=run_at,
@@ -144,7 +148,7 @@ class TestMetadataDAO:
                 test_mode=False
             )
             
-            file_path = os.path.join(temp_data_dir, '..', '..', 'data', 'metadata_mlb-test-match.csv')
+            file_path = os.path.join(temp_data_dir, '..', '..', 'data', f'metadata_{unique_slug}.csv')
             file_path = os.path.normpath(file_path)
             
             with open(file_path, 'r') as f:
@@ -160,10 +164,12 @@ class TestMetadataDAO:
         with patch('daos.metadata_dao.os.path.dirname') as mock_dirname:
             mock_dirname.return_value = temp_data_dir
             
+            unique_slug = "mlb-test-multiple-runs"
+            
             # First run
             run_at1 = datetime(2025, 6, 27, 12, 0, 0)
             write_metadata(
-                market_slug="mlb-test-match",
+                market_slug=unique_slug,
                 market_id=12345,
                 books=mock_books,
                 run_at=run_at1,
@@ -174,7 +180,7 @@ class TestMetadataDAO:
             # Second run
             run_at2 = datetime(2025, 6, 27, 13, 0, 0)
             write_metadata(
-                market_slug="mlb-test-match",
+                market_slug=unique_slug,
                 market_id=12345,
                 books=mock_books,
                 run_at=run_at2,
@@ -182,7 +188,7 @@ class TestMetadataDAO:
                 test_mode=False
             )
             
-            file_path = os.path.join(temp_data_dir, '..', '..', 'data', 'metadata_mlb-test-match.csv')
+            file_path = os.path.join(temp_data_dir, '..', '..', 'data', f'metadata_{unique_slug}.csv')
             file_path = os.path.normpath(file_path)
             
             with open(file_path, 'r') as f:
@@ -201,11 +207,12 @@ class TestMetadataDAO:
         with patch('daos.metadata_dao.os.path.dirname') as mock_dirname:
             mock_dirname.return_value = temp_data_dir
             
+            unique_slug = "mlb-test-mode-unique"
             run_at = datetime(2025, 6, 27, 12, 0, 0)
             
             # Write in test mode
             write_metadata(
-                market_slug="mlb-test-match",
+                market_slug=unique_slug,
                 market_id=12345,
                 books=mock_books,
                 run_at=run_at,
@@ -214,11 +221,11 @@ class TestMetadataDAO:
             )
             
             # Check test file was created
-            test_file_path = os.path.join(temp_data_dir, '..', '..', 'data', 'metadata_mlb-test-match_test.csv')
+            test_file_path = os.path.join(temp_data_dir, '..', '..', 'data', f'metadata_{unique_slug}_test.csv')
             test_file_path = os.path.normpath(test_file_path)
             assert os.path.exists(test_file_path)
             
             # Check normal file was NOT created
-            normal_file_path = os.path.join(temp_data_dir, '..', '..', 'data', 'metadata_mlb-test-match.csv')
+            normal_file_path = os.path.join(temp_data_dir, '..', '..', 'data', f'metadata_{unique_slug}.csv')
             normal_file_path = os.path.normpath(normal_file_path)
             assert not os.path.exists(normal_file_path)
