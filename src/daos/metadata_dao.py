@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from typing import Dict, Any, List
 import logging
+from models.synthetic_orderbook import SyntheticOrderBook
 
 logger = logging.getLogger(__name__)
 
