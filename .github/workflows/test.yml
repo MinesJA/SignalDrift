@@ -31,9 +31,24 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         
+    - name: Debug environment
+      run: |
+        echo "Python version:"
+        python --version
+        echo "Pytest version:"
+        pytest --version
+        echo "Working directory:"
+        pwd
+        echo "Python path:"
+        python -c "import sys; print('\n'.join(sys.path))"
+        echo "Directory contents:"
+        ls -la
+        echo "Source directory contents:"
+        ls -la src/
+        
     - name: Run tests with pytest
       run: |
-        pytest src/ -v --tb=short
+        PYTHONPATH=src pytest src/
         
     - name: Upload test results
       if: always()

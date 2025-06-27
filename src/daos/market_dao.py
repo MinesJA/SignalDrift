@@ -15,7 +15,7 @@ FIELD_NAMES = ['market_slug', 'asset_id', 'market_id', 'event_type', 'price', 's
 def write_marketMessages(market_slug: str, datetime: datetime, market_messages: List[Dict[str, Any]]):
     logger.info("Writing market messages")
 
-    csv_filename = os.path.join('data', f"{datetime.strftime("%Y%m%d")}-{market_slug}-polymarket_market_events.csv")
+    csv_filename = os.path.join('data', f"{datetime.strftime('%Y%m%d')}-{market_slug}-polymarket_market_events.csv")
 
     rows = []
     for event in market_messages:
