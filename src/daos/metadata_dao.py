@@ -30,7 +30,7 @@ def _write_to_csv(file_path: str, rows: List[Dict[str, Any]]) -> None:
 def write_metadata(
     market_slug: str,
     market_id: int,
-    books: List[Any],  # List of SyntheticOrderBook objects
+    books: List[SyntheticOrderBook],
     executed_at: datetime
 ) -> None:
     """
