@@ -2,7 +2,7 @@ from typing import List, Dict, Any
 from . import SyntheticOrderBook
 
 class OrderBookStore:
-    def __init__(self, market_slug: str, market_id: int, books: List[SyntheticOrderBook]):
+    def __init__(self, market_slug: str, market_id: str, books: List[SyntheticOrderBook]):
         self.market_slug = market_slug
         self.market_id = market_id
         self.books_lookup = {book.asset_id: book for book in books}

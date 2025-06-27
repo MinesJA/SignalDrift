@@ -11,7 +11,7 @@ class TestGetOrderMessageRegister:
         """Create a mock OrderBookStore."""
         store = Mock(spec=OrderBookStore)
         store.market_slug = "test-market"
-        store.market_id = 123456
+        store.market_id = "123456"
 
         # Create mock order books
         book_a = Mock(spec=SyntheticOrderBook)
@@ -83,7 +83,7 @@ class TestGetOrderMessageRegister:
 
         # Verify writes
         mock_write_marketMessages.assert_called_once_with(
-            "test-market", mock_now, sample_market_message, 123456
+            "test-market", mock_now, sample_market_message, "123456"
         )
         mock_write_orderBookStore.assert_called_once_with(
             "test-market", mock_now, mock_orderbook_store

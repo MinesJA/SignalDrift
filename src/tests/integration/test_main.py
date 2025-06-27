@@ -44,7 +44,7 @@ class TestOrderProcessingIntegration:
                 asset_id="asset-no"
             )
         ]
-        return OrderBookStore(market_slug, 123456, books)
+        return OrderBookStore(market_slug, "123456", books)
     
     @pytest.fixture
     def realistic_market_messages(self):
@@ -473,7 +473,7 @@ class TestConcurrencyIntegration:
                 SyntheticOrderBook(f"market-{i}", f"id-{i}", "YES", f"asset-yes-{i}"),
                 SyntheticOrderBook(f"market-{i}", f"id-{i}", "NO", f"asset-no-{i}")
             ]
-            stores.append(OrderBookStore(f"market-{i}", 100000 + i, books))
+            stores.append(OrderBookStore(f"market-{i}", str(100000 + i), books))
         
         # Create handlers for each store
         handlers = []
@@ -566,7 +566,7 @@ class TestArbStrategyIntegration:
             SyntheticOrderBook("arb-market", "market-123", "NO", "asset-no")
         ]
         
-        orderbook_store = OrderBookStore("arb-market", 123456, books)
+        orderbook_store = OrderBookStore("arb-market", "123456", books)
         order_store = OrdersStore()
         
         # Add orders that create arbitrage opportunity
