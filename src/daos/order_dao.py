@@ -13,8 +13,8 @@ FIELD_NAMES = ['market_slug', 'asset_id', 'price', 'size', 'timestamp']
 def write_orders(market_slug: str, datetime: datetime, orders: List[Order], test_mode: bool = False):
 
     logger.info("Writing orders")
-    test_suffix = "-test" if test_mode else ""
-    csv_filename = os.path.join('data', f"{datetime.strftime('%Y%m%d')}-{market_slug}{test_suffix}_orders.csv")
+    test_suffix = "_test" if test_mode else ""
+    csv_filename = os.path.join('data', f"{datetime.strftime('%Y%m%d')}_{market_slug}_orders{test_suffix}.csv")
 
     rows = [order.asdict() for order in orders]
 

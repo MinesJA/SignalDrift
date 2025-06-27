@@ -110,62 +110,78 @@ class CSVMessageProcessor:
         sorted_groups = sorted(groups.items(), key=lambda x: x[0][0])  # Sort by timestamp
         return [group for _, group in sorted_groups]
     
-    def reconstruct_websocket_message(self, csv_rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def reconstruct_websocket_messages(self, csv_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
-        Reconstruct a websocket message format from CSV rows.
+        Reconstruct websocket messages from CSV rows.
         
         Args:
-            csv_rows: List of CSV rows that represent a single websocket message
+            csv_rows: List of CSV rows that represent multiple websocket messages (one per asset_id)
             
         Returns:
-            Dictionary in websocket message format
+            List of dictionaries in websocket message format (one per asset_id)
         """
         if not csv_rows:
-            return {}
+            return []
             
-        # Get common fields from first row
-        first_row = csv_rows[0]
-        message = {
-            'asset_id': first_row.get('asset_id'),
-            'event_type': first_row.get('event_type'),
-            'hash': first_row.get('hash'),
-            'timestamp': first_row.get('timestamp')
-        }
+        # Group rows by asset_id to create one message per asset
+        asset_groups = {}
+        for row in csv_rows:
+            asset_id = row.get('asset_id')
+            if asset_id not in asset_groups:
+                asset_groups[asset_id] = []
+            asset_groups[asset_id].append(row)
         
-        # Reconstruct based on event type
-        if message['event_type'] == 'book':
-            asks = []
-            bids = []
+        # Create one message per asset_id
+        messages = []
+        for asset_id, asset_rows in asset_groups.items():
+            if not asset_rows:
+                continue
+                
+            # Get common fields from first row
+            first_row = asset_rows[0]
+            message = {
+                'asset_id': asset_id,
+                'event_type': first_row.get('event_type'),
+                'hash': first_row.get('hash'),
+                'timestamp': first_row.get('timestamp')
+            }
             
-            for row in csv_rows:
-                if row.get('side') == 'ask':
-                    asks.append({
+            # Reconstruct based on event type
+            if message['event_type'] == 'book':
+                asks = []
+                bids = []
+                
+                for row in asset_rows:
+                    if row.get('side') == 'ask':
+                        asks.append({
+                            'price': str(row.get('price', '')),
+                            'size': str(row.get('size', ''))
+                        })
+                    elif row.get('side') == 'bid':
+                        bids.append({
+                            'price': str(row.get('price', '')),
+                            'size': str(row.get('size', ''))
+                        })
+                
+                message['asks'] = asks
+                message['bids'] = bids
+                
+            elif message['event_type'] == 'price_change':
+                changes = []
+                
+                for row in asset_rows:
+                    side_map = {'bid': 'BUY', 'ask': 'SELL'}
+                    changes.append({
                         'price': str(row.get('price', '')),
-                        'size': str(row.get('size', ''))
+                        'size': str(row.get('size', '')),
+                        'side': side_map.get(row.get('side'), row.get('side', ''))
                     })
-                elif row.get('side') == 'bid':
-                    bids.append({
-                        'price': str(row.get('price', '')),
-                        'size': str(row.get('size', ''))
-                    })
+                
+                message['changes'] = changes
             
-            message['asks'] = asks
-            message['bids'] = bids
-            
-        elif message['event_type'] == 'price_change':
-            changes = []
-            
-            for row in csv_rows:
-                side_map = {'bid': 'BUY', 'ask': 'SELL'}
-                changes.append({
-                    'price': str(row.get('price', '')),
-                    'size': str(row.get('size', '')),
-                    'side': side_map.get(row.get('side'), row.get('side', ''))
-                })
-            
-            message['changes'] = changes
+            messages.append(message)
         
-        return message
+        return messages
     
     def run(self) -> None:
         """
@@ -181,12 +197,12 @@ class CSVMessageProcessor:
             # Process each group sequentially
             for i, message_group in enumerate(grouped_messages):
                 try:
-                    # Reconstruct websocket message format
-                    websocket_message = self.reconstruct_websocket_message(message_group)
+                    # Reconstruct websocket messages format (List[Dict])
+                    websocket_messages = self.reconstruct_websocket_messages(message_group)
                     
                     # Send to all event handlers (same as websocket service)
                     for handler in self.event_handlers:
-                        handler(websocket_message)
+                        handler(websocket_messages)
                         
                     if (i + 1) % 100 == 0:
                         logger.info(f"Processed {i + 1} message groups")

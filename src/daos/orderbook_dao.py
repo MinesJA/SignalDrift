@@ -13,8 +13,8 @@ FIELD_NAMES = ['market_slug', 'asset_id', 'market_id', 'outcome_name', 'price', 
 
 def write_orderBookStore(market_slug: str, datetime: datetime, orderBook_store: OrderBookStore, test_mode: bool = False):
     logger.info("Writing order book")
-    test_suffix = "-test" if test_mode else ""
-    csv_filename = os.path.join('data', f"{datetime.strftime('%Y%m%d')}-{market_slug}{test_suffix}-synthetic_orders.csv")
+    test_suffix = "_test" if test_mode else ""
+    csv_filename = os.path.join('data', f"{datetime.strftime('%Y%m%d')}_{market_slug}_synthetic-orders{test_suffix}.csv")
 
     rows = []
 

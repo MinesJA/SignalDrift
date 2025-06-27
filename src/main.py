@@ -35,18 +35,18 @@ def get_arb_strategy(orderbook_store: OrderBookStore, order_store: OrdersStore) 
 
 
 def get_order_message_register(orderBook_store: OrderBookStore, order_store: OrdersStore, test_mode: bool = False) -> Callable:
-    def handler(market_message: Dict[str, Any]):
+    def handler(market_messages: List[Dict[str, Any]]):
         try:
             now = datetime.now()
 
-            book_store = orderBook_store.update_book(market_message)
+            book_store = orderBook_store.update_book(market_messages)
             book_a, book_b = book_store.books
 
             # TODO: Rename to make it clear this is strategy execution
             orders = calculate_orders(book_a, book_b)
             order_store.add_orders(orders)
 
-            write_marketMessages(book_store.market_slug, now, market_message, test_mode=test_mode, market_id=book_store.market_id)
+            write_marketMessages(book_store.market_slug, now, market_messages, test_mode=test_mode, market_id=book_store.market_id)
             write_orderBookStore(book_store.market_slug, now, book_store, test_mode=test_mode)
             write_orders(book_store.market_slug, now, orders, test_mode=test_mode)
         except Exception:
@@ -105,13 +105,13 @@ def extract_market_slug_from_filename(filename: str) -> str:
     Extract market slug from filename.
     
     Args:
-        filename: Filename like "20250619-mlb-tb-kc-2025-06-24"
+        filename: Filename like "20250619_mlb-tb-kc-2025-06-24"
         
     Returns:
         Market slug like "mlb-tb-kc-2025-06-24"
     """
-    # Remove the date prefix (YYYYMMDD-)
-    parts = filename.split('-', 1)
+    # Remove the date prefix (YYYYMMDD_)
+    parts = filename.split('_', 1)
     if len(parts) >= 2:
         return parts[1]
     return filename
@@ -122,13 +122,13 @@ def get_csv_file_path(filename: str) -> str:
     Get the CSV file path from filename.
     
     Args:
-        filename: Base filename like "20250619-mlb-tb-kc-2025-06-24"
+        filename: Base filename like "20250619_mlb-tb-kc-2025-06-24"
         
     Returns:
         Full path to the polymarket_market_events.csv file
     """
     data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
-    csv_filename = f"{filename}-polymarket_market_events.csv"
+    csv_filename = f"{filename}_polymarket-market-events.csv"
     return os.path.join(data_dir, csv_filename)
 
 
@@ -152,8 +152,8 @@ if __name__ == "__main__":
                 sys.exit(1)
             
             # Basic validation of filename format
-            if not csv_filename.endswith('-polymarket_market_events'):
-                expected_filename = f"{csv_filename}-polymarket_market_events.csv"
+            if not csv_filename.endswith('_polymarket-market-events'):
+                expected_filename = f"{csv_filename}_polymarket-market-events.csv"
                 print(f"Warning: Expected filename format: {expected_filename}")
             
             # Run single market from CSV

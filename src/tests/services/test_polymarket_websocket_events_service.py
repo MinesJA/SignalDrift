@@ -50,9 +50,9 @@ class TestPolymarketWebsocketEventsService(unittest.TestCase):
         
         service.on_message(ws, json.dumps(test_data))
         
-        # Ensure all event handlers were called with the parsed data
+        # Ensure all event handlers were called with the parsed data wrapped in a list
         for handler in self.event_handlers:
-            handler.assert_called_once_with(test_data)
+            handler.assert_called_once_with([test_data])
             
     def test_market_events_service_handles_invalid_json(self):
         """Test that invalid JSON messages are logged as errors"""

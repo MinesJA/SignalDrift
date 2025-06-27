@@ -195,8 +195,8 @@ class TestMarketDaoFixes:
                 test_datetime = datetime(2025, 6, 25, 10, 0, 0)
                 write_marketMessages('test-market', test_datetime, market_messages, market_id='554912')
                 
-                # Check that CSV was created with correct data
-                csv_path = temp_data_dir / '20250625-test-market-polymarket_market_events.csv'
+                # Check that CSV was created with correct data (new underscore format)
+                csv_path = temp_data_dir / '20250625_test-market_polymarket-market-events.csv'
                 assert csv_path.exists()
                 
                 df = pd.read_csv(csv_path)

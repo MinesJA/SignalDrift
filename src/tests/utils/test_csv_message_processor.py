@@ -124,7 +124,9 @@ class TestCSVMessageProcessor:
                 {'asset_id': '123', 'event_type': 'book', 'hash': 'abc', 'timestamp': 1750803262050, 'price': 0.4, 'size': 200, 'side': 'bid'},
             ]
             
-            message = processor.reconstruct_websocket_message(csv_rows)
+            messages = processor.reconstruct_websocket_messages(csv_rows)
+            assert len(messages) == 1  # Should be one message per asset_id
+            message = messages[0]
             
             assert message['asset_id'] == '123'
             assert message['event_type'] == 'book'
@@ -151,7 +153,9 @@ class TestCSVMessageProcessor:
                 {'asset_id': '123', 'event_type': 'price_change', 'hash': 'abc', 'timestamp': 1750803262050, 'price': 0.4, 'size': 200, 'side': 'bid'},
             ]
             
-            message = processor.reconstruct_websocket_message(csv_rows)
+            messages = processor.reconstruct_websocket_messages(csv_rows)
+            assert len(messages) == 1  # Should be one message per asset_id
+            message = messages[0]
             
             assert message['asset_id'] == '123'
             assert message['event_type'] == 'price_change'
@@ -180,8 +184,11 @@ class TestCSVMessageProcessor:
             # Should have called handler once (both rows are grouped together)
             assert mock_handler.call_count == 1
             
-            # Check the message structure passed to handler
-            called_message = mock_handler.call_args[0][0]
+            # Check the message structure passed to handler (now a List[Dict])
+            called_messages = mock_handler.call_args[0][0]
+            assert isinstance(called_messages, list)
+            assert len(called_messages) == 1  # Should have one message per asset_id
+            called_message = called_messages[0]
             assert called_message['event_type'] == 'book'
             assert called_message['asset_id'] == '123'
             assert len(called_message['asks']) == 1
