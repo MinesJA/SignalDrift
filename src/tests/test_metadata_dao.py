@@ -90,7 +90,13 @@ class TestMetadataDAO:
             mock_dirname.return_value = temp_data_dir
             
             run_at = datetime(2025, 6, 27, 12, 0, 0)
-            unique_slug = "mlb-test-append-rows"
+            unique_slug = f"mlb-test-append-rows-{run_at.timestamp()}"
+            
+            # Clean up any existing test file
+            file_path = os.path.join(temp_data_dir, '..', '..', 'data', f'metadata_{unique_slug}.csv')
+            file_path = os.path.normpath(file_path)
+            if os.path.exists(file_path):
+                os.remove(file_path)
             
             write_metadata(
                 market_slug=unique_slug,
@@ -100,9 +106,6 @@ class TestMetadataDAO:
                 market_metadata=market_metadata,
                 test_mode=False
             )
-            
-            file_path = os.path.join(temp_data_dir, '..', '..', 'data', f'metadata_{unique_slug}.csv')
-            file_path = os.path.normpath(file_path)
             
             # Read and verify data
             with open(file_path, 'r') as f:
@@ -164,10 +167,16 @@ class TestMetadataDAO:
         with patch('daos.metadata_dao.os.path.dirname') as mock_dirname:
             mock_dirname.return_value = temp_data_dir
             
-            unique_slug = "mlb-test-multiple-runs"
+            run_at1 = datetime(2025, 6, 27, 12, 0, 0)
+            unique_slug = f"mlb-test-multiple-runs-{run_at1.timestamp()}"
+            
+            # Clean up any existing test file
+            file_path = os.path.join(temp_data_dir, '..', '..', 'data', f'metadata_{unique_slug}.csv')
+            file_path = os.path.normpath(file_path)
+            if os.path.exists(file_path):
+                os.remove(file_path)
             
             # First run
-            run_at1 = datetime(2025, 6, 27, 12, 0, 0)
             write_metadata(
                 market_slug=unique_slug,
                 market_id=12345,
@@ -187,9 +196,6 @@ class TestMetadataDAO:
                 market_metadata=market_metadata,
                 test_mode=False
             )
-            
-            file_path = os.path.join(temp_data_dir, '..', '..', 'data', f'metadata_{unique_slug}.csv')
-            file_path = os.path.normpath(file_path)
             
             with open(file_path, 'r') as f:
                 reader = csv.DictReader(f, quotechar='|')
