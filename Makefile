@@ -6,8 +6,13 @@ build:
 	@./setup.sh
 
 start:
+ifdef FILE
+	@echo "Starting SignalDrift from CSV file: $(FILE)..."
+	@source venv/bin/activate && CSV_FILE=$(FILE) python ./src/main.py
+else
 	@echo "Starting SignalDrift..."
 	@source venv/bin/activate && python ./src/main.py
+endif
 
 notebooks:
 ifdef FILE

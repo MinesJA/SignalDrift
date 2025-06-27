@@ -53,7 +53,7 @@ class TestFileNameCleanup:
         
         # Test synthetic_orders mapping
         new_name = get_new_filename("20250624", "mlb-tor-cle-2025-06-24", "synthetic_orders")
-        assert new_name == "20250624_mlb-tor-cle-2025-06-24_synthetic-orders.csv"
+        assert new_name == "20250624_mlb-tor-cle-2025-06-24_synthetic-order-book.csv"
     
     def test_rename_files_dry_run(self):
         """Test renaming files in dry-run mode."""

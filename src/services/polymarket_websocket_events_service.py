@@ -127,11 +127,22 @@ class PolymarketMarketEventsService(WebsocketConnection):
             
         try:
             data = json.loads(message)
+            
+            # Convert single dict to list for consistency with handlers
+            # If data is already a list, keep it as is; if single dict, wrap in list
+            if isinstance(data, dict):
+                message_list = [data]
+            elif isinstance(data, list):
+                message_list = data
+            else:
+                logger.error(f"Unexpected data format: {type(data)}")
+                return
+                
             for handler in self.event_handlers:
                 try:
-                    handler(data)
+                    handler(message_list)
                 except Exception as e:
-                    logger.error(f"Error in event handler: {e}. Message: {data}")
+                    logger.error(f"Error in event handler: {e}. Message: {message_list}")
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse WebSocket message: {e}")
             logger.error(message)
