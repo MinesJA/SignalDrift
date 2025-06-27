@@ -1,10 +1,8 @@
-import os
 import csv
-from typing import Dict, Any, List, Optional
-from datetime import datetime
-import traceback
-
 import logging
+import os
+from datetime import datetime
+from typing import Any, Optional
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -12,7 +10,7 @@ logger = logging.getLogger(__name__)
 # TODO: Should this be defined in MarketEvent?
 FIELD_NAMES = ['market_slug', 'asset_id', 'market_id', 'event_type', 'price', 'side', 'size', 'hash', 'timestamp']
 
-def write_marketMessages(market_slug: str, datetime: datetime, market_messages: List[Dict[str, Any]], test_mode: bool = False, market_id: int = None):
+def write_marketMessages(market_slug: str, datetime: datetime, market_messages: list[dict[str, Any]], test_mode: bool = False, market_id: int = None):
     logger.info("Writing market messages")
 
     test_suffix = "_test" if test_mode else ""
@@ -28,9 +26,9 @@ def write_marketMessages(market_slug: str, datetime: datetime, market_messages: 
         if len(rows) > 0:
             _write_to_csv(csv_filename, rows)
     except Exception:
-        logger.error(f"Failed to write rows in market_writer")
+        logger.error("Failed to write rows in market_writer")
 
-def _write_to_csv(csv_filename, rows: List[Dict[str, Any]]):
+def _write_to_csv(csv_filename, rows: list[dict[str, Any]]):
     if not os.path.isfile(csv_filename):
         logger.info(f"Setting up CSV file: {csv_filename}")
         _setup_csv(csv_filename)
@@ -75,7 +73,7 @@ def _create_book_rows(market_slug, event, market_id=None):
     return [{key: row.get(key) for key in FIELD_NAMES} for row in rows]
 
 
-def _create_rows(market_slug, event, market_id=None) -> Optional[List[Dict[str, Any]]]:
+def _create_rows(market_slug, event, market_id=None) -> Optional[list[dict[str, Any]]]:
     match event['event_type']:
         case 'price_change':
             return _create_price_change_rows(market_slug, event, market_id)

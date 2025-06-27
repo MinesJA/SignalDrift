@@ -1,3 +1,7 @@
+import csv
+import os
+
+
 def setup_csvs(slug):
     data_dir = "data"
     os.makedirs(data_dir, exist_ok=True)

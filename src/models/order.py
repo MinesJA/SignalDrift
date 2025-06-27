@@ -1,6 +1,7 @@
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from enum import Enum
-from typing import Dict, Any
+from typing import Any
+
 
 class OrderType(Enum):
     LIMIT_BUY = "LIMIT_BUY"
@@ -16,7 +17,7 @@ class Order:
     size: float
     timestamp: int
 
-    def asdict(self) -> Dict[str, Any]:
+    def asdict(self) -> dict[str, Any]:
         data = asdict(self)
         # Convert OrderType enum to its string value
         data['order_type'] = self.order_type.value

@@ -1,8 +1,9 @@
 import asyncio
+import json
 import time
 from datetime import datetime
-from typing import List, Callable, Dict, Any, Optional
-import json
+from typing import Any, Callable, Optional
+
 
 class PeriodicTaskExecutor:
     def __init__(self, interval: float):
@@ -20,7 +21,7 @@ class PeriodicTaskExecutor:
         }
         self.tasks.append(task_info)
 
-    async def execute_batch(self) -> Dict[str, Any]:
+    async def execute_batch(self) -> dict[str, Any]:
         """Execute all tasks and return results with metadata"""
         start_time = time.time()
 
@@ -80,7 +81,7 @@ class PeriodicTaskExecutor:
         """Stop the periodic execution"""
         self.running = False
 
-    def get_results(self) -> List[Dict]:
+    def get_results(self) -> list[dict]:
         """Get all stored results"""
         return self.results_storage
 

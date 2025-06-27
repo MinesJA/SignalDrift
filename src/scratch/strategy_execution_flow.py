@@ -1,17 +1,15 @@
 import asyncio
-from datetime import datetime
-from uuid import UUID, uuid4
-from calculators import decimal_odds
-from typing import Dict, Any, List
-from models import OddsEvent, OddsSource, OddsType
 import statistics
+from datetime import datetime
+from typing import Any
+from uuid import UUID, uuid4
 
+from calculators import decimal_odds
+from models import OddsEvent, OddsSource, OddsType
 
-from py_clob_client.client import ClobClient
-from config import config
 
 # Mock
-async def mock_get_betfair_odds(timestamp: datetime, request_id: UUID) -> Dict[str, List[OddsEvent]]:
+async def mock_get_betfair_odds(timestamp: datetime, request_id: UUID) -> dict[str, list[OddsEvent]]:
     await asyncio.sleep(0.2)
 
     result = [{"odds": 2.2, "question": "marlins"}, {"odds": 1.7, "question": "pirates"}]
@@ -25,7 +23,7 @@ async def mock_get_betfair_odds(timestamp: datetime, request_id: UUID) -> Dict[s
 
     return {"betfair_odds": [OddsEvent(**odd) for odd in odds]}
 
-async def mock_get_pinnacle_odds(timestamp: datetime, request_id: UUID) -> Dict[str, List[OddsEvent]]:
+async def mock_get_pinnacle_odds(timestamp: datetime, request_id: UUID) -> dict[str, list[OddsEvent]]:
     await asyncio.sleep(0.4)
 
     result = [{"odds": 2.0, "question": "marlins"}, {"odds": 1.9, "question": "pirates"}]
@@ -41,7 +39,7 @@ async def mock_get_pinnacle_odds(timestamp: datetime, request_id: UUID) -> Dict[
 
     return {"pinnacle_odds": [OddsEvent(**odd) for odd in odds]}
 
-async def mock_get_polymarket_odds(timestamp: datetime, request_id: UUID) -> Dict[str, List[OddsEvent]]:
+async def mock_get_polymarket_odds(timestamp: datetime, request_id: UUID) -> dict[str, list[OddsEvent]]:
     await asyncio.sleep(0.4)
 
     result = [{"odds": 0.4, "question": "marlins"}, {"odds": 0.6, "question": "pirates"}]
@@ -61,13 +59,13 @@ async def mock_get_polymarket_odds(timestamp: datetime, request_id: UUID) -> Dic
     return {"polymarket_odds": [OddsEvent(**odd) for odd in odds]}
 
 
-def calculate_avg_impl_prob(data: Dict[str, Any]) -> Dict[str, float]:
+def calculate_avg_impl_prob(data: dict[str, Any]) -> dict[str, float]:
     x = [odd.impl_prob for odd in (data.get("betfair_odds", []) + data.get("pinnacle_odds", []))]
     return {"avg_impl_prob": statistics.mean(x)}
 
 
 # Depends on avg_impl_prob
-def calculate_z(data: Dict[str, Any]) -> Dict[str, float]:
+def calculate_z(data: dict[str, Any]) -> dict[str, float]:
     a = data.get("avg_impl_prob")
     if a:
         return {"avg_impl_prob_mult": a * 8}

@@ -1,16 +1,17 @@
-import os
 import csv
-from typing import List, Dict, Any
-from datetime import datetime
-from models import Order
 import logging
+import os
+from datetime import datetime
+from typing import Any
+
+from models import Order
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 FIELD_NAMES = ['market_slug', 'asset_id', 'price', 'size', 'timestamp']
 
-def write_orders(market_slug: str, datetime: datetime, orders: List[Order], test_mode: bool = False):
+def write_orders(market_slug: str, datetime: datetime, orders: list[Order], test_mode: bool = False):
 
     logger.info("Writing orders")
     test_suffix = "_test" if test_mode else ""
@@ -22,7 +23,7 @@ def write_orders(market_slug: str, datetime: datetime, orders: List[Order], test
 
 
 # TODO: This can prob be abstracted into csv utils
-def _write_to_csv(csv_filename, rows: List[Dict[str, Any]]):
+def _write_to_csv(csv_filename, rows: list[dict[str, Any]]):
     if not os.path.isfile(csv_filename):
         logger.info(f"Setting up CSV file: {csv_filename}")
         _setup_csv(csv_filename)

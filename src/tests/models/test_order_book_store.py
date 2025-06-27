@@ -1,6 +1,7 @@
+from unittest.mock import Mock
+
 import pytest
-from typing import Dict, Any
-from unittest.mock import Mock, patch
+
 from src.models import OrderBookStore, SyntheticOrderBook
 
 

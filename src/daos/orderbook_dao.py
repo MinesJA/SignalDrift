@@ -1,10 +1,10 @@
-from models import OrderBookStore
-from datetime import datetime
-from typing import List, Dict, Any
-import os
 import csv
-
 import logging
+import os
+from datetime import datetime
+from typing import Any
+
+from models import OrderBookStore
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -24,7 +24,7 @@ def write_orderBookStore(market_slug: str, datetime: datetime, orderBook_store: 
     _write_to_csv(csv_filename, rows)
 
 
-def _write_to_csv(csv_filename, rows: List[Dict[str, Any]]):
+def _write_to_csv(csv_filename, rows: list[dict[str, Any]]):
     if not os.path.isfile(csv_filename):
         logger.info(f"Setting up CSV file: {csv_filename}")
         _setup_csv(csv_filename)

@@ -1,4 +1,4 @@
-.PHONY: build start clean notebooks test
+.PHONY: build start clean notebooks test lint format
 
 build:
 	@echo "Setting up the environment..."
@@ -38,4 +38,16 @@ clean:
 	@rm -rf venv
 	@rm -rf __pycache__
 	@rm -rf .ipynb_checkpoints
+
+lint:
+	@echo "Running linter..."
+	@source venv/bin/activate && ruff check src/
+
+format:
+	@echo "Formatting code..."
+	@source venv/bin/activate && ruff format src/
+
+lint-fix:
+	@echo "Running linter with auto-fix..."
+	@source venv/bin/activate && ruff check --fix src/
 

@@ -1,15 +1,15 @@
-from websocket import WebSocketApp
 import json
-import time
+import logging
+import sys
 import threading
-from typing import Self, Callable, List, Dict
-from services import PolymarketClobClient
-from config import config
-
-
+import time
 from abc import ABC, abstractmethod
 
-import logging
+from websocket import WebSocketApp
+
+from config import config
+from services import PolymarketClobClient
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -39,11 +39,11 @@ class WebsocketConnection(ABC):
 
     def on_error(self, ws, error):
         print("Error: ", error)
-        exit(1)
+        sys.exit(1)
 
     def on_close(self, ws, close_status_code, close_msg):
         print("closing")
-        exit(0)
+        sys.exit(0)
 
     def ping(self, ws):
         while True:
@@ -67,23 +67,23 @@ class PolymarketUserEventsService(WebsocketConnection):
 
     def channel_type(self):
         return "user"
-    
+
     def payload(self):
         return {"markets": self.asset_ids, "type": self.channel_type(), "auth": self.auth}
-    
+
     def on_open(self, ws):
         ws.send(json.dumps(self.payload()))
-        
+
         thr = threading.Thread(target=self.ping, args=(ws,))
-        logger.info(f"Starting user events service")
+        logger.info("Starting user events service")
         thr.start()
-    
+
     def on_message(self, ws, message):
         # Handle PONG messages
         if message == "PONG":
             logger.debug("Received PONG from server")
             return
-            
+
         try:
             data = json.loads(message)
             for callback in self.message_callbacks:
@@ -124,10 +124,10 @@ class PolymarketMarketEventsService(WebsocketConnection):
         if message == "PONG":
             logger.debug("Received PONG from server")
             return
-            
+
         try:
             data = json.loads(message)
-            
+
             # Convert single dict to list for consistency with handlers
             # If data is already a list, keep it as is; if single dict, wrap in list
             if isinstance(data, dict):
@@ -137,7 +137,7 @@ class PolymarketMarketEventsService(WebsocketConnection):
             else:
                 logger.error(f"Unexpected data format: {type(data)}")
                 return
-                
+
             for handler in self.event_handlers:
                 try:
                     handler(message_list)
