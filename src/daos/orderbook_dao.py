@@ -13,7 +13,7 @@ FIELD_NAMES = ['market_slug', 'asset_id', 'market_id', 'outcome_name', 'price', 
 
 def write_orderBookStore(market_slug: str, datetime: datetime, orderBook_store: OrderBookStore):
     logger.info("Writing order book")
-    csv_filename = os.path.join('data', f"{datetime.strftime("%Y%m%d")}-{market_slug}-synthetic_orders.csv")
+    csv_filename = os.path.join('data', f"{datetime.strftime('%Y%m%d')}-{market_slug}-synthetic_orders.csv")
 
     rows = []
 
