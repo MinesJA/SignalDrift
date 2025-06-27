@@ -44,7 +44,7 @@ class TestOrderProcessingIntegration:
                 asset_id="asset-no"
             )
         ]
-        return OrderBookStore(market_slug, books)
+        return OrderBookStore(market_slug, 123456, books)
     
     @pytest.fixture
     def realistic_market_messages(self):
@@ -286,7 +286,7 @@ class TestMarketConnectionIntegration:
     def mock_market_metadata(self):
         """Realistic market metadata response."""
         return {
-            'id': 'market-12345',
+            'id': 12345,
             'clobTokenIds': '["token-yes", "token-no"]',
             'outcomes': '["YES", "NO"]'
         }
@@ -427,7 +427,7 @@ class TestConcurrencyIntegration:
             # Setup service to return valid metadata
             mock_service_instance = Mock()
             mock_service_instance.get_market_by_slug.return_value = {
-                'id': 'market-123',
+                'id': 123,
                 'clobTokenIds': '["token-1", "token-2"]', 
                 'outcomes': '["YES", "NO"]'
             }
@@ -473,7 +473,7 @@ class TestConcurrencyIntegration:
                 SyntheticOrderBook(f"market-{i}", f"id-{i}", "YES", f"asset-yes-{i}"),
                 SyntheticOrderBook(f"market-{i}", f"id-{i}", "NO", f"asset-no-{i}")
             ]
-            stores.append(OrderBookStore(f"market-{i}", books))
+            stores.append(OrderBookStore(f"market-{i}", 100000 + i, books))
         
         # Create handlers for each store
         handlers = []
@@ -566,7 +566,7 @@ class TestArbStrategyIntegration:
             SyntheticOrderBook("arb-market", "market-123", "NO", "asset-no")
         ]
         
-        orderbook_store = OrderBookStore("arb-market", books)
+        orderbook_store = OrderBookStore("arb-market", 123456, books)
         order_store = OrdersStore()
         
         # Add orders that create arbitrage opportunity

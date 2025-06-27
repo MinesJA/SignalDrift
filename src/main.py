@@ -43,7 +43,7 @@ def get_order_message_register(orderBook_store: OrderBookStore, order_store: Ord
             orders = calculate_orders(book_a, book_b)
             order_store.add_orders(orders)
 
-            write_marketMessages(book_store.market_slug, now, market_message)
+            write_marketMessages(book_store.market_slug, now, market_message, book_store.market_id)
             write_orderBookStore(book_store.market_slug, now, book_store)
             write_orders(book_store.market_slug, now, orders)
         except Exception:
@@ -66,7 +66,7 @@ def run_market_connection(market_slug: str):
                 in zip(json.loads(market_metadata['clobTokenIds']), json.loads(market_metadata['outcomes']))
             ]
 
-            book_store = OrderBookStore(market_slug, books)
+            book_store = OrderBookStore(market_slug, market_metadata['id'], books)
             order_store = OrdersStore()
             message_handler = get_order_message_register(book_store, order_store)
 
