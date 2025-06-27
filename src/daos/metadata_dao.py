@@ -6,7 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-FIELD_NAMES = ['market_slug', 'market_id', 'asset_id', 'outcome_name', 'executed_at', 'game_start_timestamp']
+FIELD_NAMES = ['market_slug', 'market_id', 'asset_id', 'outcome_name', 'executed_at_timestamp', 'game_start_timestamp']
 
 def _get_file_path(market_slug: str, executed_at: datetime) -> str:
     """Get the file path for the metadata CSV file."""
@@ -31,8 +31,7 @@ def write_metadata(
     market_slug: str,
     market_id: int,
     books: List[Any],  # List of SyntheticOrderBook objects
-    executed_at: datetime,
-    market_metadata: Dict[str, Any]
+    executed_at: datetime
 ) -> None:
     """
     Write market metadata to CSV file.
@@ -42,29 +41,16 @@ def write_metadata(
         market_id: The market ID
         books: List of SyntheticOrderBook objects containing asset and outcome info
         executed_at: Timestamp when SignalDrift executed
-        market_metadata: Full market metadata from Polymarket API
     """
     try:
         file_path = _get_file_path(market_slug, executed_at)
         _setup_csv(file_path)
         
-        # Extract game start time from market metadata
-        # Polymarket typically has these fields, but they might be named differently
-        game_start_timestamp = None
-        
-        # Try to extract start time from various possible fields
-        for field in ['startDate', 'start_date', 'startTime', 'start_time', 'eventStartDate']:
-            if field in market_metadata and market_metadata[field]:
-                try:
-                    # Convert to epoch timestamp
-                    start_dt = datetime.fromisoformat(market_metadata[field].replace('Z', '+00:00'))
-                    game_start_timestamp = int(start_dt.timestamp())
-                    break
-                except:
-                    pass
-        
         # Convert executed_at to epoch timestamp
         executed_at_timestamp = int(executed_at.timestamp())
+        
+        # Set game_start_timestamp to None for now
+        game_start_timestamp = None
         
         # Create a row for each asset/outcome
         rows = []
@@ -74,7 +60,7 @@ def write_metadata(
                 'market_id': market_id,
                 'asset_id': book.asset_id,
                 'outcome_name': book.outcome_name,
-                'executed_at': executed_at_timestamp,
+                'executed_at_timestamp': executed_at_timestamp,
                 'game_start_timestamp': game_start_timestamp or ''
             }
             rows.append(row)

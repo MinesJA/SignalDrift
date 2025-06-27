@@ -32,16 +32,6 @@ class TestMetadataDAO:
         
         return [book1, book2]
     
-    @pytest.fixture
-    def market_metadata(self):
-        """Create sample market metadata."""
-        return {
-            'id': 12345,
-            'slug': 'mlb-test-match',
-            'startDate': '2025-06-27T19:00:00Z',
-            'outcomes': '["Team A", "Team B"]',
-            'clobTokenIds': '["1", "2"]'
-        }
     
     def test_get_file_path(self):
         """Test file path generation with new naming convention."""
@@ -53,7 +43,7 @@ class TestMetadataDAO:
         
         assert file_path == expected_path
     
-    def test_write_metadata_creates_file(self, mock_books, market_metadata):
+    def test_write_metadata_creates_file(self, mock_books):
         """Test that metadata writer creates file with correct headers."""
         executed_at = datetime(2025, 6, 27, 12, 0, 0)
         unique_slug = f"mlb-test-create-file-{executed_at.timestamp()}"
@@ -67,8 +57,7 @@ class TestMetadataDAO:
             market_slug=unique_slug,
             market_id=12345,
             books=mock_books,
-            executed_at=executed_at,
-            market_metadata=market_metadata
+            executed_at=executed_at
         )
         
         # Check file was created
@@ -83,7 +72,7 @@ class TestMetadataDAO:
         if os.path.exists(file_path):
             os.remove(file_path)
     
-    def test_write_metadata_appends_rows(self, mock_books, market_metadata):
+    def test_write_metadata_appends_rows(self, mock_books):
         """Test that metadata writer appends correct data."""
         executed_at = datetime(2025, 6, 27, 12, 0, 0)
         unique_slug = f"mlb-test-append-rows-{executed_at.timestamp()}"
@@ -97,8 +86,7 @@ class TestMetadataDAO:
             market_slug=unique_slug,
             market_id=12345,
             books=mock_books,
-            executed_at=executed_at,
-            market_metadata=market_metadata
+            executed_at=executed_at
         )
         
         # Read and verify data
@@ -113,9 +101,9 @@ class TestMetadataDAO:
             assert rows[0]['market_id'] == '12345'
             assert rows[0]['asset_id'] == '1'
             assert rows[0]['outcome_name'] == 'Team A'
-            assert rows[0]['executed_at'] == str(int(executed_at.timestamp()))
-            # Check that date was parsed (should be epoch timestamp)
-            assert rows[0]['game_start_timestamp'].isdigit()
+            assert rows[0]['executed_at_timestamp'] == str(int(executed_at.timestamp()))
+            # Check that game_start_timestamp is empty (set to None for now)
+            assert rows[0]['game_start_timestamp'] == ''
             
             # Check second row
             assert rows[1]['asset_id'] == '2'
@@ -130,11 +118,6 @@ class TestMetadataDAO:
         executed_at = datetime(2025, 6, 27, 12, 0, 0)
         unique_slug = f"mlb-test-missing-dates-{executed_at.timestamp()}"
         
-        # Market metadata without dates
-        metadata = {
-            'id': 12345,
-            'slug': unique_slug
-        }
         
         # Clean up any existing test file
         file_path = f"data/20250627_{unique_slug}_market-metadata.csv"
@@ -145,8 +128,7 @@ class TestMetadataDAO:
             market_slug=unique_slug,
             market_id=12345,
             books=mock_books,
-            executed_at=executed_at,
-            market_metadata=metadata
+            executed_at=executed_at
         )
         
         with open(file_path, 'r') as f:
@@ -160,7 +142,7 @@ class TestMetadataDAO:
         if os.path.exists(file_path):
             os.remove(file_path)
     
-    def test_write_metadata_multiple_runs(self, mock_books, market_metadata):
+    def test_write_metadata_multiple_runs(self, mock_books):
         """Test that multiple runs append to existing file."""
         executed_at1 = datetime(2025, 6, 27, 12, 0, 0)
         executed_at2 = datetime(2025, 6, 27, 13, 0, 0)
@@ -176,8 +158,7 @@ class TestMetadataDAO:
             market_slug=unique_slug,
             market_id=12345,
             books=mock_books,
-            executed_at=executed_at1,
-            market_metadata=market_metadata
+            executed_at=executed_at1
         )
         
         # Second run
@@ -185,8 +166,7 @@ class TestMetadataDAO:
             market_slug=unique_slug,
             market_id=12345,
             books=mock_books,
-            executed_at=executed_at2,
-            market_metadata=market_metadata
+            executed_at=executed_at2
         )
         
         with open(file_path, 'r') as f:
@@ -196,9 +176,9 @@ class TestMetadataDAO:
             # Should have 4 rows total (2 per run)
             assert len(rows) == 4
             
-            # Check different executed_at timestamps
-            assert rows[0]['executed_at'] == str(int(executed_at1.timestamp()))
-            assert rows[2]['executed_at'] == str(int(executed_at2.timestamp()))
+            # Check different executed_at_timestamp values
+            assert rows[0]['executed_at_timestamp'] == str(int(executed_at1.timestamp()))
+            assert rows[2]['executed_at_timestamp'] == str(int(executed_at2.timestamp()))
         
         # Clean up
         if os.path.exists(file_path):
@@ -206,5 +186,5 @@ class TestMetadataDAO:
     
     def test_field_names_updated(self):
         """Test that field names match new specification."""
-        expected_fields = ['market_slug', 'market_id', 'asset_id', 'outcome_name', 'executed_at', 'game_start_timestamp']
+        expected_fields = ['market_slug', 'market_id', 'asset_id', 'outcome_name', 'executed_at_timestamp', 'game_start_timestamp']
         assert FIELD_NAMES == expected_fields

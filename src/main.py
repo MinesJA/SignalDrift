@@ -90,8 +90,7 @@ def run_market_connection(market_slug: str, csv_file_path: Optional[str] = None)
                     market_slug=market_slug,
                     market_id=market_metadata['id'],
                     books=books,
-                    executed_at=executed_at,
-                    market_metadata=market_metadata
+                    executed_at=executed_at
                 )
 
             if test_mode:
