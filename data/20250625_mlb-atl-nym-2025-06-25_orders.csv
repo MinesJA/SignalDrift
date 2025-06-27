@@ -1,1 +1,1 @@
-market_slug,asset_id,price,size,timestamp
+asset_id,market_slug,order_type,price,size,timestamp

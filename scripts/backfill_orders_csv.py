@@ -52,14 +52,30 @@ def backfill_csv_file(filepath, dry_run=False):
         existing_headers = reader.fieldnames
         rows = list(reader)
     
-    if not rows:
-        print(f"  Skipping - file is empty")
-        return
-    
     # Check if file is already in new format
     expected_headers = ['asset_id', 'market_slug', 'order_type', 'price', 'size', 'timestamp']
     if existing_headers == expected_headers:
         print(f"  Skipping - file already in new format")
+        return
+    
+    # Handle files with only headers (no data rows)
+    if not rows:
+        print(f"  Converting headers for empty file")
+        if dry_run:
+            print(f"    Would update headers from: {existing_headers}")
+            print(f"    Would update headers to: {expected_headers}")
+        else:
+            # Create backup
+            backup_path = filepath + '.backup'
+            shutil.copy2(filepath, backup_path)
+            print(f"  Created backup: {backup_path}")
+            
+            # Write just the new headers
+            with open(filepath, 'w', newline='') as f:
+                writer = csv.DictWriter(f, fieldnames=expected_headers)
+                writer.writeheader()
+            
+            print(f"  Updated headers successfully")
         return
     
     # Convert the data
