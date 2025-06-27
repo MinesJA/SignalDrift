@@ -122,10 +122,7 @@ The project uses `.env` files for configuration. Key variables include:
 4. Weighted fair value calculation is core to both market making and arbitrage strategies
 5. All scrapers save page data locally for testing and development
 
-
-# SignalDrift
-
-## Git workflow
+## Git Workflow
 
 ### Branch Naming Conventions
 Always use descriptive branch names that follow these patterns to ensure easy association with issues and PRs:
@@ -194,8 +191,8 @@ gh run view <run-id> --repo MinesJA/SignalDrift --log-failed | tail -50
 - Include PR number in commit messages: "Fix error (PR #38)"
 - Update TODO list with PR numbers as soon as created
 
-## Github Workflow
-Always use the `gh` GitHub CLI for all tasks related to Github. That includes:
+## GitHub Workflow
+Always use the `gh` GitHub CLI for all tasks related to GitHub. That includes:
 - Opening Pull requests
 - Pulling down project issue details
 - Creating project issues
@@ -205,7 +202,6 @@ Always use the `gh` GitHub CLI for all tasks related to Github. That includes:
 ### Workflow for Creating PRs
 
 #### Step 1: Work in a Git Worktree (Recommended)
-
 
 ```bash
 # In the main directory of the project (/SignalDrift),
@@ -222,8 +218,6 @@ cd ../SignalDrift-feature-name
 git add .
 git commit -m "Your commit message"
 ```
-
-
 
 #### Step 2: Push Changes Using GitHub CLI
 When `git push` fails due to authentication issues, use the `gh` CLI:
@@ -359,5 +353,3 @@ The GitHub CLI supports efficient batch operations:
 - Add labels: `gh pr edit [number] --add-label bug,priority-high`
 - Link issues: Include "Fixes #123" in PR description
 - Request team reviews: `gh pr create --reviewer @org/team-name`
-
-
