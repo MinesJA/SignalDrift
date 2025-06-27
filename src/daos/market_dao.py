@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 # TODO: Should this be defined in MarketEvent?
 FIELD_NAMES = ['market_slug', 'asset_id', 'market_id', 'event_type', 'price', 'side', 'size', 'hash', 'timestamp']
 
-def write_marketMessages(market_slug: str, datetime: datetime, market_messages: List[Dict[str, Any]], market_id: str = None):
+def write_marketMessages(market_slug: str, datetime: datetime, market_messages: List[Dict[str, Any]], market_id: int = None):
     logger.info("Writing market messages")
 
     csv_filename = os.path.join('data', f"{datetime.strftime("%Y%m%d")}-{market_slug}-polymarket_market_events.csv")

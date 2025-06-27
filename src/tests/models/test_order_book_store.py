@@ -23,14 +23,14 @@ class TestOrderBookStore:
     @pytest.fixture
     def order_book_store(self, mock_books):
         """Create an OrderBookStore instance with mock books."""
-        return OrderBookStore(market_slug="test-market", market_id="123456", books=mock_books)
+        return OrderBookStore(market_slug="test-market", market_id=123456, books=mock_books)
 
     def test_init(self, mock_books):
         """Test the initialization of OrderBookStore."""
-        store = OrderBookStore(market_slug="test-market", market_id="123456", books=mock_books)
+        store = OrderBookStore(market_slug="test-market", market_id=123456, books=mock_books)
 
         assert store.market_slug == "test-market"
-        assert store.market_id == "123456"
+        assert store.market_id == 123456
         assert len(store.books_lookup) == 3
         assert "asset-1" in store.books_lookup
         assert "asset-2" in store.books_lookup
