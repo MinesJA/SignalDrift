@@ -83,13 +83,13 @@ class TestGetOrderMessageRegister:
 
         # Verify writes
         mock_write_marketMessages.assert_called_once_with(
-            "test-market", mock_now, sample_market_message, 123456
+            "test-market", mock_now, sample_market_message, test_mode=False, market_id=123456
         )
         mock_write_orderBookStore.assert_called_once_with(
-            "test-market", mock_now, mock_orderbook_store
+            "test-market", mock_now, mock_orderbook_store, test_mode=False
         )
         mock_write_orders.assert_called_once_with(
-            "test-market", mock_now, mock_orders
+            "test-market", mock_now, mock_orders, test_mode=False
         )
 
     @patch('src.main.write_marketMessages')
@@ -164,7 +164,7 @@ class TestGetOrderMessageRegister:
         mock_write_marketMessages.assert_called_once()
         mock_write_orderBookStore.assert_called_once()
         mock_write_orders.assert_called_once_with(
-            "test-market", mock_now, []
+            "test-market", mock_now, [], test_mode=False
         )
 
     @patch('src.main.write_marketMessages')
