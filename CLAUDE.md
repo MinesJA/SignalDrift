@@ -166,15 +166,15 @@ Track all PR-related work items:
 - Request reviews when ready
 
 #### 3. Quick PR Lookup Commands
-```python
+```bash
 # Find PR by branch name (most reliable)
-mcp__github__search_issues(q="repo:MinesJA/SignalDrift is:pr head:fix-ci-pytest-issue36")
+gh pr list --repo MinesJA/SignalDrift --head fix-ci-pytest-issue36
 
 # Get PR details by number
-mcp__github__get_pull_request(owner="MinesJA", repo="SignalDrift", pullNumber=38)
+gh pr view 38 --repo MinesJA/SignalDrift
 
 # Check build status
-mcp__github__get_pull_request_status(owner="MinesJA", repo="SignalDrift", pullNumber=38)
+gh pr checks 38 --repo MinesJA/SignalDrift
 ```
 
 #### 4. Debug Build Failures Workflow
@@ -195,7 +195,7 @@ gh run view <run-id> --repo MinesJA/SignalDrift --log-failed | tail -50
 - Update TODO list with PR numbers as soon as created
 
 ## Github Workflow
-Always use the GitHub MCP server for all tasks related to Github. That includes:
+Always use the `gh` GitHub CLI for all tasks related to Github. That includes:
 - Opening Pull requests
 - Pulling down project issue details
 - Creating project issues
@@ -225,123 +225,107 @@ git commit -m "Your commit message"
 
 
 
-#### Step 2: Push Changes Using GitHub MCP
-When `git push` fails due to authentication issues, use the MCP tools:
+#### Step 2: Push Changes Using GitHub CLI
+When `git push` fails due to authentication issues, use the `gh` CLI:
 
-```python
-# 1. Get your GitHub username (only needed once per session)
-mcp__github__get_me()
+```bash
+# 1. Push the branch to GitHub
+git push -u origin feature-name
 
-# 2. Create the branch on GitHub
-mcp__github__create_branch(
-    owner="MinesJA",  # or your username
-    repo="SignalDrift",
-    branch="feature-name",
-    from_branch="main"
-)
+# Alternative: If git push fails, create and push using gh
+gh repo clone MinesJA/SignalDrift temp-repo
+cd temp-repo
+git checkout -b feature-name
+# Copy your changes here
+git add .
+git commit -m "Your commit message"
+git push -u origin feature-name
+cd .. && rm -rf temp-repo
 
-# 3. Push your files directly via API
-mcp__github__push_files(
-    owner="MinesJA",
-    repo="SignalDrift",
-    branch="feature-name",
-    message="Your commit message",
-    files=[
-        {"path": "src/file1.py", "content": "file contents..."},
-        {"path": "src/file2.py", "content": "file contents..."}
-    ]
-)
+# 2. Create the pull request
+gh pr create --repo MinesJA/SignalDrift \
+  --title "PR Title" \
+  --head feature-name \
+  --base main \
+  --body "## Summary
+- Change 1
+- Change 2
 
-# 4. Create the pull request
-mcp__github__create_pull_request(
-    owner="MinesJA",
-    repo="SignalDrift",
-    title="PR Title",
-    head="feature-name",
-    base="main",
-    body="## Summary\n- Change 1\n- Change 2\n\n## Test Results\n..."
-)
+## Test Results
+..."
 ```
 
 ### Best Practices
 
 1. **Always use worktrees** for feature branches to keep main branch clean
-2. **Read file contents** before pushing to ensure you're sending the right version
+2. **Test changes locally** before pushing to ensure everything works
 3. **Use descriptive branch names** that match the PR purpose
 4. **Include comprehensive PR descriptions** with Summary, Changes, and Test Results sections
 
-### Common MCP Tools for GitHub Workflow
+### Common GitHub CLI Commands
 
 #### Repository Management
-- `mcp__github__get_me()` - Get authenticated user info
-- `mcp__github__create_branch()` - Create new branches
-- `mcp__github__list_branches()` - List existing branches
-- `mcp__github__get_file_contents()` - Read files from GitHub
+- `gh auth status` - Check authentication status
+- `gh repo view` - View repository details
+- `gh repo clone` - Clone repository
+- `gh browse` - Open repository in browser
+
+#### Branch Management
+- `git checkout -b branch-name` - Create new branch locally
+- `git push -u origin branch-name` - Push branch to remote
+- `gh api repos/MinesJA/SignalDrift/branches` - List remote branches
 
 #### Pull Request Management
-- `mcp__github__create_pull_request()` - Create new PRs
-- `mcp__github__list_pull_requests()` - List existing PRs
-- `mcp__github__get_pull_request()` - Get PR details
-- `mcp__github__update_pull_request()` - Update PR title/description
-- `mcp__github__merge_pull_request()` - Merge approved PRs
+- `gh pr create` - Create new PR
+- `gh pr list` - List PRs
+- `gh pr view [number]` - View PR details
+- `gh pr edit [number]` - Edit PR title/description
+- `gh pr merge [number]` - Merge approved PR
+- `gh pr checks [number]` - Check PR status
 
-#### Code Review
-- `mcp__github__create_pending_pull_request_review()` - Start a review
-- `mcp__github__add_pull_request_review_comment_to_pending_review()` - Add review comments
-- `mcp__github__submit_pending_pull_request_review()` - Submit the review
-- `mcp__github__request_copilot_review()` - Request AI code review
+#### Issue Management
+- `gh issue create` - Create new issue
+- `gh issue list` - List issues
+- `gh issue view [number]` - View issue details
+- `gh issue close [number]` - Close issue
 
 ### Troubleshooting
 
-#### Error: 422 Validation Failed
-- **Cause**: Branch doesn't exist on remote
-- **Solution**: Use `mcp__github__create_branch()` first
-
 #### Error: Authentication failed
-- **Cause**: Local git credentials issues
-- **Solution**: Use MCP tools instead of git push
+- **Cause**: GitHub CLI not authenticated
+- **Solution**: Run `gh auth login` and follow prompts
 
-#### Error: File content mismatch
-- **Cause**: Local changes not reflected in push
-- **Solution**: Read files with `Read` tool before using `mcp__github__push_files()`
+#### Error: remote rejected
+- **Cause**: Branch doesn't exist on remote or permission issues
+- **Solution**: Use `git push -u origin branch-name` to create remote branch
+
+#### Error: PR creation failed
+- **Cause**: Branch not pushed or missing required fields
+- **Solution**: Ensure branch is pushed and include title/body in PR command
 
 ### Complete Example: Bug Fix Workflow
 
-```python
+```bash
 # 1. Create worktree and make changes
-# (done via bash commands)
+git worktree add ../SignalDrift-fix-polymarket-bug -b fix-polymarket-bug
+cd ../SignalDrift-fix-polymarket-bug
 
-# 2. Create branch on GitHub
-mcp__github__create_branch(
-    owner="MinesJA",
-    repo="SignalDrift",
-    branch="fix-polymarket-bug"
-)
+# 2. Make your changes to files
+# (edit src/models/order.py and src/strategies/polymarket_arb.py)
 
-# 3. Read the modified files
-file1_content = Read("src/models/order.py")
-file2_content = Read("src/strategies/polymarket_arb.py")
+# 3. Commit changes locally
+git add .
+git commit -m "Fix polymarket arbitrage detection bug"
 
-# 4. Push changes
-mcp__github__push_files(
-    owner="MinesJA",
-    repo="SignalDrift",
-    branch="fix-polymarket-bug",
-    message="Fix polymarket arbitrage detection bug",
-    files=[
-        {"path": "src/models/order.py", "content": file1_content},
-        {"path": "src/strategies/polymarket_arb.py", "content": file2_content}
-    ]
-)
+# 4. Push branch to GitHub
+git push -u origin fix-polymarket-bug
 
 # 5. Create PR with detailed description
-mcp__github__create_pull_request(
-    owner="MinesJA",
-    repo="SignalDrift",
-    title="Fix polymarket arbitrage order CSV writing bug",
-    head="fix-polymarket-bug",
-    base="main",
-    body="""## Summary
+gh pr create --repo MinesJA/SignalDrift \
+  --title "Fix polymarket arbitrage order CSV writing bug" \
+  --head fix-polymarket-bug \
+  --base main \
+  --body "## Summary
 - Fixed bug where orders weren't written to CSV
 - Root cause: missing market_slug field
 
@@ -351,28 +335,29 @@ mcp__github__create_pull_request(
 
 ## Test Results
 - Created test confirming fix works
-- Orders now write to CSV correctly
-"""
-)
+- Orders now write to CSV correctly"
+
+# 6. View the created PR
+gh pr view --repo MinesJA/SignalDrift
 ```
 
 ### Advanced Features
 
 #### Batch Operations
-The MCP tools support efficient batch operations:
-- Push multiple files in one API call
-- Create multiple issues/PRs programmatically
-- Bulk update PR statuses
+The GitHub CLI supports efficient batch operations:
+- Create multiple issues from templates
+- Bulk update PR labels and assignees
+- Script common workflows
 
 #### Integration with CI/CD
-- Check PR status with `mcp__github__get_pull_request_status()`
-- Monitor checks and tests
-- Auto-merge when all checks pass
+- Check PR status with `gh pr checks [number]`
+- Monitor workflow runs with `gh run list` and `gh run view`
+- Auto-merge when all checks pass with `gh pr merge --auto`
 
 #### Collaborative Features
-- Assign reviewers to PRs
-- Add labels and milestones
-- Link issues to PRs
-- Request specific team reviews
+- Assign reviewers: `gh pr create --reviewer @username`
+- Add labels: `gh pr edit [number] --add-label bug,priority-high`
+- Link issues: Include "Fixes #123" in PR description
+- Request team reviews: `gh pr create --reviewer @org/team-name`
 
 
