@@ -3,7 +3,7 @@
 ## Files Renamed
 
 | Original Name | New Name |
-|---------------|----------|
+|---------------|---------|
 | `order_book_mlb-cle-sf-2025-06-17.csv` | `20250617-mlb-cle-sf-2025-06-17-order_book.csv` |
 | `order_book_mlb-mil-chc-2025-06-17.csv` | `20250617-mlb-mil-chc-2025-06-17-order_book.csv` |
 | `order_book_mlb-sd-lad-2025-06-17.csv` | `20250617-mlb-sd-lad-2025-06-17-order_book.csv` |
