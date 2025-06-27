@@ -124,6 +124,72 @@ The project uses `.env` files for configuration. Key variables include:
 
 ## Git workflow
 
+### Branch Naming Conventions
+Always use descriptive branch names that follow these patterns to ensure easy association with issues and PRs:
+
+#### Standard Patterns
+- **Bug fixes**: `fix-{description}-issue{number}` (e.g., `fix-ci-pytest-issue36`)
+- **Features**: `feature-{description}-issue{number}` (e.g., `feature-order-placement-issue12`)
+- **Refactoring**: `refactor-{component}-issue{number}` (e.g., `refactor-market-dao-issue45`)
+- **Documentation**: `docs-{description}-issue{number}` (e.g., `docs-api-guide-issue8`)
+- **Testing**: `test-{component}-issue{number}` (e.g., `test-polymarket-service-issue22`)
+- **Data cleanup**: `data-cleanup-{description}-issue{number}` (e.g., `data-cleanup-c-issue23`)
+
+#### Key Rules
+1. Always include the issue number at the end when working on a specific issue
+2. Use hyphens to separate words (no underscores)
+3. Keep names concise but descriptive
+4. Match the branch type to the primary purpose of the change
+5. For PRs without issues, use descriptive names: `fix-{description}` (e.g., `fix-import-error`)
+
+### PR Tracking Best Practices
+
+#### 1. Track PR Information Immediately After Creation
+When creating a PR, always document these details in your TODO list:
+```
+PR #38: Fix CI/CD pytest failures
+- Branch: fix-ci-pytest-issue36
+- Status: Open
+- Build: Failed
+- Last Error: SyntaxError in market_dao.py:18
+- GitHub Actions Run: 15912229471
+```
+
+#### 2. Use Structured TODO Items for PR Tasks
+Track all PR-related work items:
+- Fix specific errors found in CI/CD
+- Update PR after changes
+- Monitor build status
+- Request reviews when ready
+
+#### 3. Quick PR Lookup Commands
+```python
+# Find PR by branch name (most reliable)
+mcp__github__search_issues(q="repo:MinesJA/SignalDrift is:pr head:fix-ci-pytest-issue36")
+
+# Get PR details by number
+mcp__github__get_pull_request(owner="MinesJA", repo="SignalDrift", pullNumber=38)
+
+# Check build status
+mcp__github__get_pull_request_status(owner="MinesJA", repo="SignalDrift", pullNumber=38)
+```
+
+#### 4. Debug Build Failures Workflow
+```bash
+# 1. List recent workflow runs
+gh run list --repo MinesJA/SignalDrift --limit 5
+
+# 2. View specific run details
+gh run view <run-id> --repo MinesJA/SignalDrift
+
+# 3. Get failure logs
+gh run view <run-id> --repo MinesJA/SignalDrift --log-failed | tail -50
+```
+
+#### 5. Associate Local Work with Remote PRs
+- Branch name should match PR head branch
+- Include PR number in commit messages: "Fix error (PR #38)"
+- Update TODO list with PR numbers as soon as created
 
 ## Github Workflow
 Always use the GitHub MCP server for all tasks related to Github. That includes:
@@ -305,4 +371,5 @@ The MCP tools support efficient batch operations:
 - Add labels and milestones
 - Link issues to PRs
 - Request specific team reviews
+
 
