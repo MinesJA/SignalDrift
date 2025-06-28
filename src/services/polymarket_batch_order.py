@@ -1,63 +1,105 @@
 from py_clob_client.client import ClobClient
-from py_clob_client.clob_types import OrderArgs, OrderType, PostOrdersArgs
-from py_clob_client.order_builder.constants import BUY
+from py_clob_client.clob_types import OrderArgs, OrderType, PostOrdersArgs, PartialCreateOrderOptions
+from py_clob_client.order_builder.constants import BUY, SELL
+from typing import List, Dict, Any, Optional
+import logging
+from config import config
+from models.order import Order, OrderType as InternalOrderType
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class PolymarketOrderService:
     """
-    Provides ability to submit orders to Polymarket
+    Provides ability to submit orders to Polymarket using the official py-clob-client.
 
-    Attributes:
-        request_id: ID used to connect different fetched results
+    Handles conversion from internal Order objects to Polymarket API calls.
+    Supports batch order submission with automatic batching for >5 orders.
     """
 
     def __init__(self):
-        self.client =
+        """Initialize the Polymarket order service with configuration from environment variables."""
+        self.host = config.POLYMARKET_CLOB_API
+        self.chain_id = 137  # Polygon chain ID
+        self.private_key = config.POLYMARKET_PRIVATE_KEY
+        self.proxy_address = config.POLYMARKET_PROXY_ADDRESS
+        
+        if not self.private_key or not self.proxy_address:
+            raise ValueError("POLYMARKET_PRIVATE_KEY and POLYMARKET_PROXY_ADDRESS environment variables must be set")
+        
+        # Initialize client with browser wallet signature type (2)
+        self.client = ClobClient(
+            host=self.host,
+            key=self.private_key,
+            chain_id=self.chain_id,
+            signature_type=2,
+            funder=self.proxy_address
+        )
+        
+        # Set up API credentials
+        api_creds = self.client.create_or_derive_api_creds()
+        self.client.set_api_creds(api_creds)
+        
+        logger.info("PolymarketOrderService initialized successfully")
 
 
 
-    def place_single_order(self, order_data: Dict[str, Any], order_type: str = "GTC") -> Optional[Dict[str, Any]]:
+    def _convert_order_to_polymarket(self, order: Order) -> OrderArgs:
+        """
+        Convert internal Order object to Polymarket OrderArgs.
+        
+        Args:
+            order: Internal Order object
+            
+        Returns:
+            OrderArgs object for Polymarket API
+        """
+        # Convert internal order type to Polymarket side
+        if order.order_type == InternalOrderType.LIMIT_BUY:
+            side = BUY
+        elif order.order_type == InternalOrderType.LIMIT_SELL:
+            side = SELL
+        else:
+            raise ValueError(f"Unsupported order type: {order.order_type}")
+        
+        return OrderArgs(
+            price=order.price,
+            size=order.size,
+            side=side,
+            token_id=str(order.asset_id)
+        )
+    
+    def place_single_order(self, order: Order, neg_risk: bool = True, order_type: OrderType = OrderType.GTC) -> Optional[Dict[str, Any]]:
         """
         Place a single order on Polymarket.
 
         Args:
-            order_data: Dictionary containing order details:
-                - order: Signed order object with all required fields
-                - owner: API key of order owner
-            order_type: Order type ("FOK", "GTC", "GTD", "FAK")
+            order: Internal Order object
+            neg_risk: Whether this is a negative risk market (binary yes/no)
+            order_type: Polymarket OrderType (GTC, FOK, etc.)
 
         Returns:
-            Dictionary containing:
-            - success: Boolean indicating success
-            - orderId: Unique order identifier
-            - orderHashes: Settlement transaction hashes
-            - errorMsg: Error message if applicable
+            Dictionary containing order execution result
         """
         try:
-            url = f"{self.clob_api_base}/order"
-
-            payload = {
-                "order": order_data["order"],
-                "owner": order_data["owner"],
-                "orderType": order_type
-            }
-
-            headers = {**self.headers, "Content-Type": "application/json"}
-
-            response = requests.post(url, json=payload, headers=headers)
-            response.raise_for_status()
-
-            result = response.json()
-
-            if result.get("success"):
-                logger.info(f"Successfully placed order: {result.get('orderId')}")
-            else:
-                logger.error(f"Order placement failed: {result.get('errorMsg')}")
-
+            # Convert internal order to Polymarket format
+            order_args = self._convert_order_to_polymarket(order)
+            
+            # Create and sign the order
+            signed_order = self.client.create_order(
+                order_args, 
+                PartialCreateOrderOptions(neg_risk=neg_risk)
+            )
+            
+            # Submit the order
+            result = self.client.post_order(signed_order, order_type)
+            
+            logger.info(f"Successfully placed order for {order.market_slug}: {result}")
             return result
 
         except Exception as e:
-            logger.error(f"Error placing single order: {e}")
+            logger.error(f"Error placing single order for {order.market_slug}: {e}")
             return {
                 "success": False,
                 "errorMsg": str(e),
@@ -65,114 +107,122 @@ class PolymarketOrderService:
                 "orderHashes": None
             }
 
-    def place_multiple_orders(self, orders_data: List[Dict[str, Any]], order_type: str = "KOF") -> Optional[Dict[str, Any]]:
+    def place_multiple_orders(self, orders: List[Order], neg_risk: bool = True, order_type: OrderType = OrderType.GTC) -> List[Dict[str, Any]]:
         """
-        Place multiple orders in a batch on Polymarket.
+        Place multiple orders in batches on Polymarket.
 
         Args:
-            orders_data: List of order dictionaries, each containing:
-                - order: Signed order object with all required fields
-                - owner: API key of order owner
-            order_type: Order type for all orders ("FOK", "GTC", "GTD", "FAK")
+            orders: List of internal Order objects
+            neg_risk: Whether this is a negative risk market (binary yes/no)
+            order_type: Polymarket OrderType (GTC, FOK, etc.)
 
         Returns:
-            Dictionary containing:
-            - success: Boolean indicating success
-            - orderId: ID of the batch order
-            - orderHashes: Settlement transaction hashes
-            - errorMsg: Error message if applicable
+            List of results for each batch (max 5 orders per batch)
 
         Note:
-            Maximum of 5 orders per batch request
+            Automatically splits orders into batches of 5 (Polymarket's limit)
+        """
+        if not orders:
+            return []
+        
+        results = []
+        
+        # Split orders into batches of 5
+        for i in range(0, len(orders), 5):
+            batch = orders[i:i+5]
+            batch_result = self._place_order_batch(batch, neg_risk, order_type)
+            results.append(batch_result)
+        
+        return results
+    
+    def _place_order_batch(self, orders: List[Order], neg_risk: bool, order_type: OrderType) -> Dict[str, Any]:
+        """
+        Place a single batch of orders (max 5).
+        
+        Args:
+            orders: List of Order objects (max 5)
+            neg_risk: Whether this is a negative risk market
+            order_type: Polymarket OrderType
+            
+        Returns:
+            Batch execution result
         """
         try:
-            if len(orders_data) > 5:
+            if len(orders) > 5:
                 error_msg = "Maximum of 5 orders per batch request"
                 logger.error(error_msg)
                 return {
                     "success": False,
                     "errorMsg": error_msg,
-                    "orderId": None,
-                    "orderHashes": None
+                    "orders_processed": 0,
+                    "results": []
                 }
 
-            url = f"{self.clob_api_base}/orders"
+            # Convert orders to PostOrdersArgs
+            post_orders_args = []
+            for order in orders:
+                order_args = self._convert_order_to_polymarket(order)
+                signed_order = self.client.create_order(
+                    order_args, 
+                    PartialCreateOrderOptions(neg_risk=neg_risk)
+                )
+                post_orders_args.append(PostOrdersArgs(
+                    order=signed_order,
+                    orderType=order_type
+                ))
 
-            # Format orders for batch request
-            formatted_orders = []
-            for order_data in orders_data:
-                formatted_orders.append({
-                    "order": order_data["order"],
-                    "owner": order_data["owner"],
-                    "orderType": order_type
-                })
-
-            headers = {**self.headers, "Content-Type": "application/json"}
-
-            response = requests.post(url, json=formatted_orders, headers=headers)
-            response.raise_for_status()
-
-            result = response.json()
-
-            if result.get("success"):
-                logger.info(f"Successfully placed batch order: {result.get('orderId')}")
-            else:
-                logger.error(f"Batch order placement failed: {result.get('errorMsg')}")
-
-            return result
+            # Submit batch
+            result = self.client.post_orders(post_orders_args)
+            
+            logger.info(f"Successfully placed batch of {len(orders)} orders: {result}")
+            return {
+                "success": True,
+                "orders_processed": len(orders),
+                "results": result,
+                "errorMsg": None
+            }
 
         except Exception as e:
-            logger.error(f"Error placing multiple orders: {e}")
+            logger.error(f"Error placing order batch: {e}")
             return {
                 "success": False,
                 "errorMsg": str(e),
-                "orderId": None,
-                "orderHashes": None
+                "orders_processed": 0,
+                "results": []
             }
 
-
-host: str = "https://clob.polymarket.com"
-key: str = "" ##This is your Private Key. Export from https://reveal.magic.link/polymarket or from your Web3 Application
-chain_id: int = 137 #No need to adjust this
-POLYMARKET_PROXY_ADDRESS: str = '' #This is the address you deposit/send USDC to to FUND your Polymarket account.
-
-#Select from the following 3 initialization options to matches your login method, and remove any unused lines so only one client is initialized.
-
-
-### Initialization of a client using a Polymarket Proxy associated with an Email/Magic account. If you login with your email use this example.
-client = ClobClient(host, key=key, chain_id=chain_id, signature_type=1, funder=POLYMARKET_PROXY_ADDRESS)
-
-### Initialization of a client using a Polymarket Proxy associated with a Browser Wallet(Metamask, Coinbase Wallet, etc)
-client = ClobClient(host, key=key, chain_id=chain_id, signature_type=2, funder=POLYMARKET_PROXY_ADDRESS)
-
-### Initialization of a client that trades directly from an EOA.
-client = ClobClient(host, key=key, chain_id=chain_id)
-
-## Create and sign a limit order buying 100 YES tokens for 0.50c each
-#Refer to the Markets API documentation to locate a tokenID: https://docs.polymarket.com/developers/gamma-markets-api/get-markets
-
-client.set_api_creds(client.create_or_derive_api_creds())
-
-resp = client.post_orders([
-    PostOrdersArgs(
-        # Create and sign a limit order buying 100 YES tokens for 0.50 each
-        order=client.create_order(OrderArgs(
-            price=0.01,
-            size=5,
-            side=BUY,
-            token_id="88613172803544318200496156596909968959424174365708473463931555296257475886634",
-        )),
-        orderType=OrderType.GTC,  # Good 'Til Cancelled
-    ),
-    PostOrdersArgs(
-        # Create and sign a limit order selling 200 NO tokens for 0.25 each
-        order=client.create_order(OrderArgs(
-            price=0.01,
-            size=5,
-            side=BUY,
-            token_id="93025177978745967226369398316375153283719303181694312089956059680730874301533",
-        )),
-        orderType=OrderType.GTC,  # Good 'Til Cancelled
-    )
-])
-print(resp)
+    def execute_orders_from_list(self, orders: List[Order], neg_risk: bool = True) -> Dict[str, Any]:
+        """
+        Execute a list of Order objects, handling batching automatically.
+        
+        Args:
+            orders: List of Order objects to execute
+            neg_risk: Whether this is a negative risk market (binary yes/no)
+            
+        Returns:
+            Summary of execution results
+        """
+        if not orders:
+            return {
+                "success": True,
+                "total_orders": 0,
+                "batches_processed": 0,
+                "results": []
+            }
+        
+        logger.info(f"Executing {len(orders)} orders in batches of 5")
+        
+        results = self.place_multiple_orders(orders, neg_risk=neg_risk)
+        
+        # Summarize results
+        total_success = sum(1 for r in results if r.get("success", False))
+        total_orders = len(orders)
+        
+        return {
+            "success": total_success == len(results),
+            "total_orders": total_orders,
+            "batches_processed": len(results),
+            "successful_batches": total_success,
+            "failed_batches": len(results) - total_success,
+            "results": results
+        }
