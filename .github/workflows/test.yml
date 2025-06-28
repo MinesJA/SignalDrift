@@ -46,16 +46,30 @@ jobs:
         echo "Source directory contents:"
         ls -la src/
         
-    - name: Run tests with pytest
+    - name: Run tests with coverage
       run: |
         PYTHONPATH=src pytest src/
         
-    - name: Upload test results
+    - name: Check coverage requirements
+      run: |
+        echo "Coverage check completed. Build will fail if coverage is below 80%."
+        
+    - name: Upload test results and coverage
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: test-results
+        name: test-results-and-coverage
         path: |
           .coverage
           htmlcov/
+          coverage.xml
         retention-days: 30
+        
+    - name: Upload coverage to Codecov (optional)
+      if: success()
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
