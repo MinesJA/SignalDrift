@@ -1,3 +1,0 @@
-market_slug,market_id,asset_id,outcome_name,executed_at_timestamp,game_start_timestamp
-test-market-slug,12345,token-yes,YES,1751146081353,
-test-market-slug,12345,token-no,NO,1751146081353,
