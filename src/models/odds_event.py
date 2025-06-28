@@ -1,9 +1,9 @@
-from datetime import datetime
-from typing import Optional, Dict, Any
-from dataclasses import dataclass, field
-from enum import Enum
-from uuid import UUID
 import json
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum
+from typing import Any, Optional
+from uuid import UUID
 
 
 class OddsSource(Enum):
@@ -47,14 +47,14 @@ class OddsEvent:
     odds_type: OddsType
     question: str
     updated_at: Optional[datetime] = None
-    meta: Dict[str, Any] = field(default_factory=dict)
+    meta: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self):
         """Validate impl_prob is between 0 and 1"""
         if not 0 <= self.impl_prob <= 1:
             raise ValueError(f"Implied probability must be between 0 and 1, got {self.impl_prob}")
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary representation"""
         return {
             'request_id': str(self.request_id),
@@ -74,7 +74,7 @@ class OddsEvent:
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'OddsEvent':
+    def from_dict(cls, data: dict[str, Any]) -> 'OddsEvent':
         """Create instance from dictionary"""
         timestamp = datetime.fromisoformat(data['timestamp'])
         updated_at = None

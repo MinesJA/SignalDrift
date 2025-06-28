@@ -1,7 +1,7 @@
+import json
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional, Dict, Any
-import json
+from typing import Any, Optional
 
 
 class EventType(Enum):
@@ -40,7 +40,7 @@ class MarketEvent:
     timestamp: str = ""
     hash: str = ""
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert MarketEvent to dictionary"""
         return {
             'market_slug': self.market_slug,
@@ -59,7 +59,7 @@ class MarketEvent:
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'MarketEvent':
+    def from_dict(cls, data: dict[str, Any]) -> 'MarketEvent':
         """Create MarketEvent from dictionary"""
         return cls(
             market_slug=data.get('market_slug'),

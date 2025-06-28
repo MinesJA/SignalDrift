@@ -1,8 +1,9 @@
-from typing import Dict, Any, List
-from models import SyntheticOrderBook, Order, OrderType, SyntheticOrder
 from datetime import datetime
 
-def calculate_orders(a_book: SyntheticOrderBook, b_book: SyntheticOrderBook) -> List[Order]:
+from models import Order, OrderType, SyntheticOrder, SyntheticOrderBook
+
+
+def calculate_orders(a_book: SyntheticOrderBook, b_book: SyntheticOrderBook) -> list[Order]:
     a_orders = sorted(a_book.orders, key=lambda order: order.price)
     b_orders = sorted(b_book.orders, key=lambda order: order.price)
 
@@ -10,7 +11,7 @@ def calculate_orders(a_book: SyntheticOrderBook, b_book: SyntheticOrderBook) -> 
     market_slug = a_book.market_slug  # Both books should have the same market_slug
     return _recurs_build_orders(market_slug, a_book.asset_id, a_orders, b_book.asset_id, b_orders, timestamp)
 
-def _recurs_build_orders(market_slug: str, a_assetId: str, a_orders: List[SyntheticOrder], b_assetId: str, b_orders: List[SyntheticOrder], timestamp) -> List[Order]:
+def _recurs_build_orders(market_slug: str, a_assetId: str, a_orders: list[SyntheticOrder], b_assetId: str, b_orders: list[SyntheticOrder], timestamp) -> list[Order]:
     orders = []
 
     if a_orders and b_orders:

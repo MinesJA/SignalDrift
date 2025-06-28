@@ -1,5 +1,7 @@
-from config import config
 from py_clob_client.client import ClobClient
+
+from config import config
+
 
 class ConnectionError(Exception):
     """Error connecting with client"""
@@ -25,7 +27,7 @@ class PolymarketClobClient:
 
         if not address or not key or not address:
             # TODO: Rename or look for generic exception?
-            raise MissingParam(f"Missing POLYMARKET_CLOB_API or POLYMARKET_PRIVATE_KEY or POLYMARKET_PROXY_ADDRESS")
+            raise MissingParam("Missing POLYMARKET_CLOB_API or POLYMARKET_PRIVATE_KEY or POLYMARKET_PROXY_ADDRESS")
 
         client = ClobClient(host, key=key, chain_id=chain_id, signature_type=signature_type, funder=address)
 

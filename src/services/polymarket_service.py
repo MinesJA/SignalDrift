@@ -1,10 +1,11 @@
-import requests
 import json
-from datetime import datetime
-from typing import Dict, Optional, Any, List, Callable
 import logging
-import asyncio
+from datetime import datetime
+from typing import Any, Callable, Optional
+
+import requests
 import websockets
+
 from config import config
 
 logging.basicConfig(level=logging.INFO)
@@ -33,7 +34,7 @@ class PolymarketService:
         if config.POLYMARKET_PRIVY_ID_TOKEN:
             self.headers['privy-id-token'] = config.POLYMARKET_PRIVY_ID_TOKEN
 
-    def fetch_current_price(self, slug: str) -> Optional[Dict[str, Any]]:
+    def fetch_current_price(self, slug: str) -> Optional[dict[str, Any]]:
         """
         Fetch current market price for two teams given a slug.
 
@@ -86,7 +87,7 @@ class PolymarketService:
             logger.error(f"Error fetching prices for {slug}: {e}")
             return None
 
-    def get_market_by_slug(self, market_slug: str) -> Optional[Dict[str, Any]]:
+    def get_market_by_slug(self, market_slug: str) -> Optional[dict[str, Any]]:
         """Get market information using the Gamma API."""
         try:
             url = f"{self.gamma_api_base}/markets"
@@ -110,7 +111,7 @@ class PolymarketService:
             logger.error(f"Error fetching market data: {e}")
             return None
 
-    def place_single_order(self, order_data: Dict[str, Any], order_type: str = "GTC") -> Optional[Dict[str, Any]]:
+    def place_single_order(self, order_data: dict[str, Any], order_type: str = "GTC") -> Optional[dict[str, Any]]:
         """
         Place a single order on Polymarket.
 
@@ -159,7 +160,7 @@ class PolymarketService:
                 "orderHashes": None
             }
 
-    def place_multiple_orders(self, orders_data: List[Dict[str, Any]], order_type: str = "GTC") -> Optional[Dict[str, Any]]:
+    def place_multiple_orders(self, orders_data: list[dict[str, Any]], order_type: str = "GTC") -> Optional[dict[str, Any]]:
         """
         Place multiple orders in a batch on Polymarket.
 
@@ -247,7 +248,7 @@ class PolymarketService:
         self.subscribed_assets.clear()
         logger.info("Disconnected from Polymarket WebSocket")
 
-    async def subscribe_to_market_channel(self, asset_ids: List[str]) -> bool:
+    async def subscribe_to_market_channel(self, asset_ids: list[str]) -> bool:
         """Subscribe to market data updates for given asset IDs."""
         if not self.is_connected or not self.websocket:
             logger.error("WebSocket not connected")
@@ -280,7 +281,7 @@ class PolymarketService:
         if event_type not in self.event_handlers:
             logger.warning(f"Unknown event type: {event_type}")
             return
-        
+
         self.event_handlers[event_type].append(handler)
         logger.info(f"Added event handler for {event_type}")
 
@@ -295,7 +296,7 @@ class PolymarketService:
         try:
             data = json.loads(message)
             event_type = data.get("event_type")
-            
+
             if event_type and event_type in self.event_handlers:
                 for handler in self.event_handlers[event_type]:
                     try:
@@ -320,7 +321,7 @@ class PolymarketService:
             logger.error(f"Error consuming WebSocket events: {e}")
             self.is_connected = False
 
-    async def subscribe_and_start_consuming(self, asset_ids: List[str]) -> bool:
+    async def subscribe_and_start_consuming(self, asset_ids: list[str]) -> bool:
         """Connect, subscribe to assets, and start consuming events."""
         # Connect to WebSocket
         if not await self.connect_websocket():

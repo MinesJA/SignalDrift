@@ -31,6 +31,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         
+    - name: Run linter
+      run: |
+        ruff check src/
+        
     - name: Debug environment
       run: |
         echo "Python version:"

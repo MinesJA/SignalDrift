@@ -1,7 +1,9 @@
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, call
-from src.main import get_order_message_register, OrdersStore, OrderBookStore
-from src.models import SyntheticOrderBook, Order
+
+from src.main import OrderBookStore, OrdersStore, get_order_message_register
+from src.models import Order, SyntheticOrderBook
 
 
 class TestGetOrderMessageRegister:

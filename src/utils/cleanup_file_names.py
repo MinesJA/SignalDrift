@@ -9,14 +9,11 @@ File type mappings:
 - Replace underscores with hyphens in file types
 """
 
-import os
-import sys
 import argparse
 import logging
-from pathlib import Path
 import re
-from datetime import datetime
-import shutil
+import sys
+from pathlib import Path
 
 # Setup logging
 logging.basicConfig(

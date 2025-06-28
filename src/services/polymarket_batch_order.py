@@ -1,6 +1,12 @@
+import logging
+from typing import Any, Dict, List, Optional
+
+import requests
 from py_clob_client.client import ClobClient
 from py_clob_client.clob_types import OrderArgs, OrderType, PostOrdersArgs
 from py_clob_client.order_builder.constants import BUY
+
+logger = logging.getLogger(__name__)
 
 
 class PolymarketOrderService:
@@ -12,7 +18,7 @@ class PolymarketOrderService:
     """
 
     def __init__(self):
-        self.client =
+        self.client = None  # TODO: Initialize client properly
 
 
 

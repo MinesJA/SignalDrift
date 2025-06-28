@@ -1,22 +1,22 @@
-from typing import Dict, Any, List
 from collections import namedtuple
 from datetime import datetime
+from typing import Any
 
 SyntheticOrder = namedtuple('synthetic_order', ['side', 'price', 'size', 'timestamp'])
 
 class SyntheticOrderBook:
     def __init__(self, market_slug, market_id, outcome_name: str, asset_id: str):
-        self.orders_lookup: Dict[str, SyntheticOrder] = {}
+        self.orders_lookup: dict[str, SyntheticOrder] = {}
         self.market_slug = market_slug
         self.market_id = market_id
         self.outcome_name = outcome_name
         self.asset_id = asset_id
 
     @property
-    def orders(self) -> List[SyntheticOrder]:
+    def orders(self) -> list[SyntheticOrder]:
         return list(self.orders_lookup.values())
 
-    def add_entries(self, orders: List[Dict[str, Any]], timestamp):
+    def add_entries(self, orders: list[dict[str, Any]], timestamp):
         for order in orders:
             if order["side"] == "SELL":
                 size = float(order["size"])
@@ -30,7 +30,7 @@ class SyntheticOrderBook:
                         timestamp=timestamp
                     )
 
-    def replace_entries(self, orders: List[Dict[str, Any]], timestamp):
+    def replace_entries(self, orders: list[dict[str, Any]], timestamp):
         self.orders_lookup = {
             order["price"]: SyntheticOrder(
                 side="ask",
@@ -42,7 +42,7 @@ class SyntheticOrderBook:
             if float(order["size"]) > 0
         }
 
-    def to_orders_dicts(self) -> List[Dict[str, Any]]:
+    def to_orders_dicts(self) -> list[dict[str, Any]]:
         orders = sorted(self.orders, key=lambda order: order.price)
         return [{ **order._asdict(),
                   "market_slug": self.market_slug,
