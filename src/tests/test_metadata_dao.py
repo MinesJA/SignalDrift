@@ -9,6 +9,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from daos.metadata_dao import write_metadata, _get_file_path, FIELD_NAMES
+from utils.datetime_utils import datetime_to_epoch
 
 
 class TestMetadataDAO:
@@ -101,7 +102,7 @@ class TestMetadataDAO:
             assert rows[0]['market_id'] == '12345'
             assert rows[0]['asset_id'] == '1'
             assert rows[0]['outcome_name'] == 'Team A'
-            assert rows[0]['executed_at_timestamp'] == str(int(executed_at.timestamp()))
+            assert rows[0]['executed_at_timestamp'] == str(datetime_to_epoch(executed_at))
             # Check that game_start_timestamp is empty (set to None for now)
             assert rows[0]['game_start_timestamp'] == ''
             
@@ -177,8 +178,8 @@ class TestMetadataDAO:
             assert len(rows) == 4
             
             # Check different executed_at_timestamp values
-            assert rows[0]['executed_at_timestamp'] == str(int(executed_at1.timestamp()))
-            assert rows[2]['executed_at_timestamp'] == str(int(executed_at2.timestamp()))
+            assert rows[0]['executed_at_timestamp'] == str(datetime_to_epoch(executed_at1))
+            assert rows[2]['executed_at_timestamp'] == str(datetime_to_epoch(executed_at2))
         
         # Clean up
         if os.path.exists(file_path):

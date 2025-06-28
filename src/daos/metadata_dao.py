@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Dict, Any, List
 import logging
 from models.synthetic_orderbook import SyntheticOrderBook
+from utils.datetime_utils import datetime_to_epoch
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +49,7 @@ def write_metadata(
         _setup_csv(file_path)
         
         # Convert executed_at to epoch timestamp
-        executed_at_timestamp = int(executed_at.timestamp())
+        executed_at_timestamp = datetime_to_epoch(executed_at)
         
         # Set game_start_timestamp to None for now
         game_start_timestamp = None
