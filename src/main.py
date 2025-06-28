@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 from strategies import calculate_orders
 from services import PolymarketService, PolymarketMarketEventsService
 from models import EventType, SyntheticOrderBook, OrderBookStore, Order
-from daos import write_marketMessages, write_orderBookStore, write_orders
+from daos import write_marketMessages, write_orderBookStore, write_orders, write_metadata
 from utils.csv_message_processor import CSVMessageProcessor
 import traceback
 
@@ -82,6 +82,16 @@ def run_market_connection(market_slug: str, csv_file_path: Optional[str] = None)
             book_store = OrderBookStore(market_slug, market_metadata['id'], books)
             order_store = OrdersStore()
             message_handler = get_order_message_register(book_store, order_store, test_mode=test_mode)
+            
+            # Write metadata at the start of the run (only for live system, not CSV mode)
+            if not test_mode:
+                executed_at = datetime.now()
+                write_metadata(
+                    market_slug=market_slug,
+                    market_id=market_metadata['id'],
+                    books=books,
+                    executed_at=executed_at
+                )
 
             if test_mode:
                 # Run from CSV file
