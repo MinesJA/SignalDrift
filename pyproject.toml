@@ -1,0 +1,82 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "signaldrift"
+version = "0.1.0"
+description = "Sports betting arbitrage and market-making system"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "SignalDrift Team", email = "team@signaldrift.com"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = [
+    "--cov=src",
+    "--cov-report=html",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+    "--cov-fail-under=80",
+    "-v"
+]
+testpaths = [
+    "src/tests",
+]
+python_paths = [
+    "src"
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/env/*",
+    "setup.py",
+    "*/site-packages/*"
+]
+
+[tool.coverage.report]
+# Regexes for lines to exclude from consideration
+exclude_lines = [
+    # Have to re-enable the standard pragma
+    "pragma: no cover",
+    
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self\\.debug",
+    
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+    
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+    
+    # Don't complain about abstract methods, they aren't run:
+    "@(abc\\.)?abstractmethod",
+]
+
+# Minimum coverage percentage (configurable threshold)
+fail_under = 80
+show_missing = true
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.xml]
+output = "coverage.xml"
