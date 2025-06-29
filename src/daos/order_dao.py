@@ -8,7 +8,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-FIELD_NAMES = ['market_slug', 'asset_id', 'price', 'size', 'timestamp']
+FIELD_NAMES = ['asset_id', 'market_slug', 'order_type', 'price', 'size', 'timestamp']
 
 def write_orders(market_slug: str, datetime: datetime, orders: List[Order], test_mode: bool = False):
 
@@ -17,6 +17,17 @@ def write_orders(market_slug: str, datetime: datetime, orders: List[Order], test
     csv_filename = os.path.join('data', f"{datetime.strftime('%Y%m%d')}_{market_slug}_orders{test_suffix}.csv")
 
     rows = [order.asdict() for order in orders]
+    
+    # Validate that Order attributes match expected field names
+    if rows:
+        order_fields = set(rows[0].keys())
+        expected_fields = set(FIELD_NAMES)
+        if order_fields != expected_fields:
+            missing_fields = expected_fields - order_fields
+            extra_fields = order_fields - expected_fields
+            error_msg = f"Order fields mismatch. Missing: {missing_fields}, Extra: {extra_fields}"
+            logger.error(error_msg)
+            raise ValueError(error_msg)
 
     _write_to_csv(csv_filename, rows)
 
