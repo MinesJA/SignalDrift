@@ -9,10 +9,13 @@ from abc import ABC, abstractmethod
 
 
 class EventType(Enum):
+    """Types of market events emitted by Polymarket websocket."""
+    
     BOOK = "book"
-    """ TODO: Add description from polymarket docs"""
+    """Full order book snapshot - sent on initial subscription and after trades"""
+    
     PRICE_CHANGE = "price_change"
-    """ TODO: Add description from polymarket docs"""
+    """Incremental order book update - sent when orders are placed, cancelled, or modified"""
 
 @dataclass
 class MarketEvent(ABC):
@@ -37,6 +40,18 @@ class MarketEvent(ABC):
 
     @classmethod
     def validate_event_type(cls, event_type: Optional[Any]) -> EventType:
+        """
+        Validate and convert event type to EventType enum.
+        
+        Args:
+            event_type: String value that should be 'book' or 'price_change'
+            
+        Returns:
+            EventType enum value
+            
+        Raises:
+            ValueError: If event_type is None or not a valid EventType
+        """
         if not event_type:
             raise ValueError("event_type cannot not be None")
 
@@ -44,6 +59,18 @@ class MarketEvent(ABC):
 
     @classmethod
     def validate_market_slug(cls, market_slug: Optional[Any]) -> str:
+        """
+        Validate market slug is not None.
+        
+        Args:
+            market_slug: Market identifier string
+            
+        Returns:
+            Validated market_slug string
+            
+        Raises:
+            ValueError: If market_slug is None
+        """
         if not market_slug:
             raise ValueError("market_slug cannot not be None")
 
@@ -51,6 +78,7 @@ class MarketEvent(ABC):
 
     @classmethod
     def validate_market_id(cls, market_id: Optional[Any]) -> int:
+        """Validate market_id is not None and convert to int."""
         if not market_id:
             raise ValueError("market_id cannot not be None")
 
@@ -58,6 +86,7 @@ class MarketEvent(ABC):
 
     @classmethod
     def validate_market(cls, market: Optional[Any]) -> str:
+        """Validate market is not None."""
         if not market:
             raise ValueError("market cannot not be None")
 
@@ -65,6 +94,7 @@ class MarketEvent(ABC):
 
     @classmethod
     def validate_asset_id(cls, asset_id: Optional[Any]) -> int:
+        """Validate asset_id is not None and convert to int."""
         if not asset_id:
             raise ValueError("asset_id cannot not be None")
 
@@ -72,6 +102,7 @@ class MarketEvent(ABC):
 
     @classmethod
     def validate_outcome_name(cls, outcome_name: Optional[Any]) -> str:
+        """Validate outcome_name is not None."""
         if not outcome_name:
             raise ValueError("outcome_name cannot not be None")
 
@@ -79,6 +110,7 @@ class MarketEvent(ABC):
 
     @classmethod
     def validate_timestamp(cls, timestamp: Optional[Any]) -> int:
+        """Validate timestamp is not None and convert to int."""
         if not timestamp:
             raise ValueError("timestamp cannot not be None")
 
@@ -86,6 +118,7 @@ class MarketEvent(ABC):
 
     @classmethod
     def validate_hash(cls, hash: Optional[Any]) -> str:
+        """Validate hash is not None."""
         if not hash:
             raise ValueError("hash cannot not be None")
 
@@ -93,10 +126,27 @@ class MarketEvent(ABC):
 
     @abstractmethod
     def asdict(self) -> Dict[str, Any]:
+        """
+        Convert event to dictionary representation.
+        
+        Abstract method to be implemented by subclasses.
+        
+        Returns:
+            Dictionary containing all event fields
+        """
         pass
 
     @abstractmethod
     def asdict_rows(self) -> List[Dict[str, Any]]:
+        """
+        Convert event to list of flat dictionary rows for CSV export.
+        
+        Abstract method to be implemented by subclasses to flatten
+        hierarchical event data into rows suitable for CSV/tabular export.
+        
+        Returns:
+            List of dictionaries where each represents a row
+        """
         pass
 
     def to_json(self) -> str:
@@ -199,7 +249,15 @@ class BookEvent(MarketEvent):
 
     def asdict_rows(self) -> List[Dict[str, Any]]:
         """
-        Creates a new row with market event metadata for each change item
+        Convert BookEvent to list of flat dictionary rows for CSV export.
+        
+        Creates one row per order (bid or ask), with market event metadata
+        duplicated in each row.
+        
+        Returns:
+            List of dictionaries where each dict represents one order with:
+            - All market event metadata fields
+            - Individual order fields (side, price, size)
         """
         event_dict = self.asdict()
         ask_dicts = event_dict.pop("asks")
@@ -264,7 +322,15 @@ class PriceChangeEvent(MarketEvent):
 
     def asdict_rows(self) -> List[Dict[str, Any]]:
         """
-        Creates a new row with market event metadata for each change item
+        Convert PriceChangeEvent to list of flat dictionary rows for CSV export.
+        
+        Creates one row per order change, with market event metadata
+        duplicated in each row.
+        
+        Returns:
+            List of dictionaries where each dict represents one change with:
+            - All market event metadata fields  
+            - Individual change fields (side, price, size)
         """
         event_dict = self.asdict()
         changes = event_dict.pop("changes")
