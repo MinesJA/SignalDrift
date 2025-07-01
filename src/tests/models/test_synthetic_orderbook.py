@@ -59,8 +59,8 @@ class TestSyntheticOrderBook:
         orderbook.add_entries(orders)
 
         assert len(orderbook.orders_lookup) == 2
-        assert "0.5" in orderbook.orders_lookup
-        assert "0.6" in orderbook.orders_lookup
+        assert 0.5 in orderbook.orders_lookup
+        assert 0.6 in orderbook.orders_lookup
 
         order1 = orderbook.orders_lookup[0.5]
         assert order1.side == OrderSide.SELL
@@ -80,14 +80,14 @@ class TestSyntheticOrderBook:
             SyntheticOrder(side= OrderSide.SELL, price=0.5, size=100)
         ])
 
-        # Update with new size
+        # Update with new size - should replace (not accumulate)
         orderbook.add_entries([
-            SyntheticOrder(side= OrderSide.SELL, price=0.5, size=100)
+            SyntheticOrder(side=OrderSide.SELL, price=0.5, size=50)
         ])
 
         assert len(orderbook.orders_lookup) == 1
         order = orderbook.orders_lookup[0.5]
-        assert order.size == 150.0
+        assert order.size == 50.0
 
     def test_add_entries_remove_zero_size(self, orderbook):
         """Test that orders with size 0 are removed from the orderbook."""
@@ -101,28 +101,26 @@ class TestSyntheticOrderBook:
         assert len(orderbook.orders_lookup) == 2
 
         # Remove order by setting size to 0
-        orderbook.add_entries([{"side": "SELL", "price": "0.5", "size": "0"}])
+        orderbook.add_entries([SyntheticOrder(side=OrderSide.SELL, price=0.5, size=0)])
 
         assert len(orderbook.orders_lookup) == 1
-        assert "0.5" not in orderbook.orders_lookup
-        assert "0.6" in orderbook.orders_lookup
+        assert 0.5 not in orderbook.orders_lookup
+        assert 0.6 in orderbook.orders_lookup
 
-    @patch('src.models.synthetic_orderbook.datetime')
-    def test_add_entries_non_sell_orders(self, mock_datetime, orderbook):
+    def test_add_entries_non_sell_orders(self, orderbook):
         """Test that non-SELL orders are ignored."""
-        mock_datetime.now().timestamp.return_value = 1234567.890
 
         orders = [
-            {"side": "BUY", "price": "0.5", "size": "100"},
-            {"side": "SELL", "price": "0.6", "size": "200"}
+            SyntheticOrder(side=OrderSide.BUY, price=0.5, size=100),
+            SyntheticOrder(side=OrderSide.SELL, price=0.6, size=200)
         ]
 
         orderbook.add_entries(orders)
 
         # Only SELL order should be added
         assert len(orderbook.orders_lookup) == 1
-        assert "0.6" in orderbook.orders_lookup
-        assert "0.5" not in orderbook.orders_lookup
+        assert 0.6 in orderbook.orders_lookup
+        assert 0.5 not in orderbook.orders_lookup
 
     def test_replace_entries(self, orderbook):
         """Test replacing all entries in the orderbook."""
@@ -209,7 +207,7 @@ class TestSyntheticOrderBook:
         """Test various edge cases."""
 
         # Test with string "0.0" size
-        orderbook.add_entries([{"side": "SELL", "price": "0.5", "size": "0.0"}])
+        orderbook.add_entries([SyntheticOrder(side=OrderSide.SELL, price=0.5, size=0.0)])
         assert len(orderbook.orders_lookup) == 0
 
         # Test with empty orders list
