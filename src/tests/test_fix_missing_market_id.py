@@ -104,76 +104,8 @@ class TestMarketIdFixer:
 class TestMarketDaoFixes:
     """Test cases for market_dao.py fixes."""
     
-    @pytest.mark.skip(reason="_create_book_rows function was removed in refactoring")
-    def test_create_book_rows_with_market_id(self):
-        """Test that book rows include market_id when provided."""
-        event = {
-            'event_type': 'book',
-            'asset_id': '123456',
-            'asks': [{'price': '0.5', 'size': '100', 'hash': 'abc123'}],
-            'bids': [{'price': '0.4', 'size': '200', 'hash': 'def456'}],
-            'timestamp': 1750888000000
-        }
-        
-        rows = _create_book_rows('test-slug', event, market_id='554912')
-        
-        assert len(rows) == 2  # One ask, one bid
-        
-        # Check ask row
-        ask_row = rows[0]
-        assert ask_row['market_slug'] == 'test-slug'
-        assert ask_row['market_id'] == '554912'
-        assert ask_row['side'] == 'ask'
-        assert ask_row['price'] == '0.5'
-        
-        # Check bid row
-        bid_row = rows[1]
-        assert bid_row['market_slug'] == 'test-slug'
-        assert bid_row['market_id'] == '554912'
-        assert bid_row['side'] == 'bid'
-        assert bid_row['price'] == '0.4'
     
-    @pytest.mark.skip(reason="_create_price_change_rows function was removed in refactoring")
-    def test_create_price_change_rows_with_market_id(self):
-        """Test that price change rows include market_id when provided."""
-        event = {
-            'event_type': 'price_change',
-            'asset_id': '123456',
-            'changes': [
-                {'side': 'BUY', 'price': '0.55', 'size': '150', 'hash': 'xyz789'}
-            ],
-            'timestamp': 1750888000000
-        }
-        
-        rows = _create_price_change_rows('test-slug', event, market_id='554912')
-        
-        assert len(rows) == 1
-        
-        row = rows[0]
-        assert row['market_slug'] == 'test-slug'
-        assert row['market_id'] == '554912'
-        assert row['side'] == 'bid'  # BUY -> bid
-        assert row['price'] == '0.55'
     
-    @pytest.mark.skip(reason="_create_book_rows function was removed in refactoring")
-    def test_create_book_rows_without_market_id(self):
-        """Test that book rows handle missing market_id gracefully."""
-        event = {
-            'event_type': 'book',
-            'asset_id': '123456',
-            'asks': [{'price': '0.5', 'size': '100', 'hash': 'abc123'}],
-            'bids': [],
-            'timestamp': 1750888000000
-        }
-        
-        rows = _create_book_rows('test-slug', event)  # No market_id provided
-        
-        assert len(rows) == 1  # One ask, no bids
-        
-        ask_row = rows[0]
-        assert ask_row['market_slug'] == 'test-slug'
-        assert ask_row['market_id'] is None  # Should be None, not missing
-        assert ask_row['side'] == 'ask'
     
     @pytest.mark.skip(reason="write_marketMessages function was removed in refactoring")
     def test_write_market_messages_with_market_id(self):
