@@ -4,13 +4,13 @@ from typing import Dict, Any, List, Optional
 import json
 import os
 import sys
+import traceback
 from concurrent.futures import ThreadPoolExecutor
 from src.strategies import calculate_orders
 from src.services import PolymarketService, PolymarketMarketEventsService
-from src.models import MarketEvent, SyntheticOrderBook, OrderBookStore, Order
-from src.daos import write_marketEvents, write_orderBookStore, write_orders
+from src.models import EventType, MarketEvent, SyntheticOrderBook, OrderBookStore, Order
+from src.daos import write_marketEvents, write_orderBookStore, write_orders, write_metadata
 from src.utils import datetime_to_epoch, CSVMessageProcessor
-import traceback
 
 class OrdersStore:
     def __init__(self):
@@ -94,6 +94,16 @@ def run_market_connection(market_slug: str, csv_file_path: Optional[str] = None)
             book_store = OrderBookStore(market_slug, market_metadata['id'], books)
             order_store = OrdersStore()
             message_handler = get_order_message_register(book_store, order_store, test_mode=test_mode)
+
+            # Write metadata at the start of the run (only for live system, not CSV mode)
+            if not test_mode:
+                executed_at = datetime.now()
+                write_metadata(
+                    market_slug=market_slug,
+                    market_id=market_metadata['id'],
+                    books=books,
+                    executed_at=executed_at
+                )
 
             if test_mode:
                 # Run from CSV file
@@ -183,15 +193,20 @@ if __name__ == "__main__":
         # Running from websocket (live mode)
         print("Running in live mode from websocket connections")
 
+        #market_slugs = [
+        #    "mlb-tex-bal-2025-06-25",
+        #    "mlb-oak-det-2025-06-25",
+        #    "mlb-tor-cle-2025-06-25",
+        #    "mlb-atl-nym-2025-06-25",
+        #    "mlb-nyy-cin-2024-06-25",
+        #    "mlb-sea-min-2025-06-25",
+        #    "mlb-tb-kc-2025-06-25",
+        #    "mlb-chc-stl-2025-06-25"
+        #]
+
         market_slugs = [
-            "mlb-tex-bal-2025-06-25",
-            "mlb-oak-det-2025-06-25",
-            "mlb-tor-cle-2025-06-25",
-            "mlb-atl-nym-2025-06-25",
-            "mlb-nyy-cin-2025-06-25",
-            "mlb-sea-min-2025-06-25",
-            "mlb-tb-kc-2025-06-25",
-            "mlb-chc-stl-2025-06-25"
+            "mlb-kc-sea-2025-06-30",
+            "mlb-sf-ari-2025-06-30",
         ]
 
         # Create thread pool with max workers equal to number of markets
