@@ -2,7 +2,7 @@ import os
 import csv
 from typing import Dict, Any, List, Optional
 from datetime import datetime
-import traceback
+from models import MarketEvent
 
 import logging
 
@@ -10,17 +10,20 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # TODO: Should this be defined in MarketEvent?
-FIELD_NAMES = ['market_slug', 'asset_id', 'market_id', 'event_type', 'price', 'side', 'size', 'hash', 'timestamp']
+FIELD_NAMES = ['market_slug', 'market_id', 'asset_id', 'outcome_name', 'event_type', 'price', 'side', 'size', 'hash', 'timestamp']
 
-def write_marketMessages(market_slug: str, datetime: datetime, market_messages: List[Dict[str, Any]], test_mode: bool = False, market_id: int = None):
+def write_marketEvents(market_slug: str, market_id: int, market_events: List[MarketEvent], datetime: datetime,  test_mode: bool = False):
+    if len(market_events) == 0:
+        return
+
     logger.info("Writing market messages")
 
     test_suffix = "_test" if test_mode else ""
     csv_filename = os.path.join('data', f"{datetime.strftime('%Y%m%d')}_{market_slug}_polymarket-market-events{test_suffix}.csv")
 
     rows = []
-    for event in market_messages:
-        event_rows = _create_rows(market_slug, event, market_id)
+    for event in market_events:
+        event_rows = _create_rows(event, market_id)
         if event_rows:
             rows.extend(event_rows)
 
@@ -44,7 +47,6 @@ def _write_to_csv(csv_filename, rows: List[Dict[str, Any]]):
                                 )
         writer.writerows(rows)
 
-
 # TODO: Can abstract into util
 def _setup_csv(csv_filename: str):
     data_dir = "data"
@@ -54,30 +56,9 @@ def _setup_csv(csv_filename: str):
         writer = csv.writer(csvfile, delimiter=',')
         writer.writerow(FIELD_NAMES)
 
-
-def _create_price_change_rows(market_slug, event, market_id=None):
-    rows = [{
-                **event,
-                **change,
-                "market_slug": market_slug,
-                "market_id": market_id,
-                "side": "bid" if change['side'] == 'BUY' else 'ask'
-            } for change in event["changes"]]
-
+def _create_rows(event: MarketEvent, market_id: int) -> Optional[List[Dict[str, Any]]]:
+    rows = event.asdict_rows()
+    #TODO: Prob a faster way to do this
+    rows = [{**row, 'market_id': market_id} for row in rows]
     return [{key: row.get(key) for key in FIELD_NAMES} for row in rows]
 
-
-def _create_book_rows(market_slug, event, market_id=None):
-    asks = [{**event, **ask, "side": "ask", "market_slug": market_slug, "market_id": market_id} for ask in event["asks"]]
-    bids = [{**event, **bid, "side": "bid", "market_slug": market_slug, "market_id": market_id} for bid in event["bids"]]
-    rows = asks + bids
-
-    return [{key: row.get(key) for key in FIELD_NAMES} for row in rows]
-
-
-def _create_rows(market_slug, event, market_id=None) -> Optional[List[Dict[str, Any]]]:
-    match event['event_type']:
-        case 'price_change':
-            return _create_price_change_rows(market_slug, event, market_id)
-        case 'book':
-            return _create_book_rows(market_slug, event, market_id)

@@ -9,9 +9,9 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-FIELD_NAMES = ['market_slug', 'asset_id', 'market_id', 'outcome_name', 'price', 'size', 'side',  'timestamp']
+FIELD_NAMES = ['market_slug', 'market_id', 'asset_id', 'outcome_name', 'price', 'size', 'side',  'timestamp']
 
-def write_orderBookStore(market_slug: str, datetime: datetime, orderBook_store: OrderBookStore, test_mode: bool = False):
+def write_orderBookStore(market_slug: str, orderBook_store: OrderBookStore, datetime: datetime, test_mode: bool = False):
     logger.info("Writing order book")
     test_suffix = "_test" if test_mode else ""
     csv_filename = os.path.join('data', f"{datetime.strftime('%Y%m%d')}_{market_slug}_synthetic-order-book{test_suffix}.csv")
@@ -19,7 +19,7 @@ def write_orderBookStore(market_slug: str, datetime: datetime, orderBook_store: 
     rows = []
 
     for book in orderBook_store.books:
-        rows.extend(book.to_orders_dicts())
+        rows.extend(book.asdict_rows())
 
     _write_to_csv(csv_filename, rows)
 

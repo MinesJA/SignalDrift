@@ -5,6 +5,7 @@ import threading
 from typing import Self, Callable, List, Dict
 from services import PolymarketClobClient
 from config import config
+from models import MarketEvent
 
 
 from abc import ABC, abstractmethod
@@ -55,7 +56,7 @@ class WebsocketConnection(ABC):
 
 class PolymarketUserEventsService(WebsocketConnection):
 
-    def __init__(self, asset_ids, message_callbacks):
+    def __init__(self, asset_ids, event_handlers):
         super().__init__("user")
         client = PolymarketClobClient.connect()
         if not client:
@@ -63,34 +64,35 @@ class PolymarketUserEventsService(WebsocketConnection):
 
         self.auth = client.derive_auth()
         self.asset_ids = asset_ids
-        self.message_callbacks = message_callbacks
+        self.event_handlers = event_handlers
 
     def channel_type(self):
         return "user"
-    
+
     def payload(self):
         return {"markets": self.asset_ids, "type": self.channel_type(), "auth": self.auth}
-    
+
     def on_open(self, ws):
         ws.send(json.dumps(self.payload()))
-        
+
         thr = threading.Thread(target=self.ping, args=(ws,))
         logger.info(f"Starting user events service")
         thr.start()
-    
+
     def on_message(self, ws, message):
         # Handle PONG messages
         if message == "PONG":
             logger.debug("Received PONG from server")
             return
-            
+
         try:
             data = json.loads(message)
-            for callback in self.message_callbacks:
+
+            for handler in self.event_handlers:
                 try:
-                    callback(data)
+                    handler(data)
                 except Exception as e:
-                    logger.error(f"Error in message callback: {e}. Message: {data}")
+                    logger.error(f"Error in message handler: {e}. Message: {data}")
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse WebSocket message: {e}")
             logger.error(message)
@@ -104,7 +106,9 @@ class PolymarketMarketEventsService(WebsocketConnection):
     Provdies ability to connect to Polymarket websocket for streaming orderbook events
 
     Attributes:
-        channel_type: ...
+        market_slug:
+        asset_ids:
+        event_handlers:
     """
     def __init__(self,market_slug, asset_ids, event_handlers):
         super().__init__("market")
@@ -124,10 +128,11 @@ class PolymarketMarketEventsService(WebsocketConnection):
         if message == "PONG":
             logger.debug("Received PONG from server")
             return
-            
+
         try:
-            data = json.loads(message)
-            
+            data = MarketEvent.from_json(message)
+            json.loads(message)
+
             # Convert single dict to list for consistency with handlers
             # If data is already a list, keep it as is; if single dict, wrap in list
             if isinstance(data, dict):
@@ -137,7 +142,7 @@ class PolymarketMarketEventsService(WebsocketConnection):
             else:
                 logger.error(f"Unexpected data format: {type(data)}")
                 return
-                
+
             for handler in self.event_handlers:
                 try:
                     handler(message_list)

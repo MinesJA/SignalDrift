@@ -1,6 +1,5 @@
 from dataclasses import dataclass, asdict
 from enum import Enum
-from order_side import Side
 from typing import Dict, Any
 
 class OrderType(Enum):
@@ -13,7 +12,7 @@ class OrderType(Enum):
     GTD = "GTD"
     """Good-Til-Date: Limit order that remains active until specific date."""
 
-class Side(Enum):
+class OrderSide(Enum):
     BUY = "BUY"
     SELL = "SELL"
 
@@ -28,7 +27,7 @@ class Order:
     market_id: int
     asset_id: int
     outcome_name: str
-    side: Side
+    side: OrderSide
     order_type: OrderType
     price: float
     size: float
