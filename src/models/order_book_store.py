@@ -29,8 +29,8 @@ class OrderBookStore:
             if isinstance(event, PriceChangeEvent):
                 synth_orderbook.add_entries(event.changes)
             elif isinstance(event, BookEvent):
-                all_orders = event.asks + event.bids
-                synth_orderbook.replace_entries(all_orders)
+                # We only care about the asks in the orderbook
+                synth_orderbook.replace_entries(event.asks)
 
         return self
 

@@ -2,11 +2,8 @@ from websocket import WebSocketApp
 import json
 import time
 import threading
-from typing import Self, Callable, List, Dict
 from services import PolymarketClobClient
 from config import config
-from models import MarketEvent
-
 
 from abc import ABC, abstractmethod
 
@@ -130,8 +127,7 @@ class PolymarketMarketEventsService(WebsocketConnection):
             return
 
         try:
-            data = MarketEvent.from_json(message)
-            json.loads(message)
+            data = json.loads(message)
 
             # Convert single dict to list for consistency with handlers
             # If data is already a list, keep it as is; if single dict, wrap in list
