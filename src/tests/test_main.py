@@ -1,7 +1,10 @@
 import pytest
-from unittest.mock import Mock, patch, call
+from unittest.mock import Mock, patch
 from src.main import get_order_message_register, OrdersStore, OrderBookStore
 from src.models import SyntheticOrderBook, Order
+from src.models.market_event import MarketEvent, BookEvent, PriceChangeEvent, EventType
+from src.models.synthetic_orderbook import SyntheticOrder
+from src.models.order import OrderSide
 
 
 class TestGetOrderMessageRegister:
@@ -27,7 +30,7 @@ class TestGetOrderMessageRegister:
 
     @pytest.fixture
     def sample_market_message(self):
-        """Create a sample market message."""
+        """Create a sample market message as dict (handler expects dicts)."""
         return [
             {
                 "asset_id": "asset-123",
@@ -68,7 +71,7 @@ class TestGetOrderMessageRegister:
         mock_orders = [Mock(spec=Order), Mock(spec=Order)]
         mock_calculate_orders.return_value = mock_orders
         mock_orderbook_store.update_book.return_value = mock_orderbook_store
-        
+
         # Mock the lookup method to return a book with outcome_name
         mock_book = Mock()
         mock_book.outcome_name = "YES"
@@ -256,7 +259,12 @@ class TestGetOrderMessageRegister:
         mock_calculate_orders.return_value = mock_orders
         mock_orderbook_store.update_book.return_value = mock_orderbook_store
 
-        # Create multiple market messages
+        # Mock the lookup method to return a book with outcome_name
+        mock_book = Mock()
+        mock_book.outcome_name = "YES"
+        mock_orderbook_store.lookup.return_value = mock_book
+
+        # Create multiple market messages as dicts (handler expects dicts)
         market_messages = [
             {
                 "asset_id": "asset-123",
@@ -285,8 +293,19 @@ class TestGetOrderMessageRegister:
         # Execute handler
         handler(market_messages)
 
-        # Verify update_book was called with all messages
-        mock_orderbook_store.update_book.assert_called_once_with(market_messages)
+        # Verify update_book was called with MarketEvent objects (converted from dicts)
+        mock_orderbook_store.update_book.assert_called_once()
+        call_args = mock_orderbook_store.update_book.call_args[0][0]
+        assert len(call_args) == 2
+        # Check first event properties
+        assert call_args[0].event_type.value == "book"
+        assert call_args[0].asset_id == "asset-123"
+        assert hasattr(call_args[0], 'asks')
+        assert hasattr(call_args[0], 'bids')
+        # Check second event properties
+        assert call_args[1].event_type.value == "price_change"
+        assert call_args[1].asset_id == "asset-456"
+        assert hasattr(call_args[1], 'changes')
 
         # Verify orders were added
         assert len(order_store.orders) == 1
