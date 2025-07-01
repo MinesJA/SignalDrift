@@ -1,18 +1,14 @@
 from dataclasses import dataclass
 from enum import Enum
 from typing import Optional, Dict, Any
+from models import Side
 import json
-
 
 class EventType(Enum):
     BOOK = "book"
+    """ TODO: Add description from polymarket docs"""
     PRICE_CHANGE = "price_change"
-
-
-class Side(Enum):
-    BID = "bid"
-    ASK = "ask"
-
+    """ TODO: Add description from polymarket docs"""
 
 @dataclass
 class MarketEvent:
@@ -24,17 +20,27 @@ class MarketEvent:
         event_type: Type of event - EventType.BOOK or EventType.PRICE_CHANGE
         asset_id: The unique asset identifier
         market: The market address/identifier
-        side: Order side - Side.BID or Side.ASK
+        side: Order side - Side.BUY or Side.SELL
         price: The price as a string
         size: The size/quantity as a string
         timestamp: Epoch timestamp in milliseconds
         hash: Event hash identifier
     """
+
+    # TODO: Do we need to do some validation on these attributes?
+    # Feel like we should be throwing exceptions if they are not available
+    # Maybe thats more important for the Order class
     market_slug: Optional[str] = None
+
+    # TODO: Fix this, should not be defaulting. Look into defaulting to None
+    # and making it optional
     event_type: EventType = EventType.BOOK
+
     asset_id: str = ""
     market: str = ""
-    side: Side = Side.BID
+    # TODO: Fix this, should not be defaulting
+    side: Side = Side.BUY
+
     price: str = ""
     size: str = ""
     timestamp: str = ""

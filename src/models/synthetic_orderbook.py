@@ -1,8 +1,27 @@
 from typing import Dict, Any, List
 from collections import namedtuple
 from datetime import datetime
+from models import Side
 
-SyntheticOrder = namedtuple('synthetic_order', ['side', 'price', 'size', 'timestamp'])
+
+#TODO: This should contain all information necessary to build an actual Order
+# even if it means duplicates
+@dataclass
+class SyntheticOrder:
+    market_slug: str
+    market_id: int
+    outcome_name: str
+    asset_id: int
+    side: Side
+    price: float
+    size: float
+    timestamp: int
+
+    def asdict(self) -> Dict[str, Any]:
+        data = asdict(self)
+        data['side'] = self.side.value
+        return data
+
 
 class SyntheticOrderBook:
     def __init__(self, market_slug, market_id, outcome_name: str, asset_id: str):
@@ -16,6 +35,9 @@ class SyntheticOrderBook:
     def orders(self) -> List[SyntheticOrder]:
         return list(self.orders_lookup.values())
 
+    def sorted_orders(self) -> List[SyntheticOrder]:
+        return sorted(self.orders, key=lambda order: order.price)
+
     def add_entries(self, orders: List[Dict[str, Any]], timestamp):
         for order in orders:
             if order["side"] == "SELL":
@@ -24,7 +46,7 @@ class SyntheticOrderBook:
                     self.orders_lookup.pop(order["price"], None)
                 else:
                     self.orders_lookup[order["price"]] = SyntheticOrder(
-                        side="ask",
+                        side=Side.ASK,
                         price=float(order["price"]),
                         size=float(order["size"]),
                         timestamp=timestamp
@@ -33,7 +55,7 @@ class SyntheticOrderBook:
     def replace_entries(self, orders: List[Dict[str, Any]], timestamp):
         self.orders_lookup = {
             order["price"]: SyntheticOrder(
-                side="ask",
+                side=Side.ASK,
                 price=float(order["price"]),
                 size=float(order["size"]),
                 timestamp=timestamp
