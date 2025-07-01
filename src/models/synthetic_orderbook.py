@@ -1,5 +1,5 @@
 from typing import Dict, Any, List
-from models import OrderSide
+from .order import OrderSide
 from dataclasses import dataclass, asdict
 
 @dataclass

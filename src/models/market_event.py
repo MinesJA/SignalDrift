@@ -1,7 +1,8 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional, Dict, Any, List, Self
-from models import OrderSide, SyntheticOrder
+from .order import OrderSide
+from .synthetic_orderbook import SyntheticOrder
 import json
 
 from abc import ABC, abstractmethod
@@ -131,9 +132,9 @@ class BookEvent(MarketEvent):
         - First subscribed to a market
         - When there is a trade that affects the book
     """
-    event_type: EventType = EventType.BOOK
-    bids: List[SyntheticOrder] = []
-    asks: List[SyntheticOrder] = []
+    bids: List[SyntheticOrder] = field(default_factory=list)
+    asks: List[SyntheticOrder] = field(default_factory=list)
+
 
     @classmethod
     def validate_bids(cls, bids: Optional[Any]) -> List[SyntheticOrder]:
@@ -166,7 +167,7 @@ class BookEvent(MarketEvent):
     @classmethod
     def from_dict(cls, data: Dict[str, Any]):
         return cls(
-            event_type = EventType.PRICE_CHANGE,
+            event_type = EventType.BOOK,
             market_slug = cls.validate_market_slug(data.get('market_slug')),
             market_id = cls.validate_market_id(data.get('market_id')),
             market = cls.validate_market(data.get('market')),
@@ -219,8 +220,8 @@ class PriceChangeEvent(MarketEvent):
 
     Attributes:
     """
-    event_type: EventType = EventType.PRICE_CHANGE
-    changes: List[SyntheticOrder] = []
+    changes: List[SyntheticOrder] = field(default_factory=list)
+
 
     @classmethod
     def validate_changes(cls, changes: Optional[Any]) -> List[SyntheticOrder]:
