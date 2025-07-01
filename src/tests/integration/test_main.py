@@ -8,6 +8,8 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
 
+from src.utils.datetime_utils import datetime_to_epoch
+
 from src.main import (
     OrdersStore, 
     get_order_message_register, 
@@ -62,7 +64,7 @@ class TestOrderProcessingIntegration:
                     {"price": "0.47", "size": "250"}
                 ],
                 "bids": [],
-                "timestamp": int(datetime.now().timestamp()),
+                "timestamp": datetime_to_epoch(datetime.now()),
                 "hash": "test-hash-realistic-1"
             },
             {
@@ -76,7 +78,7 @@ class TestOrderProcessingIntegration:
                     {"price": "0.56", "size": "200"}
                 ],
                 "bids": [],
-                "timestamp": int(datetime.now().timestamp()),
+                "timestamp": datetime_to_epoch(datetime.now()),
                 "hash": "test-hash-realistic-2"
             }
         ]
