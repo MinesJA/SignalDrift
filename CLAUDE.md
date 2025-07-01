@@ -121,6 +121,7 @@ The project uses `.env` files for configuration. Key variables include:
 3. Initial target markets: MLB, NFL, NBA, major soccer leagues
 4. Weighted fair value calculation is core to both market making and arbitrage strategies
 5. All scrapers save page data locally for testing and development
+6. **Import Convention**: Always use absolute imports with `src.` prefix instead of relative imports (e.g., `from src.models import OrderSide` not `from .order import OrderSide`)
 
 ## Git Workflow
 

@@ -4,13 +4,13 @@ from typing import Dict, Any, List, Optional
 import json
 import os
 import sys
-from concurrent.futures import ThreadPoolExecutor
-from strategies import calculate_orders
-from services import PolymarketService, PolymarketMarketEventsService
-from models import EventType, SyntheticOrderBook, OrderBookStore, Order
-from daos import write_marketMessages, write_orderBookStore, write_orders, write_metadata
-from utils.csv_message_processor import CSVMessageProcessor
 import traceback
+from concurrent.futures import ThreadPoolExecutor
+from src.strategies import calculate_orders
+from src.services import PolymarketService, PolymarketMarketEventsService
+from src.models import EventType, MarketEvent, SyntheticOrderBook, OrderBookStore, Order
+from src.daos import write_marketEvents, write_orderBookStore, write_orders, write_metadata
+from src.utils import datetime_to_epoch, CSVMessageProcessor
 
 class OrdersStore:
     def __init__(self):
@@ -23,32 +23,43 @@ class OrdersStore:
         self.orders.extend(orders)
 
 
-def get_arb_strategy(orderbook_store: OrderBookStore, order_store: OrdersStore) -> Callable:
-    def handler(_order_message: List[Dict[str, Any]]):
-        book_a, book_b = orderbook_store.books
-        orders = calculate_orders(book_a, book_b)
-        order_store.add_orders(orders)
-
-        return order_store
-
-    return handler
-
-
+# TODO: Could use the same pattern as OrderBuilder in polymarket_arb
 def get_order_message_register(orderBook_store: OrderBookStore, order_store: OrdersStore, test_mode: bool = False) -> Callable:
-    def handler(market_messages: List[Dict[str, Any]]):
+    def handler(events: List[Dict[str, Any]]):
         try:
             now = datetime.now()
+            market_events = [MarketEvent.from_dict(
+                {**market_eventdict,
+                 "market_id": orderBook_store.market_id,
+                 "outcome_name": orderBook_store.lookup(market_eventdict["asset_id"]).outcome_name}
+            ) for market_eventdict in events]
 
-            book_store = orderBook_store.update_book(market_messages)
+            book_store = orderBook_store.update_book(market_events)
             book_a, book_b = book_store.books
 
             # TODO: Rename to make it clear this is strategy execution
             orders = calculate_orders(book_a, book_b)
             order_store.add_orders(orders)
 
-            write_marketMessages(book_store.market_slug, now, market_messages, test_mode=test_mode, market_id=book_store.market_id)
-            write_orderBookStore(book_store.market_slug, now, book_store, test_mode=test_mode)
-            write_orders(book_store.market_slug, now, orders, test_mode=test_mode)
+            write_marketEvents(
+                market_slug=book_store.market_slug,
+                market_id=book_store.market_id,
+                market_events=market_events,
+                datetime=now,
+                test_mode=test_mode
+            )
+            write_orderBookStore(
+                market_slug=book_store.market_slug,
+                orderBook_store=book_store,
+                datetime=now,
+                test_mode=test_mode
+            )
+            write_orders(
+                market_slug=book_store.market_slug,
+                orders=orders,
+                datetime=now,
+                test_mode=test_mode
+            )
         except Exception:
             print("ERROR ERROR ERROR")
             print(traceback.format_exc())
@@ -73,9 +84,10 @@ def run_market_connection(market_slug: str, csv_file_path: Optional[str] = None)
         market_metadata = PolymarketService().get_market_by_slug(market_slug)
 
         if market_metadata:
+            timestamp = datetime_to_epoch(datetime.now())
             books = [
-                SyntheticOrderBook(market_slug, market_metadata['id'], outcome, token_id)
-                for token_id, outcome
+                SyntheticOrderBook(market_slug, market_metadata['id'], outcome_name, asset_id, timestamp)
+                for asset_id, outcome_name
                 in zip(json.loads(market_metadata['clobTokenIds']), json.loads(market_metadata['outcomes']))
             ]
 
@@ -191,12 +203,11 @@ if __name__ == "__main__":
         #    "mlb-tb-kc-2025-06-25",
         #    "mlb-chc-stl-2025-06-25"
         #]
+
         market_slugs = [
             "mlb-kc-sea-2025-06-30",
             "mlb-sf-ari-2025-06-30",
         ]
-
-
 
         # Create thread pool with max workers equal to number of markets
         with ThreadPoolExecutor(max_workers=len(market_slugs)) as executor:

@@ -2,15 +2,17 @@ import os
 import csv
 from typing import List, Dict, Any
 from datetime import datetime
-from models import Order
+from src.models import Order
 import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-FIELD_NAMES = ['market_slug', 'asset_id', 'price', 'size', 'timestamp']
+FIELD_NAMES = ['market_slug', 'market_id', 'asset_id', 'outcome_name', 'side', 'order_type', 'price', 'size', 'timestamp']
 
-def write_orders(market_slug: str, datetime: datetime, orders: List[Order], test_mode: bool = False):
+def write_orders(market_slug: str, orders: List[Order], datetime: datetime, test_mode: bool = False):
+    if len(orders) == 0:
+        return
 
     logger.info("Writing orders")
     test_suffix = "_test" if test_mode else ""

@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 from datetime import datetime
 
 from src.utils.fix_missing_market_id import MarketIdFixer
-from src.daos.market_dao import write_marketMessages, _create_book_rows, _create_price_change_rows
+from src.daos.market_dao import write_marketEvents
 
 
 class TestMarketIdFixer:
@@ -104,76 +104,8 @@ class TestMarketIdFixer:
 class TestMarketDaoFixes:
     """Test cases for market_dao.py fixes."""
     
-    def test_create_book_rows_with_market_id(self):
-        """Test that book rows include market_id when provided."""
-        event = {
-            'event_type': 'book',
-            'asset_id': '123456',
-            'asks': [{'price': '0.5', 'size': '100', 'hash': 'abc123'}],
-            'bids': [{'price': '0.4', 'size': '200', 'hash': 'def456'}],
-            'timestamp': 1750888000000
-        }
-        
-        rows = _create_book_rows('test-slug', event, market_id='554912')
-        
-        assert len(rows) == 2  # One ask, one bid
-        
-        # Check ask row
-        ask_row = rows[0]
-        assert ask_row['market_slug'] == 'test-slug'
-        assert ask_row['market_id'] == '554912'
-        assert ask_row['side'] == 'ask'
-        assert ask_row['price'] == '0.5'
-        
-        # Check bid row
-        bid_row = rows[1]
-        assert bid_row['market_slug'] == 'test-slug'
-        assert bid_row['market_id'] == '554912'
-        assert bid_row['side'] == 'bid'
-        assert bid_row['price'] == '0.4'
-    
-    def test_create_price_change_rows_with_market_id(self):
-        """Test that price change rows include market_id when provided."""
-        event = {
-            'event_type': 'price_change',
-            'asset_id': '123456',
-            'changes': [
-                {'side': 'BUY', 'price': '0.55', 'size': '150', 'hash': 'xyz789'}
-            ],
-            'timestamp': 1750888000000
-        }
-        
-        rows = _create_price_change_rows('test-slug', event, market_id='554912')
-        
-        assert len(rows) == 1
-        
-        row = rows[0]
-        assert row['market_slug'] == 'test-slug'
-        assert row['market_id'] == '554912'
-        assert row['side'] == 'bid'  # BUY -> bid
-        assert row['price'] == '0.55'
-    
-    def test_create_book_rows_without_market_id(self):
-        """Test that book rows handle missing market_id gracefully."""
-        event = {
-            'event_type': 'book',
-            'asset_id': '123456',
-            'asks': [{'price': '0.5', 'size': '100', 'hash': 'abc123'}],
-            'bids': [],
-            'timestamp': 1750888000000
-        }
-        
-        rows = _create_book_rows('test-slug', event)  # No market_id provided
-        
-        assert len(rows) == 1  # One ask, no bids
-        
-        ask_row = rows[0]
-        assert ask_row['market_slug'] == 'test-slug'
-        assert ask_row['market_id'] is None  # Should be None, not missing
-        assert ask_row['side'] == 'ask'
-    
-    def test_write_market_messages_with_market_id(self):
-        """Test that write_marketMessages includes market_id in CSV output."""
+    def test_write_market_events_with_market_id(self):
+        """Test that write_marketEvents includes market_id in CSV output."""
         with tempfile.TemporaryDirectory() as temp_dir:
             # Change to temp directory for CSV output
             import os
@@ -184,26 +116,39 @@ class TestMarketDaoFixes:
             try:
                 os.chdir(temp_dir)
                 
-                market_messages = [{
-                    'event_type': 'book',
-                    'asset_id': '123456789',
-                    'asks': [{'price': '0.6', 'size': '100', 'hash': 'test123'}],
-                    'bids': [{'price': '0.4', 'size': '200', 'hash': 'test456'}],
-                    'timestamp': 1750888000000
-                }]
+                # Import the required models
+                from src.models.market_event import BookEvent, EventType
+                from src.models.synthetic_orderbook import SyntheticOrder
+                from src.models.order import OrderSide
+                
+                # Create MarketEvent objects instead of raw dicts
+                market_events = [
+                    BookEvent(
+                        event_type=EventType.BOOK,
+                        market_slug='test-market',
+                        market_id=554912,
+                        market='test-market-address',
+                        asset_id='123456789',
+                        outcome_name='Yes',
+                        timestamp=1750888000000,
+                        hash='test-hash-1',
+                        asks=[SyntheticOrder(price=0.6, size=100.0, side=OrderSide.SELL)],
+                        bids=[SyntheticOrder(price=0.4, size=200.0, side=OrderSide.BUY)]
+                    )
+                ]
                 
                 test_datetime = datetime(2025, 6, 25, 10, 0, 0)
-                write_marketMessages('test-market', test_datetime, market_messages, market_id='554912')
+                write_marketEvents('test-market', 554912, market_events, test_datetime, test_mode=True)
                 
                 # Check that CSV was created with correct data (new underscore format)
-                csv_path = temp_data_dir / '20250625_test-market_polymarket-market-events.csv'
+                csv_path = temp_data_dir / '20250625_test-market_polymarket-market-events_test.csv'
                 assert csv_path.exists()
                 
                 df = pd.read_csv(csv_path)
                 assert len(df) == 2  # One ask, one bid
                 assert all(df['market_id'] == 554912)  # Should be int, not string
                 assert all(df['market_slug'] == 'test-market')
-                assert df['side'].tolist() == ['ask', 'bid']
+                assert df['side'].tolist() == ['SELL', 'BUY']
                 
             finally:
                 os.chdir(original_cwd)
