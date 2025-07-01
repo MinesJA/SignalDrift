@@ -13,7 +13,7 @@ from src.main import (
     get_order_message_register, 
     run_market_connection
 )
-from src.models import SyntheticOrderBook, OrderBookStore, Order, OrderType
+from src.models import SyntheticOrderBook, OrderBookStore, Order, OrderType, OrderSide
 
 
 class TestOrderProcessingIntegration:
@@ -32,15 +32,17 @@ class TestOrderProcessingIntegration:
         books = [
             SyntheticOrderBook(
                 market_slug=market_slug,
-                market_id="market-123",
+                market_id=123,
                 outcome_name="YES",
-                asset_id="asset-yes"
+                asset_id="asset-yes",
+                timestamp=1000
             ),
             SyntheticOrderBook(
                 market_slug=market_slug,
-                market_id="market-123", 
+                market_id=123, 
                 outcome_name="NO",
-                asset_id="asset-no"
+                asset_id="asset-no",
+                timestamp=1000
             )
         ]
         return OrderBookStore(market_slug, 123456, books)
@@ -52,26 +54,34 @@ class TestOrderProcessingIntegration:
             {
                 "asset_id": "asset-yes",
                 "event_type": "book",
+                "market_slug": "test-market-integration",
+                "market": "test-market-address",
                 "asks": [
                     {"price": "0.45", "size": "1000"},
                     {"price": "0.46", "size": "500"},
                     {"price": "0.47", "size": "250"}
                 ],
-                "timestamp": int(datetime.now().timestamp())
+                "bids": [],
+                "timestamp": int(datetime.now().timestamp()),
+                "hash": "test-hash-realistic-1"
             },
             {
                 "asset_id": "asset-no", 
                 "event_type": "book",
+                "market_slug": "test-market-integration",
+                "market": "test-market-address",
                 "asks": [
                     {"price": "0.54", "size": "800"},
                     {"price": "0.55", "size": "400"},
                     {"price": "0.56", "size": "200"}
                 ],
-                "timestamp": int(datetime.now().timestamp())
+                "bids": [],
+                "timestamp": int(datetime.now().timestamp()),
+                "hash": "test-hash-realistic-2"
             }
         ]
     
-    @patch('src.main.write_marketMessages')
+    @patch('src.main.write_marketEvents')
     @patch('src.main.write_orderBookStore')
     @patch('src.main.write_orders')
     @patch('src.main.calculate_orders')
@@ -80,7 +90,7 @@ class TestOrderProcessingIntegration:
         mock_calculate_orders,
         mock_write_orders,
         mock_write_orderBookStore,
-        mock_write_marketMessages,
+        mock_write_marketEvents,
         real_orderbook_store,
         realistic_market_messages
     ):
@@ -90,8 +100,8 @@ class TestOrderProcessingIntegration:
         
         # Create mock orders that strategy would return
         mock_orders = [
-            Mock(spec=Order, order_type=OrderType.LIMIT_BUY, price=0.44, size=100),
-            Mock(spec=Order, order_type=OrderType.LIMIT_SELL, price=0.57, size=50)
+            Mock(spec=Order, order_type=OrderType.GTC, price=0.44, size=100),
+            Mock(spec=Order, order_type=OrderType.GTC, price=0.57, size=50)
         ]
         mock_calculate_orders.return_value = mock_orders
         
@@ -113,7 +123,7 @@ class TestOrderProcessingIntegration:
         yes_orders = yes_book.orders
         assert yes_orders[0].price == 0.45
         assert yes_orders[0].size == 1000.0
-        assert yes_orders[0].side == "ask"
+        assert yes_orders[0].side.value == "SELL"
         
         # Verify strategy was called with real books
         mock_calculate_orders.assert_called_once_with(yes_book, no_book)
@@ -123,17 +133,17 @@ class TestOrderProcessingIntegration:
         assert order_store.orders == mock_orders
         
         # Verify file writes were called
-        mock_write_marketMessages.assert_called_once()
+        mock_write_marketEvents.assert_called_once()
         mock_write_orderBookStore.assert_called_once()
         mock_write_orders.assert_called_once()
         
         # Verify write calls had correct arguments
-        write_market_call = mock_write_marketMessages.call_args
-        assert write_market_call[0][0] == "test-market-integration"  # market_slug
-        assert write_market_call[0][2] == realistic_market_messages  # messages
+        write_market_call = mock_write_marketEvents.call_args
+        # Check that it was called with keyword arguments
+        assert write_market_call.kwargs["market_slug"] == "test-market-integration"
         
         write_orders_call = mock_write_orders.call_args
-        assert write_orders_call[0][2] == mock_orders  # orders
+        assert write_orders_call.kwargs["orders"] == mock_orders
     
     def test_multiple_message_processing_updates_order_books(
         self,
@@ -143,7 +153,7 @@ class TestOrderProcessingIntegration:
         order_store = OrdersStore()
         
         with patch('src.main.calculate_orders', return_value=[]), \
-             patch('src.main.write_marketMessages'), \
+             patch('src.main.write_marketEvents'), \
              patch('src.main.write_orderBookStore'), \
              patch('src.main.write_orders'):
             
@@ -152,9 +162,13 @@ class TestOrderProcessingIntegration:
             # First update
             first_messages = [{
                 "asset_id": "asset-yes",
-                "event_type": "book", 
+                "event_type": "book",
+                "market_slug": "test-market-integration",
+                "market": "test-market-address",
                 "asks": [{"price": "0.50", "size": "100"}],
-                "timestamp": 1000
+                "bids": [],
+                "timestamp": 1000,
+                "hash": "test-hash-1"
             }]
             handler(first_messages)
             
@@ -162,11 +176,15 @@ class TestOrderProcessingIntegration:
             second_messages = [{
                 "asset_id": "asset-yes",
                 "event_type": "book",
+                "market_slug": "test-market-integration",
+                "market": "test-market-address",
                 "asks": [
                     {"price": "0.49", "size": "200"},
                     {"price": "0.51", "size": "150"}
                 ],
-                "timestamp": 2000
+                "bids": [],
+                "timestamp": 2000,
+                "hash": "test-hash-2"
             }]
             handler(second_messages)
             
@@ -191,7 +209,7 @@ class TestOrderProcessingIntegration:
         order_store = OrdersStore()
         mock_calculate_orders.return_value = []
         
-        with patch('src.main.write_marketMessages'), \
+        with patch('src.main.write_marketEvents'), \
              patch('src.main.write_orderBookStore'), \
              patch('src.main.write_orders'):
             
@@ -202,14 +220,22 @@ class TestOrderProcessingIntegration:
                 {
                     "asset_id": "asset-yes",
                     "event_type": "book",
+                    "market_slug": "test-market-integration",
+                    "market": "test-market-address",
                     "asks": [{"price": "0.45", "size": "1000"}],
-                    "timestamp": 1000
+                    "bids": [],
+                    "timestamp": 1000,
+                    "hash": "test-hash-3"
                 },
                 {
                     "asset_id": "asset-no", 
                     "event_type": "book",
+                    "market_slug": "test-market-integration",
+                    "market": "test-market-address",
                     "asks": [{"price": "0.55", "size": "800"}],
-                    "timestamp": 1000
+                    "bids": [],
+                    "timestamp": 1000,
+                    "hash": "test-hash-4"
                 }
             ]
             
@@ -239,12 +265,16 @@ class TestOrderProcessingIntegration:
         initial_messages = [{
             "asset_id": "asset-yes",
             "event_type": "book",
+            "market_slug": "test-market-integration",
+            "market": "test-market-address",
             "asks": [{"price": "0.50", "size": "100"}],
-            "timestamp": 1000
+            "bids": [],
+            "timestamp": 1000,
+            "hash": "test-hash-5"
         }]
         
         with patch('src.main.calculate_orders', return_value=[]), \
-             patch('src.main.write_marketMessages'), \
+             patch('src.main.write_marketEvents'), \
              patch('src.main.write_orderBookStore'), \
              patch('src.main.write_orders'):
             
@@ -258,7 +288,7 @@ class TestOrderProcessingIntegration:
         
         # Now cause an error in strategy calculation
         with patch('src.main.calculate_orders', side_effect=Exception("Strategy error")), \
-             patch('src.main.write_marketMessages'), \
+             patch('src.main.write_marketEvents'), \
              patch('src.main.write_orderBookStore'), \
              patch('src.main.write_orders'):
             
@@ -266,8 +296,12 @@ class TestOrderProcessingIntegration:
             error_messages = [{
                 "asset_id": "asset-yes", 
                 "event_type": "book",
+                "market_slug": "test-market-integration",
+                "market": "test-market-address",
                 "asks": [{"price": "0.48", "size": "200"}],
-                "timestamp": 2000
+                "bids": [],
+                "timestamp": 2000,
+                "hash": "test-hash-6"
             }]
             
             handler(error_messages)
@@ -400,13 +434,17 @@ class TestMarketConnectionIntegration:
         test_message = [{
             "asset_id": "token-yes",
             "event_type": "book",
+            "market_slug": "test-market",
+            "market": "test-market-address",
             "asks": [{"price": "0.45", "size": "100"}],
-            "timestamp": 1000
+            "bids": [],
+            "timestamp": 1000,
+            "hash": "test-hash-7"
         }]
         
         # This should not raise (tests that real objects were created correctly)
         with patch('src.main.calculate_orders', return_value=[]), \
-             patch('src.main.write_marketMessages'), \
+             patch('src.main.write_marketEvents'), \
              patch('src.main.write_orderBookStore'), \
              patch('src.main.write_orders'):
             
@@ -469,8 +507,8 @@ class TestConcurrencyIntegration:
         stores = []
         for i in range(3):
             books = [
-                SyntheticOrderBook(f"market-{i}", f"id-{i}", "YES", f"asset-yes-{i}"),
-                SyntheticOrderBook(f"market-{i}", f"id-{i}", "NO", f"asset-no-{i}")
+                SyntheticOrderBook(f"market-{i}", i, "YES", f"asset-yes-{i}", 1000),
+                SyntheticOrderBook(f"market-{i}", i, "NO", f"asset-no-{i}", 1000)
             ]
             stores.append(OrderBookStore(f"market-{i}", 100000 + i, books))
         
@@ -486,13 +524,17 @@ class TestConcurrencyIntegration:
             messages = [{
                 "asset_id": f"asset-yes-{i}",
                 "event_type": "book",
+                "market_slug": f"market-{i}",
+                "market": f"market-address-{i}",
                 "asks": [{"price": f"0.{40+i}", "size": f"{100*(i+1)}"}],
-                "timestamp": 1000 + i
+                "bids": [],
+                "timestamp": 1000 + i,
+                "hash": f"test-hash-{8+i}"
             }]
             messages_list.append(messages)
         
         with patch('src.main.calculate_orders') as mock_calc, \
-             patch('src.main.write_marketMessages'), \
+             patch('src.main.write_marketEvents'), \
              patch('src.main.write_orderBookStore'), \
              patch('src.main.write_orders'):
             
@@ -563,8 +605,8 @@ class TestArbStrategyIntegration:
         """Test arbitrage strategy with real order book data."""
         # Create order books with realistic arbitrage opportunity
         books = [
-            SyntheticOrderBook("arb-market", "market-123", "YES", "asset-yes"),
-            SyntheticOrderBook("arb-market", "market-123", "NO", "asset-no")
+            SyntheticOrderBook("arb-market", 123, "YES", "asset-yes", 1000),
+            SyntheticOrderBook("arb-market", 123, "NO", "asset-no", 1000)
         ]
         
         orderbook_store = OrderBookStore("arb-market", 123456, books)

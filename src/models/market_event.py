@@ -33,7 +33,7 @@ class MarketEvent(ABC):
     market_slug: str
     market_id: int
     market: str
-    asset_id: int
+    asset_id: str
     outcome_name: str
     timestamp: int
     hash: str
@@ -93,12 +93,12 @@ class MarketEvent(ABC):
         return market
 
     @classmethod
-    def validate_asset_id(cls, asset_id: Optional[Any]) -> int:
-        """Validate asset_id is not None and convert to int."""
+    def validate_asset_id(cls, asset_id: Optional[Any]) -> str:
+        """Validate asset_id is not None."""
         if not asset_id:
             raise ValueError("asset_id cannot not be None")
 
-        return int(asset_id)
+        return str(asset_id)
 
     @classmethod
     def validate_outcome_name(cls, outcome_name: Optional[Any]) -> str:
@@ -162,7 +162,7 @@ class MarketEvent(ABC):
         """
 
         event_type = cls.validate_event_type(data.get('event_type'))
-        if event_type == EventType.PRICE_CHANGE:
+        if event_type == EventType.BOOK:
             return BookEvent.from_dict(data)
         elif event_type == EventType.PRICE_CHANGE:
             return PriceChangeEvent.from_dict(data)
@@ -188,8 +188,10 @@ class BookEvent(MarketEvent):
 
     @classmethod
     def validate_bids(cls, bids: Optional[Any]) -> List[SyntheticOrder]:
-        if not bids:
+        if bids is None:
             raise ValueError("bids cannot be None")
+        if not bids:  # Empty list is ok
+            return []
 
         return [
             SyntheticOrder(
@@ -202,8 +204,10 @@ class BookEvent(MarketEvent):
 
     @classmethod
     def validate_asks(cls, asks: Optional[Any]) -> List[SyntheticOrder]:
-        if not asks:
+        if asks is None:
             raise ValueError("asks cannot be None")
+        if not asks:  # Empty list is ok
+            return []
 
         return [
             SyntheticOrder(

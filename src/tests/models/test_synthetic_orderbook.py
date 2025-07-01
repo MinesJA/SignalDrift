@@ -2,6 +2,7 @@ import pytest
 from datetime import datetime
 from unittest.mock import patch
 from src.models.synthetic_orderbook import SyntheticOrderBook, SyntheticOrder
+from src.models.order import OrderSide
 
 
 class TestSyntheticOrderBook:
@@ -11,22 +12,24 @@ class TestSyntheticOrderBook:
         """Create a SyntheticOrderBook instance for testing."""
         return SyntheticOrderBook(
             market_slug="test-market",
-            market_id="test-id-123",
+            market_id=123,
             outcome_name="YES",
-            asset_id="asset-456"
+            asset_id="asset-456",
+            timestamp=1000
         )
     
     def test_init(self):
         """Test the initialization of SyntheticOrderBook."""
         ob = SyntheticOrderBook(
             market_slug="test-market",
-            market_id="test-id-123",
+            market_id=123,
             outcome_name="YES",
-            asset_id="asset-456"
+            asset_id="asset-456",
+            timestamp=1000
         )
         
         assert ob.market_slug == "test-market"
-        assert ob.market_id == "test-id-123"
+        assert ob.market_id == 123
         assert ob.outcome_name == "YES"
         assert ob.asset_id == "asset-456"
         assert ob.orders_lookup == {}
@@ -36,8 +39,8 @@ class TestSyntheticOrderBook:
         """Test the orders property returns list of orders."""
         # Add some orders manually
         orderbook.orders_lookup = {
-            "0.5": SyntheticOrder(side="ask", price=0.5, size=100.0, timestamp=1000),
-            "0.6": SyntheticOrder(side="ask", price=0.6, size=200.0, timestamp=1000)
+            "0.5": SyntheticOrder(side=OrderSide.SELL, price=0.5, size=100.0),
+            "0.6": SyntheticOrder(side=OrderSide.SELL, price=0.6, size=200.0)
         }
         
         orders = orderbook.orders

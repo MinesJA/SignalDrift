@@ -32,15 +32,19 @@ class TestGetOrderMessageRegister:
             {
                 "asset_id": "asset-123",
                 "event_type": "book",
+                "market_slug": "test-market",
+                "market": "test-market-address",
                 "asks": [
                     {"price": "0.5", "size": "100"},
                     {"price": "0.6", "size": "200"}
                 ],
-                "timestamp": 1234567890
+                "bids": [],
+                "timestamp": 1234567890,
+                "hash": "test-hash-main"
             }
         ]
 
-    @patch('src.main.write_marketMessages')
+    @patch('src.main.write_marketEvents')
     @patch('src.main.write_orderBookStore')
     @patch('src.main.write_orders')
     @patch('src.main.calculate_orders')
@@ -51,7 +55,7 @@ class TestGetOrderMessageRegister:
         mock_calculate_orders,
         mock_write_orders,
         mock_write_orderBookStore,
-        mock_write_marketMessages,
+        mock_write_marketEvents,
         mock_orderbook_store,
         order_store,
         sample_market_message
@@ -64,6 +68,11 @@ class TestGetOrderMessageRegister:
         mock_orders = [Mock(spec=Order), Mock(spec=Order)]
         mock_calculate_orders.return_value = mock_orders
         mock_orderbook_store.update_book.return_value = mock_orderbook_store
+        
+        # Mock the lookup method to return a book with outcome_name
+        mock_book = Mock()
+        mock_book.outcome_name = "YES"
+        mock_orderbook_store.lookup.return_value = mock_book
 
         # Create handler
         handler = get_order_message_register(mock_orderbook_store, order_store)
@@ -71,8 +80,11 @@ class TestGetOrderMessageRegister:
         # Execute handler
         handler(sample_market_message)
 
-        # Verify calls
-        mock_orderbook_store.update_book.assert_called_once_with(sample_market_message)
+        # Verify calls - should be called with MarketEvent objects, not raw dicts
+        mock_orderbook_store.update_book.assert_called_once()
+        # Get the actual call arguments
+        call_args = mock_orderbook_store.update_book.call_args[0][0]
+        assert len(call_args) == 1  # Should have converted 1 message
         mock_calculate_orders.assert_called_once_with(
             mock_orderbook_store.books[0],
             mock_orderbook_store.books[1]
@@ -82,17 +94,28 @@ class TestGetOrderMessageRegister:
         assert order_store.orders == mock_orders
 
         # Verify writes
-        mock_write_marketMessages.assert_called_once_with(
-            "test-market", mock_now, sample_market_message, test_mode=False, market_id=123456
-        )
+        mock_write_marketEvents.assert_called_once()
+        write_call = mock_write_marketEvents.call_args
+        assert write_call.kwargs["market_slug"] == "test-market"
+        assert write_call.kwargs["market_id"] == 123456
+        assert write_call.kwargs["datetime"] == mock_now
+        assert write_call.kwargs["test_mode"] == False
+        # market_events should be MarketEvent objects, not raw dicts
+        assert len(write_call.kwargs["market_events"]) == 1
         mock_write_orderBookStore.assert_called_once_with(
-            "test-market", mock_now, mock_orderbook_store, test_mode=False
+            market_slug="test-market",
+            orderBook_store=mock_orderbook_store,
+            datetime=mock_now,
+            test_mode=False
         )
         mock_write_orders.assert_called_once_with(
-            "test-market", mock_now, mock_orders, test_mode=False
+            market_slug="test-market",
+            orders=mock_orders,
+            datetime=mock_now,
+            test_mode=False
         )
 
-    @patch('src.main.write_marketMessages')
+    @patch('src.main.write_marketEvents')
     @patch('src.main.write_orderBookStore')
     @patch('src.main.write_orders')
     @patch('src.main.calculate_orders')
@@ -101,7 +124,7 @@ class TestGetOrderMessageRegister:
         mock_calculate_orders,
         mock_write_orders,
         mock_write_orderBookStore,
-        mock_write_marketMessages,
+        mock_write_marketEvents,
         mock_orderbook_store,
         order_store,
         sample_market_message,
@@ -123,11 +146,11 @@ class TestGetOrderMessageRegister:
         assert "Test exception" in captured.out
 
         # Verify no writes happened
-        mock_write_marketMessages.assert_not_called()
+        mock_write_marketEvents.assert_not_called()
         mock_write_orderBookStore.assert_not_called()
         mock_write_orders.assert_not_called()
 
-    @patch('src.main.write_marketMessages')
+    @patch('src.main.write_marketEvents')
     @patch('src.main.write_orderBookStore')
     @patch('src.main.write_orders')
     @patch('src.main.calculate_orders')
@@ -138,7 +161,7 @@ class TestGetOrderMessageRegister:
         mock_calculate_orders,
         mock_write_orders,
         mock_write_orderBookStore,
-        mock_write_marketMessages,
+        mock_write_marketEvents,
         mock_orderbook_store,
         order_store,
         sample_market_message
@@ -161,13 +184,16 @@ class TestGetOrderMessageRegister:
         assert order_store.orders == []
 
         # Verify writes still happened
-        mock_write_marketMessages.assert_called_once()
+        mock_write_marketEvents.assert_called_once()
         mock_write_orderBookStore.assert_called_once()
         mock_write_orders.assert_called_once_with(
-            "test-market", mock_now, [], test_mode=False
+            market_slug="test-market",
+            orders=[],
+            datetime=mock_now,
+            test_mode=False
         )
 
-    @patch('src.main.write_marketMessages')
+    @patch('src.main.write_marketEvents')
     @patch('src.main.write_orderBookStore')
     @patch('src.main.write_orders')
     @patch('src.main.calculate_orders')
@@ -176,7 +202,7 @@ class TestGetOrderMessageRegister:
         mock_calculate_orders,
         mock_write_orders,
         mock_write_orderBookStore,
-        mock_write_marketMessages,
+        mock_write_marketEvents,
         mock_orderbook_store,
         order_store,
         sample_market_message,
@@ -188,7 +214,7 @@ class TestGetOrderMessageRegister:
         mock_orderbook_store.update_book.return_value = mock_orderbook_store
 
         # Make write fail
-        mock_write_marketMessages.side_effect = Exception("Write failed")
+        mock_write_marketEvents.side_effect = Exception("Write failed")
 
         # Create handler
         handler = get_order_message_register(mock_orderbook_store, order_store)
@@ -206,7 +232,7 @@ class TestGetOrderMessageRegister:
         handler = get_order_message_register(mock_orderbook_store, order_store)
         assert callable(handler)
 
-    @patch('src.main.write_marketMessages')
+    @patch('src.main.write_marketEvents')
     @patch('src.main.write_orderBookStore')
     @patch('src.main.write_orders')
     @patch('src.main.calculate_orders')
@@ -217,7 +243,7 @@ class TestGetOrderMessageRegister:
         mock_calculate_orders,
         mock_write_orders,
         mock_write_orderBookStore,
-        mock_write_marketMessages,
+        mock_write_marketEvents,
         mock_orderbook_store,
         order_store
     ):
@@ -235,14 +261,21 @@ class TestGetOrderMessageRegister:
             {
                 "asset_id": "asset-123",
                 "event_type": "book",
+                "market_slug": "test-market",
+                "market": "test-market-address",
                 "asks": [{"price": "0.5", "size": "100"}],
-                "timestamp": 1234567890
+                "bids": [],
+                "timestamp": 1234567890,
+                "hash": "test-hash-multiple-1"
             },
             {
                 "asset_id": "asset-456",
-                "event_type": "event_type",
-                "changes": [{"price": "0.7", "size": "300"}],
-                "timestamp": 1234567891
+                "event_type": "price_change",
+                "market_slug": "test-market",
+                "market": "test-market-address",
+                "changes": [{"side": "BUY", "price": "0.7", "size": "300"}],
+                "timestamp": 1234567891,
+                "hash": "test-hash-multiple-2"
             }
         ]
 
