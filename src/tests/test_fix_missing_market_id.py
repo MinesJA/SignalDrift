@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 from datetime import datetime
 
 from src.utils.fix_missing_market_id import MarketIdFixer
-from src.daos.market_dao import write_marketEvents, _create_rows
+from src.daos.market_dao import write_marketEvents
 
 
 class TestMarketIdFixer:
@@ -107,9 +107,8 @@ class TestMarketDaoFixes:
     
     
     
-    @pytest.mark.skip(reason="write_marketMessages function was removed in refactoring")
-    def test_write_market_messages_with_market_id(self):
-        """Test that write_marketMessages includes market_id in CSV output."""
+    def test_write_market_events_with_market_id(self):
+        """Test that write_marketEvents includes market_id in CSV output."""
         with tempfile.TemporaryDirectory() as temp_dir:
             # Change to temp directory for CSV output
             import os
@@ -120,26 +119,39 @@ class TestMarketDaoFixes:
             try:
                 os.chdir(temp_dir)
                 
-                market_messages = [{
-                    'event_type': 'book',
-                    'asset_id': '123456789',
-                    'asks': [{'price': '0.6', 'size': '100', 'hash': 'test123'}],
-                    'bids': [{'price': '0.4', 'size': '200', 'hash': 'test456'}],
-                    'timestamp': 1750888000000
-                }]
+                # Import the required models
+                from src.models.market_event import BookEvent, EventType
+                from src.models.synthetic_orderbook import SyntheticOrder
+                from src.models.order import OrderSide
+                
+                # Create MarketEvent objects instead of raw dicts
+                market_events = [
+                    BookEvent(
+                        event_type=EventType.BOOK,
+                        market_slug='test-market',
+                        market_id=554912,
+                        market='test-market-address',
+                        asset_id='123456789',
+                        outcome_name='Yes',
+                        timestamp=1750888000000,
+                        hash='test-hash-1',
+                        asks=[SyntheticOrder(price=0.6, size=100.0, side=OrderSide.SELL)],
+                        bids=[SyntheticOrder(price=0.4, size=200.0, side=OrderSide.BUY)]
+                    )
+                ]
                 
                 test_datetime = datetime(2025, 6, 25, 10, 0, 0)
-                write_marketMessages('test-market', test_datetime, market_messages, market_id='554912')
+                write_marketEvents('test-market', 554912, market_events, test_datetime, test_mode=True)
                 
                 # Check that CSV was created with correct data (new underscore format)
-                csv_path = temp_data_dir / '20250625_test-market_polymarket-market-events.csv'
+                csv_path = temp_data_dir / '20250625_test-market_polymarket-market-events_test.csv'
                 assert csv_path.exists()
                 
                 df = pd.read_csv(csv_path)
                 assert len(df) == 2  # One ask, one bid
                 assert all(df['market_id'] == 554912)  # Should be int, not string
                 assert all(df['market_slug'] == 'test-market')
-                assert df['side'].tolist() == ['ask', 'bid']
+                assert df['side'].tolist() == ['SELL', 'BUY']
                 
             finally:
                 os.chdir(original_cwd)
