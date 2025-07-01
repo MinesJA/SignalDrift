@@ -28,11 +28,15 @@ def get_order_message_register(orderBook_store: OrderBookStore, order_store: Ord
     def handler(events: List[Dict[str, Any]]):
         try:
             now = datetime.now()
+            #TODO: Refactor, this is ugly
             market_events = [MarketEvent.from_dict(
                 {**market_eventdict,
+                 "market_slug": orderBook_store.market_slug,
                  "market_id": orderBook_store.market_id,
                  "outcome_name": orderBook_store.lookup(market_eventdict["asset_id"]).outcome_name}
-            ) for market_eventdict in events]
+            ) for market_eventdict in events
+            if market_eventdict["event_type"] == "book"
+                or market_eventdict["event_type"] == "price_change" ]
 
             book_store = orderBook_store.update_book(market_events)
             book_a, book_b = book_store.books
@@ -204,9 +208,15 @@ if __name__ == "__main__":
         #    "mlb-chc-stl-2025-06-25"
         #]
 
+        #"mlb-kc-sea-2025-06-30",
+        #"mlb-sf-ari-2025-06-30",
+
         market_slugs = [
-            "mlb-kc-sea-2025-06-30",
-            "mlb-sf-ari-2025-06-30",
+            "mlb-min-mia-2025-07-01",
+            "mlb-stl-pit-2025-07-01",
+            "mlb-det-wsh-2025-07-01",
+            "mlb-det-tb-2025-07-01",
+            "mlb-cin-bos-2025-07-01"
         ]
 
         # Create thread pool with max workers equal to number of markets
