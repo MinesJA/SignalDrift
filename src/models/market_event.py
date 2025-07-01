@@ -1,8 +1,7 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional, Dict, Any, List, Self
-from .order import OrderSide
-from .synthetic_orderbook import SyntheticOrder
+from src.models import OrderSide, SyntheticOrder
 import json
 
 from abc import ABC, abstractmethod
@@ -40,18 +39,7 @@ class MarketEvent(ABC):
 
     @classmethod
     def validate_event_type(cls, event_type: Optional[Any]) -> EventType:
-        """
-        Validate and convert event type to EventType enum.
-        
-        Args:
-            event_type: String value that should be 'book' or 'price_change'
-            
-        Returns:
-            EventType enum value
-            
-        Raises:
-            ValueError: If event_type is None or not a valid EventType
-        """
+        """Validate and convert event type to EventType enum."""
         if not event_type:
             raise ValueError("event_type cannot not be None")
 
@@ -59,18 +47,7 @@ class MarketEvent(ABC):
 
     @classmethod
     def validate_market_slug(cls, market_slug: Optional[Any]) -> str:
-        """
-        Validate market slug is not None.
-        
-        Args:
-            market_slug: Market identifier string
-            
-        Returns:
-            Validated market_slug string
-            
-        Raises:
-            ValueError: If market_slug is None
-        """
+        """Validate market slug is not None."""
         if not market_slug:
             raise ValueError("market_slug cannot not be None")
 
@@ -126,14 +103,7 @@ class MarketEvent(ABC):
 
     @abstractmethod
     def asdict(self) -> Dict[str, Any]:
-        """
-        Convert event to dictionary representation.
-        
-        Abstract method to be implemented by subclasses.
-        
-        Returns:
-            Dictionary containing all event fields
-        """
+        """Convert event to dictionary representation."""
         pass
 
     @abstractmethod

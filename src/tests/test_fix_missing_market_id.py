@@ -104,9 +104,6 @@ class TestMarketIdFixer:
 class TestMarketDaoFixes:
     """Test cases for market_dao.py fixes."""
     
-    
-    
-    
     def test_write_market_events_with_market_id(self):
         """Test that write_marketEvents includes market_id in CSV output."""
         with tempfile.TemporaryDirectory() as temp_dir:
