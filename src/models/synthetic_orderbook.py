@@ -1,5 +1,5 @@
 from typing import Dict, Any, List
-from models import OrderSide
+from src.models import OrderSide
 from dataclasses import dataclass, asdict
 
 @dataclass
@@ -15,7 +15,7 @@ class SyntheticOrder:
 
 
 class SyntheticOrderBook:
-    def __init__(self, market_slug: str, market_id: int, outcome_name: str, asset_id: int, timestamp: int):
+    def __init__(self, market_slug: str, market_id: int, outcome_name: str, asset_id: str, timestamp: int):
         self.orders_lookup: Dict[float, SyntheticOrder] = {}
         self.market_slug = market_slug
         self.market_id = market_id

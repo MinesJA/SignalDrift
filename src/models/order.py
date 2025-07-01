@@ -25,7 +25,7 @@ class Order:
     """
     market_slug: str
     market_id: int
-    asset_id: int
+    asset_id: str
     outcome_name: str
     side: OrderSide
     order_type: OrderType

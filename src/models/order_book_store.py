@@ -1,5 +1,5 @@
 from typing import List, Self
-from models import MarketEvent, PriceChangeEvent, BookEvent, SyntheticOrderBook
+from src.models import MarketEvent, PriceChangeEvent, BookEvent, SyntheticOrderBook
 
 class OrderBookStore:
     def __init__(self, market_slug: str, market_id: int, books: List[SyntheticOrderBook]):
@@ -12,13 +12,13 @@ class OrderBookStore:
         return list(self.books_lookup.values())
 
     @property
-    def asset_ids(self) -> List[int]:
+    def asset_ids(self) -> List[str]:
         return list(self.books_lookup.keys())
 
     def lookup(self, asset_id) -> SyntheticOrderBook:
         return self.books_lookup[asset_id]
 
-    def lookups(self, asset_ids: List[int]) -> List[SyntheticOrderBook]:
+    def lookups(self, asset_ids: List[str]) -> List[SyntheticOrderBook]:
         return [self.books_lookup[asset_id] for asset_id in asset_ids]
 
     def update_book(self, market_events: List[MarketEvent]) -> Self:
@@ -29,6 +29,7 @@ class OrderBookStore:
             if isinstance(event, PriceChangeEvent):
                 synth_orderbook.add_entries(event.changes)
             elif isinstance(event, BookEvent):
+                # We only care about the asks in the orderbook
                 synth_orderbook.replace_entries(event.asks)
 
         return self

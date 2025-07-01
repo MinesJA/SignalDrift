@@ -5,11 +5,11 @@ import json
 import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
-from strategies import calculate_orders
-from services import PolymarketService, PolymarketMarketEventsService
-from models import MarketEvent, SyntheticOrderBook, OrderBookStore, Order
-from daos import write_marketEvents, write_orderBookStore, write_orders
-from utils import datetime_to_epoch, CSVMessageProcessor
+from src.strategies import calculate_orders
+from src.services import PolymarketService, PolymarketMarketEventsService
+from src.models import MarketEvent, SyntheticOrderBook, OrderBookStore, Order
+from src.daos import write_marketEvents, write_orderBookStore, write_orders
+from src.utils import datetime_to_epoch, CSVMessageProcessor
 import traceback
 
 class OrdersStore:
