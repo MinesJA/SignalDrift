@@ -59,17 +59,17 @@ def get_order_message_register(orderBook_store: OrderBookStore, order_store: Ord
 def run_market_connection(market_slug: str, csv_file_path: Optional[str] = None):
     """
     Run a single market connection in its own thread.
-    
+
     Args:
         market_slug: The market slug identifier
         csv_file_path: Optional path to CSV file for testing. If provided, runs from CSV data instead of websocket.
     """
     try:
         print(f"Starting market connection for {market_slug}")
-        
+
         # Determine if we're running in test mode (from CSV)
         test_mode = csv_file_path is not None
-        
+
         market_metadata = PolymarketService().get_market_by_slug(market_slug)
 
         if market_metadata:
@@ -82,7 +82,7 @@ def run_market_connection(market_slug: str, csv_file_path: Optional[str] = None)
             book_store = OrderBookStore(market_slug, market_metadata['id'], books)
             order_store = OrdersStore()
             message_handler = get_order_message_register(book_store, order_store, test_mode=test_mode)
-            
+
             # Write metadata at the start of the run (only for live system, not CSV mode)
             if not test_mode:
                 executed_at = datetime.now()
@@ -113,10 +113,10 @@ def run_market_connection(market_slug: str, csv_file_path: Optional[str] = None)
 def extract_market_slug_from_filename(filename: str) -> str:
     """
     Extract market slug from filename.
-    
+
     Args:
         filename: Filename like "20250619_mlb-tb-kc-2025-06-24"
-        
+
     Returns:
         Market slug like "mlb-tb-kc-2025-06-24"
     """
@@ -130,10 +130,10 @@ def extract_market_slug_from_filename(filename: str) -> str:
 def get_csv_file_path(filename: str) -> str:
     """
     Get the CSV file path from filename.
-    
+
     Args:
         filename: Base filename like "20250619_mlb-tb-kc-2025-06-24"
-        
+
     Returns:
         Full path to the polymarket_market_events.csv file
     """
@@ -145,53 +145,59 @@ def get_csv_file_path(filename: str) -> str:
 if __name__ == "__main__":
     # Check if CSV file is provided via environment variable or command line
     csv_filename = os.environ.get('CSV_FILE')
-    
+
     if csv_filename:
         # Running from CSV file (test mode)
         try:
             csv_file_path = get_csv_file_path(csv_filename)
             market_slug = extract_market_slug_from_filename(csv_filename)
-            
+
             print(f"Running in test mode from CSV file: {csv_file_path}")
             print(f"Market slug: {market_slug}")
-            
+
             # Validate file exists
             if not os.path.exists(csv_file_path):
                 print(f"Error: CSV file not found: {csv_file_path}")
                 print(f"Make sure the file exists in the data directory.")
                 sys.exit(1)
-            
+
             # Basic validation of filename format
             if not csv_filename.endswith('_polymarket-market-events'):
                 expected_filename = f"{csv_filename}_polymarket-market-events.csv"
                 print(f"Warning: Expected filename format: {expected_filename}")
-            
+
             # Run single market from CSV
             run_market_connection(market_slug, csv_file_path)
             print("CSV processing completed successfully")
-            
+
         except KeyboardInterrupt:
             print("\nShutting down CSV processing...")
         except Exception as e:
             print(f"Error during CSV processing: {e}")
             traceback.print_exc()
             sys.exit(1)
-        
+
     else:
         # Running from websocket (live mode)
         print("Running in live mode from websocket connections")
-        
+
+        #market_slugs = [
+        #    "mlb-tex-bal-2025-06-25",
+        #    "mlb-oak-det-2025-06-25",
+        #    "mlb-tor-cle-2025-06-25",
+        #    "mlb-atl-nym-2025-06-25",
+        #    "mlb-nyy-cin-2024-06-25",
+        #    "mlb-sea-min-2025-06-25",
+        #    "mlb-tb-kc-2025-06-25",
+        #    "mlb-chc-stl-2025-06-25"
+        #]
         market_slugs = [
-            "mlb-tex-bal-2025-06-25",
-            "mlb-oak-det-2025-06-25",
-            "mlb-tor-cle-2025-06-25",
-            "mlb-atl-nym-2025-06-25",
-            "mlb-nyy-cin-2025-06-25",
-            "mlb-sea-min-2025-06-25",
-            "mlb-tb-kc-2025-06-25",
-            "mlb-chc-stl-2025-06-25"
+            "mlb-kc-sea-2025-06-30",
+            "mlb-sf-ari-2025-06-30",
         ]
-        
+
+
+
         # Create thread pool with max workers equal to number of markets
         with ThreadPoolExecutor(max_workers=len(market_slugs)) as executor:
             # Submit all market connections to run concurrently
