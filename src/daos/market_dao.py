@@ -2,7 +2,7 @@ import os
 import csv
 from typing import Dict, Any, List, Optional
 from datetime import datetime
-from models import MarketEvent
+from src.models import MarketEvent
 
 import logging
 

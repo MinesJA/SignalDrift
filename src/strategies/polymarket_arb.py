@@ -1,10 +1,10 @@
-from typing import Dict, Any, List, Callable
-from models import SyntheticOrderBook, Order, OrderType, SyntheticOrder, OrderSide
+from typing import List
+from src.models import SyntheticOrderBook, Order, OrderType, SyntheticOrder, OrderSide
 from datetime import datetime
-from utils.datetime_utils import datetime_to_epoch
+from src.utils.datetime_utils import datetime_to_epoch
 
 class OrderBuilder:
-    def __init__(self, market_slug: str, market_id: int, outcome_name: str, asset_id: int):
+    def __init__(self, market_slug: str, market_id: int, outcome_name: str, asset_id: str):
         self.market_slug = market_slug
         self.market_id = market_id
         self.outcome_name = outcome_name

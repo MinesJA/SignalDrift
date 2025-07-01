@@ -1,5 +1,5 @@
 from typing import List, Self
-from models import MarketEvent, PriceChangeEvent, BookEvent, SyntheticOrderBook
+from src.models import MarketEvent, PriceChangeEvent, BookEvent, SyntheticOrderBook
 
 class OrderBookStore:
     def __init__(self, market_slug: str, market_id: int, books: List[SyntheticOrderBook]):

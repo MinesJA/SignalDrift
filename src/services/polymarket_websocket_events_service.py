@@ -2,8 +2,8 @@ from websocket import WebSocketApp
 import json
 import time
 import threading
-from services import PolymarketClobClient
-from config import config
+from src.services import PolymarketClobClient
+from src.config import config
 
 from abc import ABC, abstractmethod
 
