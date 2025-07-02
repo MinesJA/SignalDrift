@@ -3,6 +3,11 @@ from src.models import SyntheticOrderBook, Order, OrderType, SyntheticOrder, Ord
 from datetime import datetime
 from src.utils.datetime_utils import datetime_to_epoch
 
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 class OrderBuilder:
     def __init__(self, market_slug: str, market_id: int, outcome_name: str, asset_id: str):
         self.market_slug = market_slug
@@ -46,6 +51,8 @@ def _recurs_build_orders(orders_a: List[SyntheticOrder], orderBuilder_a: OrderBu
 
         total = a.price + b.price
         if total < 1:
+            logger.info("Identified order")
+
             if a.size < b.size and round(a.size/2) >= 1:
                 size = round(a.size/2)
                 # TODO: Figure out how to remove all the duplicate extend _build_order calls for each conditional
