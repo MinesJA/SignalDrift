@@ -8,7 +8,7 @@ import traceback
 from concurrent.futures import ThreadPoolExecutor
 from src.strategies import calculate_orders
 from src.services import PolymarketService, PolymarketMarketEventsService
-from src.models import EventType, MarketEvent, SyntheticOrderBook, OrderBookStore, Order
+from src.models import MarketEvent, SyntheticOrderBook, OrderBookStore, Order
 from src.daos import write_marketEvents, write_orderBookStore, write_orders, write_metadata
 from src.utils import datetime_to_epoch, CSVMessageProcessor
 

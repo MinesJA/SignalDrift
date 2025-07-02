@@ -9,10 +9,10 @@ from abc import ABC, abstractmethod
 
 class EventType(Enum):
     """Types of market events emitted by Polymarket websocket."""
-    
+
     BOOK = "book"
     """Full order book snapshot - sent on initial subscription and after trades"""
-    
+
     PRICE_CHANGE = "price_change"
     """Incremental order book update - sent when orders are placed, cancelled, or modified"""
 
@@ -72,32 +72,32 @@ class MarketEvent(ABC):
     @classmethod
     def validate_asset_id(cls, asset_id: Optional[Any]) -> str:
         """Validate asset_id is not None."""
-        if not asset_id:
-            raise ValueError("asset_id cannot not be None")
+        if asset_id is None:
+            raise ValueError("asset_id cannot be None")
 
         return str(asset_id)
 
     @classmethod
     def validate_outcome_name(cls, outcome_name: Optional[Any]) -> str:
         """Validate outcome_name is not None."""
-        if not outcome_name:
-            raise ValueError("outcome_name cannot not be None")
+        if outcome_name is None:
+            raise ValueError("outcome_name cannot be None")
 
         return outcome_name
 
     @classmethod
     def validate_timestamp(cls, timestamp: Optional[Any]) -> int:
         """Validate timestamp is not None and convert to int."""
-        if not timestamp:
-            raise ValueError("timestamp cannot not be None")
+        if timestamp is None:
+            raise ValueError("timestamp cannot be None")
 
         return int(timestamp)
 
     @classmethod
     def validate_hash(cls, hash: Optional[Any]) -> str:
         """Validate hash is not None."""
-        if not hash:
-            raise ValueError("hash cannot not be None")
+        if hash is None:
+            raise ValueError("hash cannot be None")
 
         return hash
 
@@ -110,10 +110,10 @@ class MarketEvent(ABC):
     def asdict_rows(self) -> List[Dict[str, Any]]:
         """
         Convert event to list of flat dictionary rows for CSV export.
-        
+
         Abstract method to be implemented by subclasses to flatten
         hierarchical event data into rows suitable for CSV/tabular export.
-        
+
         Returns:
             List of dictionaries where each represents a row
         """
@@ -214,6 +214,7 @@ class BookEvent(MarketEvent):
             'market_slug': self.market_slug,
             'event_type': self.event_type.value,
             'asset_id': self.asset_id,
+            'outcome_name': self.outcome_name,
             'market': self.market,
             'timestamp': self.timestamp,
             'hash': self.hash,
@@ -224,10 +225,10 @@ class BookEvent(MarketEvent):
     def asdict_rows(self) -> List[Dict[str, Any]]:
         """
         Convert BookEvent to list of flat dictionary rows for CSV export.
-        
+
         Creates one row per order (bid or ask), with market event metadata
         duplicated in each row.
-        
+
         Returns:
             List of dictionaries where each dict represents one order with:
             - All market event metadata fields
@@ -257,8 +258,8 @@ class PriceChangeEvent(MarketEvent):
 
     @classmethod
     def validate_changes(cls, changes: Optional[Any]) -> List[SyntheticOrder]:
-        if not changes:
-            raise ValueError("bids cannot be None")
+        if changes is None:
+            raise ValueError("changes cannot be None")
 
         return [
             SyntheticOrder(
@@ -288,6 +289,7 @@ class PriceChangeEvent(MarketEvent):
             'market_slug': self.market_slug,
             'event_type': self.event_type.value,
             'asset_id': self.asset_id,
+            'outcome_name': self.outcome_name,
             'market': self.market,
             'timestamp': self.timestamp,
             'hash': self.hash,
@@ -297,13 +299,13 @@ class PriceChangeEvent(MarketEvent):
     def asdict_rows(self) -> List[Dict[str, Any]]:
         """
         Convert PriceChangeEvent to list of flat dictionary rows for CSV export.
-        
+
         Creates one row per order change, with market event metadata
         duplicated in each row.
-        
+
         Returns:
             List of dictionaries where each dict represents one change with:
-            - All market event metadata fields  
+            - All market event metadata fields
             - Individual change fields (side, price, size)
         """
         event_dict = self.asdict()
