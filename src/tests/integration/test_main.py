@@ -83,6 +83,7 @@ class TestOrderProcessingIntegration:
             }
         ]
 
+    @patch('src.main.PolymarketOrderService')
     @patch('src.main.write_marketEvents')
     @patch('src.main.write_orderBookStore')
     @patch('src.main.write_orders')
@@ -93,12 +94,18 @@ class TestOrderProcessingIntegration:
         mock_write_orders,
         mock_write_orderBookStore,
         mock_write_marketEvents,
+        mock_polymarket_order_service,
         real_orderbook_store,
         realistic_market_messages
     ):
         """Test complete order processing flow with real objects."""
         # Setup
         order_store = OrdersStore()
+
+        # Setup PolymarketOrderService mock
+        mock_order_service_instance = Mock()
+        mock_order_service_instance.execute_orders_from_list.return_value = {"status": "success", "orders": []}
+        mock_polymarket_order_service.return_value = mock_order_service_instance
 
         # Create mock orders that strategy would return
         mock_orders = [

@@ -1,0 +1,9 @@
+market_slug,market_id,asset_id,outcome_name,executed_at_timestamp,game_start_timestamp
+market-1,123,token-1,YES,1751424607476,
+market-1,123,token-2,NO,1751424607476,
+market-1,123,token-1,YES,1751425086555,
+market-1,123,token-2,NO,1751425086555,
+market-1,123,token-1,YES,1751425194445,
+market-1,123,token-2,NO,1751425194445,
+market-1,123,token-1,YES,1751425276629,
+market-1,123,token-2,NO,1751425276629,

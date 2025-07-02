@@ -8,7 +8,7 @@ across different platforms, starting with Polymarket.
 from typing import List, Dict, Any, Optional
 import logging
 from src.models import Order
-from services.polymarket_batch_order import PolymarketOrderService
+from src.services.polymarket_order_service import PolymarketOrderService
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

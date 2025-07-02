@@ -47,6 +47,7 @@ class TestGetOrderMessageRegister:
             }
         ]
 
+    @patch('src.main.PolymarketOrderService')
     @patch('src.main.write_marketEvents')
     @patch('src.main.write_orderBookStore')
     @patch('src.main.write_orders')
@@ -59,6 +60,7 @@ class TestGetOrderMessageRegister:
         mock_write_orders,
         mock_write_orderBookStore,
         mock_write_marketEvents,
+        mock_polymarket_service,
         mock_orderbook_store,
         order_store,
         sample_market_message
@@ -76,6 +78,11 @@ class TestGetOrderMessageRegister:
         mock_book = Mock()
         mock_book.outcome_name = "YES"
         mock_orderbook_store.lookup.return_value = mock_book
+        
+        # Mock PolymarketOrderService
+        mock_service_instance = Mock()
+        mock_service_instance.execute_orders_from_list.return_value = {"success": True}
+        mock_polymarket_service.return_value = mock_service_instance
 
         # Create handler
         handler = get_order_message_register(mock_orderbook_store, order_store)
@@ -153,6 +160,7 @@ class TestGetOrderMessageRegister:
         mock_write_orderBookStore.assert_not_called()
         mock_write_orders.assert_not_called()
 
+    @patch('src.main.PolymarketOrderService')
     @patch('src.main.write_marketEvents')
     @patch('src.main.write_orderBookStore')
     @patch('src.main.write_orders')
@@ -165,6 +173,7 @@ class TestGetOrderMessageRegister:
         mock_write_orders,
         mock_write_orderBookStore,
         mock_write_marketEvents,
+        mock_polymarket_service,
         mock_orderbook_store,
         order_store,
         sample_market_message
@@ -176,6 +185,16 @@ class TestGetOrderMessageRegister:
 
         mock_calculate_orders.return_value = []
         mock_orderbook_store.update_book.return_value = mock_orderbook_store
+        
+        # Mock PolymarketOrderService
+        mock_service_instance = Mock()
+        mock_service_instance.execute_orders_from_list.return_value = {"success": True}
+        mock_polymarket_service.return_value = mock_service_instance
+        
+        # Mock the lookup method
+        mock_book = Mock()
+        mock_book.outcome_name = "YES"
+        mock_orderbook_store.lookup.return_value = mock_book
 
         # Create handler
         handler = get_order_message_register(mock_orderbook_store, order_store)
@@ -196,6 +215,7 @@ class TestGetOrderMessageRegister:
             test_mode=False
         )
 
+    @patch('src.main.PolymarketOrderService')
     @patch('src.main.write_marketEvents')
     @patch('src.main.write_orderBookStore')
     @patch('src.main.write_orders')
@@ -206,6 +226,7 @@ class TestGetOrderMessageRegister:
         mock_write_orders,
         mock_write_orderBookStore,
         mock_write_marketEvents,
+        mock_polymarket_service,
         mock_orderbook_store,
         order_store,
         sample_market_message,
@@ -215,6 +236,16 @@ class TestGetOrderMessageRegister:
         # Setup mocks
         mock_calculate_orders.return_value = []
         mock_orderbook_store.update_book.return_value = mock_orderbook_store
+
+        # Mock PolymarketOrderService
+        mock_service_instance = Mock()
+        mock_service_instance.execute_orders_from_list.return_value = {"success": True}
+        mock_polymarket_service.return_value = mock_service_instance
+        
+        # Mock the lookup method
+        mock_book = Mock()
+        mock_book.outcome_name = "YES"
+        mock_orderbook_store.lookup.return_value = mock_book
 
         # Make write fail
         mock_write_marketEvents.side_effect = Exception("Write failed")
@@ -235,6 +266,7 @@ class TestGetOrderMessageRegister:
         handler = get_order_message_register(mock_orderbook_store, order_store)
         assert callable(handler)
 
+    @patch('src.main.PolymarketOrderService')
     @patch('src.main.write_marketEvents')
     @patch('src.main.write_orderBookStore')
     @patch('src.main.write_orders')
@@ -247,6 +279,7 @@ class TestGetOrderMessageRegister:
         mock_write_orders,
         mock_write_orderBookStore,
         mock_write_marketEvents,
+        mock_polymarket_service,
         mock_orderbook_store,
         order_store
     ):
@@ -258,6 +291,11 @@ class TestGetOrderMessageRegister:
         mock_orders = [Mock(spec=Order)]
         mock_calculate_orders.return_value = mock_orders
         mock_orderbook_store.update_book.return_value = mock_orderbook_store
+
+        # Mock PolymarketOrderService
+        mock_service_instance = Mock()
+        mock_service_instance.execute_orders_from_list.return_value = {"success": True}
+        mock_polymarket_service.return_value = mock_service_instance
 
         # Mock the lookup method to return a book with outcome_name
         mock_book = Mock()
