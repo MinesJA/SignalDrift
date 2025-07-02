@@ -1,4 +1,6 @@
 import unittest
+import pytest
+import asyncio
 from unittest.mock import Mock, patch
 import json
 import logging
@@ -15,7 +17,8 @@ class TestPolymarketWebsocketEventsService(unittest.TestCase):
         self.event_handlers = [Mock(), Mock()]
         self.message_callbacks = [Mock(), Mock()]
 
-    def test_market_events_service_handles_pong_message(self):
+    @pytest.mark.asyncio
+    async def test_market_events_service_handles_pong_message(self):
         """Test that PONG messages are handled without JSON parsing errors"""
         service = PolymarketMarketEventsService(
             self.market_slug,
@@ -23,12 +26,9 @@ class TestPolymarketWebsocketEventsService(unittest.TestCase):
             self.event_handlers
         )
 
-        # Mock WebSocket
-        ws = Mock()
-
         # Test PONG message handling
         with patch('services.polymarket_websocket_events_service.logger') as mock_logger:
-            service.on_message(ws, "PONG")
+            await service.on_message("PONG")
 
             # Ensure debug log was called
             mock_logger.debug.assert_called_once_with("Received PONG from server")
@@ -37,7 +37,8 @@ class TestPolymarketWebsocketEventsService(unittest.TestCase):
             for handler in self.event_handlers:
                 handler.assert_not_called()
 
-    def test_market_events_service_handles_json_messages(self):
+    @pytest.mark.asyncio
+    async def test_market_events_service_handles_json_messages(self):
         """Test that regular JSON messages are parsed and handled correctly"""
         service = PolymarketMarketEventsService(
             self.market_slug,
@@ -45,16 +46,16 @@ class TestPolymarketWebsocketEventsService(unittest.TestCase):
             self.event_handlers
         )
 
-        ws = Mock()
         test_data = {"type": "update", "data": {"price": 100}}
 
-        service.on_message(ws, json.dumps(test_data))
+        await service.on_message(json.dumps(test_data))
 
         # Ensure all event handlers were called with the parsed data wrapped in a list
         for handler in self.event_handlers:
             handler.assert_called_once_with([test_data])
 
-    def test_market_events_service_handles_invalid_json(self):
+    @pytest.mark.asyncio
+    async def test_market_events_service_handles_invalid_json(self):
         """Test that invalid JSON messages are logged as errors"""
         service = PolymarketMarketEventsService(
             self.market_slug,
@@ -62,11 +63,10 @@ class TestPolymarketWebsocketEventsService(unittest.TestCase):
             self.event_handlers
         )
 
-        ws = Mock()
         invalid_json = "not a json {invalid"
 
         with patch('services.polymarket_websocket_events_service.logger') as mock_logger:
-            service.on_message(ws, invalid_json)
+            await service.on_message(invalid_json)
 
             # Ensure error was logged
             self.assertEqual(mock_logger.error.call_count, 2)
@@ -75,8 +75,9 @@ class TestPolymarketWebsocketEventsService(unittest.TestCase):
             for handler in self.event_handlers:
                 handler.assert_not_called()
 
+    @pytest.mark.asyncio
     @patch('services.polymarket_websocket_events_service.PolymarketClobClient')
-    def test_user_events_service_handles_pong_message(self, mock_clob_client):
+    async def test_user_events_service_handles_pong_message(self, mock_clob_client):
         """Test that UserEventsService handles PONG messages correctly"""
         # Mock the client
         mock_client = Mock()
@@ -88,10 +89,8 @@ class TestPolymarketWebsocketEventsService(unittest.TestCase):
             self.message_callbacks
         )
 
-        ws = Mock()
-
         with patch('services.polymarket_websocket_events_service.logger') as mock_logger:
-            service.on_message(ws, "PONG")
+            await service.on_message("PONG")
 
             # Ensure debug log was called
             mock_logger.debug.assert_called_once_with("Received PONG from server")
@@ -100,8 +99,9 @@ class TestPolymarketWebsocketEventsService(unittest.TestCase):
             for callback in self.message_callbacks:
                 callback.assert_not_called()
 
+    @pytest.mark.asyncio
     @patch('services.polymarket_websocket_events_service.PolymarketClobClient')
-    def test_user_events_service_handles_json_messages(self, mock_clob_client):
+    async def test_user_events_service_handles_json_messages(self, mock_clob_client):
         """Test that UserEventsService handles JSON messages correctly"""
         # Mock the client
         mock_client = Mock()
@@ -113,10 +113,9 @@ class TestPolymarketWebsocketEventsService(unittest.TestCase):
             self.message_callbacks
         )
 
-        ws = Mock()
         test_data = {"type": "user_update", "data": {"balance": 1000}}
 
-        service.on_message(ws, json.dumps(test_data))
+        await service.on_message(json.dumps(test_data))
 
         # Ensure all callbacks were called with the parsed data
         for callback in self.message_callbacks:

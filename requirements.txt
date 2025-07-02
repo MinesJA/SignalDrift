@@ -5,6 +5,7 @@ pandas==2.2.1
 matplotlib==3.8.3
 py-clob-client
 pytest==8.3.2
+pytest-asyncio>=0.23.0
 selenium==4.25.0
 requests==2.32.3
 beautifulsoup4==4.12.3
