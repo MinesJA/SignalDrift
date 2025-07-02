@@ -9,7 +9,7 @@ class OrderBuilder:
         self.market_id = market_id
         self.outcome_name = outcome_name
         self.asset_id = asset_id
-        self.order_type = OrderType.FOK
+        self.order_type = OrderType.GTC
         self.side = OrderSide.BUY
 
 

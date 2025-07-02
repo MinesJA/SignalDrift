@@ -81,7 +81,8 @@ class TestGetOrderMessageRegister:
         
         # Mock PolymarketOrderService
         mock_service_instance = Mock()
-        mock_service_instance.execute_orders_from_list.return_value = {"success": True}
+        # Mock returns empty list since no orders are processed in the test
+        mock_service_instance.execute_orders_from_list.return_value = []
         mock_polymarket_service.return_value = mock_service_instance
 
         # Create handler
@@ -188,7 +189,8 @@ class TestGetOrderMessageRegister:
         
         # Mock PolymarketOrderService
         mock_service_instance = Mock()
-        mock_service_instance.execute_orders_from_list.return_value = {"success": True}
+        # Mock returns empty list since no orders are processed in the test
+        mock_service_instance.execute_orders_from_list.return_value = []
         mock_polymarket_service.return_value = mock_service_instance
         
         # Mock the lookup method
@@ -239,7 +241,8 @@ class TestGetOrderMessageRegister:
 
         # Mock PolymarketOrderService
         mock_service_instance = Mock()
-        mock_service_instance.execute_orders_from_list.return_value = {"success": True}
+        # Mock returns empty list since no orders are processed in the test
+        mock_service_instance.execute_orders_from_list.return_value = []
         mock_polymarket_service.return_value = mock_service_instance
         
         # Mock the lookup method
@@ -294,7 +297,8 @@ class TestGetOrderMessageRegister:
 
         # Mock PolymarketOrderService
         mock_service_instance = Mock()
-        mock_service_instance.execute_orders_from_list.return_value = {"success": True}
+        # Mock returns empty list since no orders are processed in the test
+        mock_service_instance.execute_orders_from_list.return_value = []
         mock_polymarket_service.return_value = mock_service_instance
 
         # Mock the lookup method to return a book with outcome_name

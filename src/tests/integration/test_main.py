@@ -104,7 +104,8 @@ class TestOrderProcessingIntegration:
 
         # Setup PolymarketOrderService mock
         mock_order_service_instance = Mock()
-        mock_order_service_instance.execute_orders_from_list.return_value = {"status": "success", "orders": []}
+        # Mock returns empty list since no orders are processed in the test
+        mock_order_service_instance.execute_orders_from_list.return_value = []
         mock_polymarket_order_service.return_value = mock_order_service_instance
 
         # Create mock orders that strategy would return
