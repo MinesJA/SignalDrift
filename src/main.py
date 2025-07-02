@@ -5,7 +5,7 @@ import json
 import os
 import sys
 import traceback
-from concurrent.futures import ThreadPoolExecutor
+import asyncio
 from src.strategies import calculate_orders
 from src.services import PolymarketService, PolymarketMarketEventsService
 from src.models import MarketEvent, SyntheticOrderBook, OrderBookStore, Order
@@ -71,9 +71,9 @@ def get_order_message_register(orderBook_store: OrderBookStore, order_store: Ord
     return handler
 
 
-def run_market_connection(market_slug: str, csv_file_path: Optional[str] = None):
+async def run_market_connection(market_slug: str, csv_file_path: Optional[str] = None):
     """
-    Run a single market connection in its own thread.
+    Run a single market connection asynchronously.
 
     Args:
         market_slug: The market slug identifier
@@ -118,7 +118,7 @@ def run_market_connection(market_slug: str, csv_file_path: Optional[str] = None)
             else:
                 # Run from websocket (original behavior)
                 market_connection = PolymarketMarketEventsService(market_slug, book_store.asset_ids, [message_handler])
-                market_connection.run()
+                await market_connection.run()
         else:
             print(f"No metadata found for market {market_slug}")
     except Exception as e:
@@ -183,7 +183,7 @@ if __name__ == "__main__":
                 print(f"Warning: Expected filename format: {expected_filename}")
 
             # Run single market from CSV
-            run_market_connection(market_slug, csv_file_path)
+            asyncio.run(run_market_connection(market_slug, csv_file_path))
             print("CSV processing completed successfully")
 
         except KeyboardInterrupt:
@@ -219,22 +219,28 @@ if __name__ == "__main__":
             "mlb-cin-bos-2025-07-01"
         ]
 
-        # Create thread pool with max workers equal to number of markets
-        with ThreadPoolExecutor(max_workers=len(market_slugs)) as executor:
-            # Submit all market connections to run concurrently
-            futures = []
+        # Create async tasks for all market connections
+        async def run_all_connections():
+            # Create all market connection tasks
+            tasks = []
             for market_slug in market_slugs:
-                future = executor.submit(run_market_connection, market_slug)
-                futures.append(future)
+                task = asyncio.create_task(run_market_connection(market_slug))
+                tasks.append(task)
 
-            print(f"Started {len(futures)} market connections")
+            print(f"Started {len(tasks)} market connections")
 
-            # Keep main thread alive while workers are running
             try:
-                # Wait for all threads to complete (they won't unless there's an error)
-                for future in futures:
-                    future.result()
+                # Run all connections concurrently
+                await asyncio.gather(*tasks)
             except KeyboardInterrupt:
                 print("\nShutting down market connections...")
-                executor.shutdown(wait=False)
+                # Cancel all remaining tasks
+                for task in tasks:
+                    if not task.done():
+                        task.cancel()
+                # Wait for all tasks to finish cancellation
+                await asyncio.gather(*tasks, return_exceptions=True)
+
+        # Run the async function
+        asyncio.run(run_all_connections())
 

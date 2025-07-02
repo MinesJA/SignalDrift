@@ -1,57 +1,102 @@
-from websocket import WebSocketApp
+import asyncio
 import json
 import time
-import threading
+import websockets
 from src.services import PolymarketClobClient
 from src.config import config
 
 from abc import ABC, abstractmethod
+from typing import List, Callable, Any
 
 import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class WebsocketConnection(ABC):
+class AsyncWebsocketConnection(ABC):
     def __init__(self, channel_type):
         self.url = config.POLYMARKET_WEBSOCKET_URL
-        furl = self.url + "/ws/" + channel_type
-
         self.channel_type = channel_type
-        self.ws = WebSocketApp(
-            furl,
-            on_message=self.on_message,
-            on_error=self.on_error,
-            on_close=self.on_close,
-            on_open=self.on_open,
-        )
+        self.websocket_url = self.url + "/ws/" + channel_type
+        self.websocket = None
+        self.ping_task = None
+        self.running = False
 
     @abstractmethod
-    def on_open(self, ws):
+    async def on_open(self):
         """To be implemented by child class"""
         pass
 
     @abstractmethod
-    def on_message(self, ws, message):
+    async def on_message(self, message: str):
         """To be implemented by child class"""
         pass
 
-    def on_error(self, ws, error):
-        print("Error: ", error)
-        exit(1)
+    async def on_error(self, error):
+        logger.error(f"WebSocket error: {error}")
+        raise error
 
-    def on_close(self, ws, close_status_code, close_msg):
-        print("closing")
-        exit(0)
+    async def on_close(self):
+        logger.info("WebSocket connection closed")
+        self.running = False
 
-    def ping(self, ws):
+    async def ping_handler(self):
+        """Send ping messages every 10 seconds to keep connection alive"""
+        try:
+            while self.running and self.websocket:
+                await self.websocket.send("PING")
+                logger.debug("Sent PING to server")
+                await asyncio.sleep(10)
+        except websockets.exceptions.ConnectionClosed:
+            logger.info("Ping handler stopped - connection closed")
+        except Exception as e:
+            logger.error(f"Error in ping handler: {e}")
+
+    async def run(self):
+        """Run the WebSocket connection with automatic reconnection"""
+        retry_delay = 1
+        max_retry_delay = 60
+        
         while True:
-            ws.send("PING")
-            time.sleep(10)
+            try:
+                logger.info(f"Connecting to WebSocket: {self.websocket_url}")
+                async with websockets.connect(self.websocket_url) as websocket:
+                    self.websocket = websocket
+                    self.running = True
+                    retry_delay = 1  # Reset retry delay on successful connection
+                    
+                    # Start ping task
+                    self.ping_task = asyncio.create_task(self.ping_handler())
+                    
+                    # Call on_open handler
+                    await self.on_open()
+                    
+                    # Listen for messages
+                    try:
+                        async for message in websocket:
+                            if message == "PONG":
+                                logger.debug("Received PONG from server")
+                                continue
+                            await self.on_message(message)
+                    except websockets.exceptions.ConnectionClosed:
+                        logger.info("WebSocket connection closed by server")
+                        await self.on_close()
+                        break
+                        
+            except Exception as e:
+                await self.on_error(e)
+                logger.error(f"WebSocket connection failed, retrying in {retry_delay}s...")
+                await asyncio.sleep(retry_delay)
+                retry_delay = min(retry_delay * 2, max_retry_delay)
+            finally:
+                if self.ping_task:
+                    self.ping_task.cancel()
+                    try:
+                        await self.ping_task
+                    except asyncio.CancelledError:
+                        pass
+                self.running = False
 
-    def run(self):
-        self.ws.run_forever()
-
-class PolymarketUserEventsService(WebsocketConnection):
+class PolymarketUserEventsService(AsyncWebsocketConnection):
 
     def __init__(self, asset_ids, event_handlers):
         super().__init__("user")
@@ -69,14 +114,11 @@ class PolymarketUserEventsService(WebsocketConnection):
     def payload(self):
         return {"markets": self.asset_ids, "type": self.channel_type(), "auth": self.auth}
 
-    def on_open(self, ws):
-        ws.send(json.dumps(self.payload()))
-
-        thr = threading.Thread(target=self.ping, args=(ws,))
+    async def on_open(self):
+        await self.websocket.send(json.dumps(self.payload()))
         logger.info(f"Starting user events service")
-        thr.start()
 
-    def on_message(self, ws, message):
+    async def on_message(self, message: str):
         # Handle PONG messages
         if message == "PONG":
             logger.debug("Received PONG from server")
@@ -97,17 +139,17 @@ class PolymarketUserEventsService(WebsocketConnection):
             logger.error(f"Error handling WebSocket message: {e}")
 
 
-class PolymarketMarketEventsService(WebsocketConnection):
+class PolymarketMarketEventsService(AsyncWebsocketConnection):
 
     """
-    Provdies ability to connect to Polymarket websocket for streaming orderbook events
+    Provides ability to connect to Polymarket websocket for streaming orderbook events
 
     Attributes:
         market_slug:
         asset_ids:
         event_handlers:
     """
-    def __init__(self,market_slug, asset_ids, event_handlers):
+    def __init__(self, market_slug, asset_ids, event_handlers):
         super().__init__("market")
         self.market_slug = market_slug
         self.asset_ids = asset_ids
@@ -120,7 +162,7 @@ class PolymarketMarketEventsService(WebsocketConnection):
     def channel_type(self):
         return "market"
 
-    def on_message(self, ws, message):
+    async def on_message(self, message: str):
         # Handle PONG messages
         if message == "PONG":
             logger.debug("Received PONG from server")
@@ -149,13 +191,8 @@ class PolymarketMarketEventsService(WebsocketConnection):
             logger.error(message)
         except Exception as e:
             logger.error(f"Error handling WebSocket message: {e}")
-        finally:
-            pass
 
-    def on_open(self, ws):
-        ws.send(json.dumps(self.payload))
-
-        thr = threading.Thread(target=self.ping, args=(ws,))
+    async def on_open(self):
+        await self.websocket.send(json.dumps(self.payload))
         print(f"\n STARTING {self.market_slug} \n")
-        thr.start()
 

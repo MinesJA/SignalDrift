@@ -3,8 +3,8 @@ import tempfile
 import json
 import threading
 import time
+import asyncio
 from unittest.mock import Mock, patch, MagicMock
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
 
@@ -326,9 +326,10 @@ class TestMarketConnectionIntegration:
             'outcomes': '["YES", "NO"]'
         }
 
+    @pytest.mark.asyncio
     @patch('src.main.PolymarketMarketEventsService')
     @patch('src.main.PolymarketService')
-    def test_successful_market_connection_setup(
+    async def test_successful_market_connection_setup(
         self,
         mock_polymarket_service,
         mock_events_service,
@@ -341,11 +342,12 @@ class TestMarketConnectionIntegration:
         mock_polymarket_service.return_value = mock_service_instance
 
         mock_events_instance = Mock()
+        mock_events_instance.run = Mock(return_value=asyncio.sleep(0.01))  # Make run async
         mock_events_service.return_value = mock_events_instance
 
         # Run market connection
         market_slug = "test-market-slug"
-        run_market_connection(market_slug)
+        await run_market_connection(market_slug)
 
         # Verify service calls
         mock_service_instance.get_market_by_slug.assert_called_once_with(market_slug)
@@ -365,9 +367,10 @@ class TestMarketConnectionIntegration:
         # Verify run was called
         mock_events_instance.run.assert_called_once()
 
+    @pytest.mark.asyncio
     @patch('src.main.PolymarketMarketEventsService')
     @patch('src.main.PolymarketService')
-    def test_market_connection_with_invalid_slug(
+    async def test_market_connection_with_invalid_slug(
         self,
         mock_polymarket_service,
         mock_events_service
@@ -379,14 +382,15 @@ class TestMarketConnectionIntegration:
         mock_polymarket_service.return_value = mock_service_instance
 
         # Should not raise exception
-        run_market_connection("invalid-slug")
+        await run_market_connection("invalid-slug")
 
         # Events service should not be called
         mock_events_service.assert_not_called()
 
+    @pytest.mark.asyncio
     @patch('src.main.PolymarketMarketEventsService')
     @patch('src.main.PolymarketService')
-    def test_market_connection_service_exception(
+    async def test_market_connection_service_exception(
         self,
         mock_polymarket_service,
         mock_events_service
@@ -398,14 +402,15 @@ class TestMarketConnectionIntegration:
         mock_polymarket_service.return_value = mock_service_instance
 
         # Should not raise exception (error is caught and logged)
-        run_market_connection("test-market")
+        await run_market_connection("test-market")
 
         # Events service should not be called
         mock_events_service.assert_not_called()
 
+    @pytest.mark.asyncio
     @patch('src.main.PolymarketMarketEventsService')
     @patch('src.main.PolymarketService')
-    def test_real_orderbook_creation_from_metadata(
+    async def test_real_orderbook_creation_from_metadata(
         self,
         mock_polymarket_service,
         mock_events_service,
@@ -422,12 +427,14 @@ class TestMarketConnectionIntegration:
         def capture_handler(market_slug, asset_ids, handlers):
             nonlocal captured_handler
             captured_handler = handlers[0]
-            return Mock()
+            mock_connection = Mock()
+            mock_connection.run = Mock(return_value=asyncio.sleep(0.01))
+            return mock_connection
 
         mock_events_service.side_effect = capture_handler
 
         # Run market connection
-        run_market_connection("test-market")
+        await run_market_connection("test-market")
 
         # Test the captured handler with real market message
         assert captured_handler is not None
@@ -456,8 +463,9 @@ class TestMarketConnectionIntegration:
 class TestConcurrencyIntegration:
     """Integration tests for concurrent operations and threading."""
 
-    def test_multiple_market_connections_thread_safety(self):
-        """Test that multiple market connections can run concurrently safely."""
+    @pytest.mark.asyncio
+    async def test_multiple_market_connections_async_safety(self):
+        """Test that multiple market connections can run concurrently safely using asyncio."""
         market_slugs = ["market-1", "market-2", "market-3"]
 
         with patch('src.main.PolymarketService') as mock_service, \
@@ -479,28 +487,28 @@ class TestConcurrencyIntegration:
             def mock_events_service(market_slug, asset_ids, handlers):
                 with lock:
                     processed_markets.append(market_slug)
-                # Simulate some processing time
-                time.sleep(0.1)
-                return Mock()
+                # Create a mock connection with async run method
+                mock_connection = Mock()
+                mock_connection.run = Mock(return_value=asyncio.sleep(0.1))
+                return mock_connection
 
             mock_events.side_effect = mock_events_service
 
-            # Run multiple market connections concurrently
-            with ThreadPoolExecutor(max_workers=3) as executor:
-                futures = []
-                for market_slug in market_slugs:
-                    future = executor.submit(run_market_connection, market_slug)
-                    futures.append(future)
+            # Run multiple market connections concurrently using asyncio
+            tasks = []
+            for market_slug in market_slugs:
+                task = asyncio.create_task(run_market_connection(market_slug))
+                tasks.append(task)
 
-                # Wait for all to complete
-                for future in futures:
-                    future.result()
+            # Wait for all to complete
+            await asyncio.gather(*tasks)
 
             # Verify all markets were processed
             assert len(processed_markets) == 3
             assert set(processed_markets) == set(market_slugs)
 
-    def test_concurrent_order_processing(self):
+    @pytest.mark.asyncio
+    async def test_concurrent_order_processing(self):
         """Test that order processing is thread-safe across multiple handlers."""
         # Create shared order store
         order_store = OrdersStore()
@@ -549,28 +557,33 @@ class TestConcurrencyIntegration:
 
             mock_calc.side_effect = side_effect_calc
 
-            # Process messages concurrently
-            with ThreadPoolExecutor(max_workers=3) as executor:
-                futures = []
-                for handler, messages in zip(handlers, messages_list):
-                    future = executor.submit(handler, messages)
-                    futures.append(future)
+            # Process messages concurrently using asyncio
+            async def process_handler_async(handler, messages):
+                # Wrap synchronous handler in async function
+                await asyncio.sleep(0.01)  # Simulate async processing
+                handler(messages)
 
-                # Wait for all to complete
-                for future in futures:
-                    future.result()
+            tasks = []
+            for handler, messages in zip(handlers, messages_list):
+                task = asyncio.create_task(process_handler_async(handler, messages))
+                tasks.append(task)
+
+            # Wait for all to complete
+            await asyncio.gather(*tasks)
 
             # Verify all orders were added correctly
             # Market 0: 1 order, Market 1: 2 orders, Market 2: 3 orders
             expected_total_orders = 1 + 2 + 3
             assert len(order_store.orders) == expected_total_orders
 
-    def test_order_store_thread_safety(self):
-        """Test that OrdersStore operations are thread-safe."""
+    @pytest.mark.asyncio
+    async def test_order_store_async_safety(self):
+        """Test that OrdersStore operations are safe with asyncio concurrency."""
         order_store = OrdersStore()
 
-        def add_orders_worker(worker_id, num_orders):
+        async def add_orders_worker(worker_id, num_orders):
             """Worker function that adds orders concurrently."""
+            await asyncio.sleep(0.01)  # Simulate async processing
             orders = [Mock(spec=Order, worker_id=worker_id, order_num=i)
                      for i in range(num_orders)]
             order_store.add_orders(orders)
@@ -579,15 +592,13 @@ class TestConcurrencyIntegration:
         num_workers = 5
         orders_per_worker = 10
 
-        with ThreadPoolExecutor(max_workers=num_workers) as executor:
-            futures = []
-            for worker_id in range(num_workers):
-                future = executor.submit(add_orders_worker, worker_id, orders_per_worker)
-                futures.append(future)
+        tasks = []
+        for worker_id in range(num_workers):
+            task = asyncio.create_task(add_orders_worker(worker_id, orders_per_worker))
+            tasks.append(task)
 
-            # Wait for all workers to complete
-            for future in futures:
-                future.result()
+        # Wait for all workers to complete
+        await asyncio.gather(*tasks)
 
         # Verify all orders were added
         expected_total = num_workers * orders_per_worker
