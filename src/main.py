@@ -212,11 +212,12 @@ if __name__ == "__main__":
         #"mlb-sf-ari-2025-06-30",
 
         market_slugs = [
-            "mlb-min-mia-2025-07-01",
-            "mlb-stl-pit-2025-07-01",
-            "mlb-det-wsh-2025-07-01",
-            "mlb-det-tb-2025-07-01",
-            "mlb-cin-bos-2025-07-01"
+            "mlb-sf-ari-2025-07-01",
+            "mlb-kc-sea-2025-07-01",
+            "mlb-hou-col-2025-07-01",
+            "mlb-cle-chc-2025-07-01",
+            "mlb-bal-tex-2025-07-01",
+            "mlb-cws-lad-2025-07-01"
         ]
 
         # Create thread pool with max workers equal to number of markets
