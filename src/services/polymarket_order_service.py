@@ -3,7 +3,7 @@ from py_clob_client.clob_types import OrderArgs, OrderType, PostOrdersArgs, Part
 from py_clob_client.order_builder.constants import BUY, SELL
 from typing import List, Dict, Any, Optional
 import logging
-from config import config
+from src.config import config
 from src.models import Order, OrderSide
 
 logging.basicConfig(level=logging.INFO)

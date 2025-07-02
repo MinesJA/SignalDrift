@@ -1,4 +1,4 @@
-from config import config
+from src.config import config
 from py_clob_client.client import ClobClient
 
 class ConnectionError(Exception):

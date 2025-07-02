@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 from typing import Dict, Optional, Any, List
 import logging
-from config import config
+from src.config import config
 from src.models import OrderType
 
 logging.basicConfig(level=logging.INFO)
