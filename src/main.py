@@ -3,12 +3,10 @@ from datetime import datetime
 from typing import Dict, Any, List, Optional
 import json
 import os
-import sys
 import traceback
-from concurrent.futures import ThreadPoolExecutor
 from src.strategies import calculate_orders
 from src.services import PolymarketService, PolymarketMarketEventsService, PolymarketOrderService
-from src.models import MarketEvent, SyntheticOrderBook, OrderBookStore, Order
+from src.models import MarketEvent, SyntheticOrderBook, OrderBookStore, Order, OrderSide, OrderType
 from src.daos import write_marketEvents, write_orderBookStore, write_orders, write_metadata
 from src.utils import datetime_to_epoch, CSVMessageProcessor
 
@@ -159,8 +157,39 @@ def get_csv_file_path(filename: str) -> str:
     csv_filename = f"{filename}_polymarket-market-events.csv"
     return os.path.join(data_dir, csv_filename)
 
-
 if __name__ == "__main__":
+
+    print("Getting metadata")
+    market_slug = "mlb-sd-phi-2025-07-02"
+    market_metadata = PolymarketService().get_market_by_slug(market_slug)
+
+    print("Getting metadata")
+
+    if market_metadata:
+        timestamp = datetime_to_epoch(datetime.now())
+        orders = [
+            Order(
+                market_slug=market_slug,
+                market_id=int(market_metadata['id']),
+                asset_id=asset_id,
+                outcome_name=outcome_name,
+                side=OrderSide.BUY,
+                order_type=OrderType.GTC,
+                price=0.25,
+                size=1,
+                timestamp=timestamp
+            )
+            for asset_id, outcome_name
+            in zip(json.loads(market_metadata['clobTokenIds']), json.loads(market_metadata['outcomes']))
+        ]
+
+        print(orders)
+        response = PolymarketOrderService().execute_orders_from_list(orders)
+        print(" \n ")
+        print(response)
+
+
+if __name__ == "__mn__":
     # Check if CSV file is provided via environment variable or command line
     csv_filename = os.environ.get('CSV_FILE')
 
@@ -198,20 +227,6 @@ if __name__ == "__main__":
     else:
         # Running from websocket (live mode)
         print("Running in live mode from websocket connections")
-
-        #market_slugs = [
-        #    "mlb-tex-bal-2025-06-25",
-        #    "mlb-oak-det-2025-06-25",
-        #    "mlb-tor-cle-2025-06-25",
-        #    "mlb-atl-nym-2025-06-25",
-        #    "mlb-nyy-cin-2024-06-25",
-        #    "mlb-sea-min-2025-06-25",
-        #    "mlb-tb-kc-2025-06-25",
-        #    "mlb-chc-stl-2025-06-25"
-        #]
-
-        #"mlb-kc-sea-2025-06-30",
-        #"mlb-sf-ari-2025-06-30",
 
         market_slugs = [
             "mlb-min-mia-2025-07-01",

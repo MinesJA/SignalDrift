@@ -108,7 +108,7 @@ class PolymarketOrderService:
                 OrderType.GTD: PolymarketOrderType.GTD
             }
             polymarket_order_type = order_type_map.get(order.order_type, PolymarketOrderType.FOK)
-            
+
             # Submit the order
             result = self.client.post_order(signed_order, polymarket_order_type)
 
@@ -189,7 +189,7 @@ class PolymarketOrderService:
                     OrderType.GTD: PolymarketOrderType.GTD
                 }
                 polymarket_order_type = order_type_map.get(order.order_type, PolymarketOrderType.FOK)
-                    
+
                 post_orders_args.append(PostOrdersArgs(
                     order=signed_order,
                     orderType=polymarket_order_type
@@ -230,13 +230,13 @@ class PolymarketOrderService:
             return []
 
         logger.info(f"Executing {len(orders)} orders in batches of 5")
-        
+
         execution_results = []
-        
+
         # Split orders into batches of 5
         for i in range(0, len(orders), 5):
             batch = orders[i:i+5]
-            
+
             try:
                 # Convert orders to PostOrdersArgs
                 post_orders_args = []
@@ -246,8 +246,9 @@ class PolymarketOrderService:
                         order_args,
                         PartialCreateOrderOptions(neg_risk=neg_risk)
                     )
-                    
+
                     # Convert our OrderType to Polymarket's OrderType
+                    # TODO: Revisit, this seems silly but maybe its necessary
                     order_type_map = {
                         OrderType.GTC: PolymarketOrderType.GTC,
                         OrderType.FOK: PolymarketOrderType.FOK,
@@ -255,15 +256,15 @@ class PolymarketOrderService:
                         OrderType.GTD: PolymarketOrderType.GTD
                     }
                     polymarket_order_type = order_type_map.get(order.order_type, PolymarketOrderType.FOK)
-                        
+
                     post_orders_args.append(PostOrdersArgs(
                         order=signed_order,
                         orderType=polymarket_order_type
                     ))
-                
+
                 # Submit batch and get results
                 batch_results = self.client.post_orders(post_orders_args)
-                
+
                 # Process results - batch_results should be a list of individual order results
                 if isinstance(batch_results, list):
                     for j, (order, result) in enumerate(zip(batch, batch_results)):
@@ -287,7 +288,7 @@ class PolymarketOrderService:
                             error_msg=error_msg,
                             polymarket_response=batch_results
                         ))
-                        
+
             except Exception as e:
                 # If exception occurs, create failure results for all orders in batch
                 logger.error(f"Error placing batch: {e}")
@@ -300,9 +301,9 @@ class PolymarketOrderService:
                         error_msg=str(e),
                         polymarket_response={'error': str(e)}
                     ))
-        
+
         # Log summary
         successful_orders = sum(1 for r in execution_results if r.success)
         logger.info(f"Executed {len(orders)} orders: {successful_orders} successful, {len(orders) - successful_orders} failed")
-        
+
         return execution_results
