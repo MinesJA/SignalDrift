@@ -7,7 +7,7 @@ across different platforms, starting with Polymarket.
 
 from typing import List, Dict, Any, Optional
 import logging
-from models.order import Order
+from src.models import Order
 from services.polymarket_batch_order import PolymarketOrderService
 
 logging.basicConfig(level=logging.INFO)
@@ -62,47 +62,3 @@ class OrderExecutor:
         return {
             "polymarket": self.is_polymarket_available()
         }
-
-
-def execute_orders_from_csv_data(csv_file_path: str, neg_risk: bool = True) -> Dict[str, Any]:
-    """
-    Convenience function to execute orders from historical CSV data.
-    
-    Args:
-        csv_file_path: Path to CSV file containing order data
-        neg_risk: Whether this is a negative risk market
-        
-    Returns:
-        Execution results
-    """
-    import pandas as pd
-    from models.order import OrderType
-    
-    # Read CSV data
-    df = pd.read_csv(csv_file_path)
-    
-    if df.empty:
-        return {
-            "success": True,
-            "message": "No orders found in CSV file",
-            "total_orders": 0
-        }
-    
-    # Convert CSV rows to Order objects
-    orders = []
-    for _, row in df.iterrows():
-        order_type = OrderType.LIMIT_BUY if row['side'].upper() == 'BUY' else OrderType.LIMIT_SELL
-        
-        order = Order(
-            asset_id=int(row['asset_id']),
-            market_slug=row['market_slug'],
-            order_type=order_type,
-            price=float(row['price']),
-            size=float(row['size']),
-            timestamp=int(row['timestamp'])
-        )
-        orders.append(order)
-    
-    # Execute orders
-    executor = OrderExecutor()
-    return executor.execute_polymarket_orders(orders, neg_risk=neg_risk)

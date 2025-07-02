@@ -4,7 +4,7 @@ from py_clob_client.order_builder.constants import BUY, SELL
 from typing import List, Dict, Any, Optional
 import logging
 from config import config
-from models.order import Order, OrderType as InternalOrderType
+from src.models import Order, OrderType as InternalOrderType, OrderSide
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -55,22 +55,21 @@ class PolymarketOrderService:
         Returns:
             OrderArgs object for Polymarket API
         """
-        # Convert internal order type to Polymarket side
-        if order.order_type == InternalOrderType.LIMIT_BUY:
+        if order.side == OrderSide.BUY:
             side = BUY
-        elif order.order_type == InternalOrderType.LIMIT_SELL:
+        elif order.side == OrderSide.SELL:
             side = SELL
         else:
-            raise ValueError(f"Unsupported order type: {order.order_type}")
+            raise ValueError(f"Unsupported order side: {order.side}")
         
         return OrderArgs(
             price=order.price,
             size=order.size,
             side=side,
-            token_id=str(order.asset_id)
+            token_id=order.asset_id
         )
     
-    def place_single_order(self, order: Order, neg_risk: bool = True, order_type: OrderType = OrderType.GTC) -> Optional[Dict[str, Any]]:
+    def place_single_order(self, order: Order, neg_risk: bool = True, order_type: OrderType = OrderType.FOK) -> Optional[Dict[str, Any]]:
         """
         Place a single order on Polymarket.
 
@@ -107,7 +106,7 @@ class PolymarketOrderService:
                 "orderHashes": None
             }
 
-    def place_multiple_orders(self, orders: List[Order], neg_risk: bool = True, order_type: OrderType = OrderType.GTC) -> List[Dict[str, Any]]:
+    def place_multiple_orders(self, orders: List[Order], neg_risk: bool = True, order_type: OrderType = OrderType.FOK) -> List[Dict[str, Any]]:
         """
         Place multiple orders in batches on Polymarket.
 
@@ -117,19 +116,19 @@ class PolymarketOrderService:
             order_type: Polymarket OrderType (GTC, FOK, etc.)
 
         Returns:
-            List of results for each batch (max 5 orders per batch)
+            List of results for each batch (max 4 orders per batch)
 
         Note:
-            Automatically splits orders into batches of 5 (Polymarket's limit)
+            Automatically splits orders into batches of 4
         """
         if not orders:
             return []
         
         results = []
         
-        # Split orders into batches of 5
-        for i in range(0, len(orders), 5):
-            batch = orders[i:i+5]
+        # Split orders into batches of 4
+        for i in range(0, len(orders), 4):
+            batch = orders[i:i+4]
             batch_result = self._place_order_batch(batch, neg_risk, order_type)
             results.append(batch_result)
         
@@ -137,10 +136,10 @@ class PolymarketOrderService:
     
     def _place_order_batch(self, orders: List[Order], neg_risk: bool, order_type: OrderType) -> Dict[str, Any]:
         """
-        Place a single batch of orders (max 5).
+        Place a single batch of orders (max 4).
         
         Args:
-            orders: List of Order objects (max 5)
+            orders: List of Order objects (max 4)
             neg_risk: Whether this is a negative risk market
             order_type: Polymarket OrderType
             
@@ -148,8 +147,8 @@ class PolymarketOrderService:
             Batch execution result
         """
         try:
-            if len(orders) > 5:
-                error_msg = "Maximum of 5 orders per batch request"
+            if len(orders) > 4:
+                error_msg = "Maximum of 4 orders per batch request"
                 logger.error(error_msg)
                 return {
                     "success": False,
@@ -210,7 +209,7 @@ class PolymarketOrderService:
                 "results": []
             }
         
-        logger.info(f"Executing {len(orders)} orders in batches of 5")
+        logger.info(f"Executing {len(orders)} orders in batches of 4")
         
         results = self.place_multiple_orders(orders, neg_risk=neg_risk)
         
