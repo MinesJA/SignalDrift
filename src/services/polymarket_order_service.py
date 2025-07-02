@@ -4,7 +4,7 @@ from py_clob_client.order_builder.constants import BUY, SELL
 from typing import List, Dict, Any, Optional
 import logging
 from config import config
-from src.models import Order, OrderType as InternalOrderType, OrderSide
+from src.models import Order, OrderSide
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -24,10 +24,10 @@ class PolymarketOrderService:
         self.chain_id = 137  # Polygon chain ID
         self.private_key = config.POLYMARKET_PRIVATE_KEY
         self.proxy_address = config.POLYMARKET_PROXY_ADDRESS
-        
+
         if not self.private_key or not self.proxy_address:
             raise ValueError("POLYMARKET_PRIVATE_KEY and POLYMARKET_PROXY_ADDRESS environment variables must be set")
-        
+
         # Initialize client with browser wallet signature type (2)
         self.client = ClobClient(
             host=self.host,
@@ -36,11 +36,11 @@ class PolymarketOrderService:
             signature_type=2,
             funder=self.proxy_address
         )
-        
+
         # Set up API credentials
         api_creds = self.client.create_or_derive_api_creds()
         self.client.set_api_creds(api_creds)
-        
+
         logger.info("PolymarketOrderService initialized successfully")
 
 
@@ -48,10 +48,10 @@ class PolymarketOrderService:
     def _convert_order_to_polymarket(self, order: Order) -> OrderArgs:
         """
         Convert internal Order object to Polymarket OrderArgs.
-        
+
         Args:
             order: Internal Order object
-            
+
         Returns:
             OrderArgs object for Polymarket API
         """
@@ -61,14 +61,14 @@ class PolymarketOrderService:
             side = SELL
         else:
             raise ValueError(f"Unsupported order side: {order.side}")
-        
+
         return OrderArgs(
             price=order.price,
             size=order.size,
             side=side,
             token_id=order.asset_id
         )
-    
+
     def place_single_order(self, order: Order, neg_risk: bool = True, order_type: OrderType = OrderType.FOK) -> Optional[Dict[str, Any]]:
         """
         Place a single order on Polymarket.
@@ -84,16 +84,16 @@ class PolymarketOrderService:
         try:
             # Convert internal order to Polymarket format
             order_args = self._convert_order_to_polymarket(order)
-            
+
             # Create and sign the order
             signed_order = self.client.create_order(
-                order_args, 
+                order_args,
                 PartialCreateOrderOptions(neg_risk=neg_risk)
             )
-            
+
             # Submit the order
             result = self.client.post_order(signed_order, order_type)
-            
+
             logger.info(f"Successfully placed order for {order.market_slug}: {result}")
             return result
 
@@ -123,26 +123,26 @@ class PolymarketOrderService:
         """
         if not orders:
             return []
-        
+
         results = []
-        
+
         # Split orders into batches of 4
         for i in range(0, len(orders), 4):
             batch = orders[i:i+4]
             batch_result = self._place_order_batch(batch, neg_risk, order_type)
             results.append(batch_result)
-        
+
         return results
-    
+
     def _place_order_batch(self, orders: List[Order], neg_risk: bool, order_type: OrderType) -> Dict[str, Any]:
         """
         Place a single batch of orders (max 4).
-        
+
         Args:
             orders: List of Order objects (max 4)
             neg_risk: Whether this is a negative risk market
             order_type: Polymarket OrderType
-            
+
         Returns:
             Batch execution result
         """
@@ -162,7 +162,7 @@ class PolymarketOrderService:
             for order in orders:
                 order_args = self._convert_order_to_polymarket(order)
                 signed_order = self.client.create_order(
-                    order_args, 
+                    order_args,
                     PartialCreateOrderOptions(neg_risk=neg_risk)
                 )
                 post_orders_args.append(PostOrdersArgs(
@@ -172,7 +172,7 @@ class PolymarketOrderService:
 
             # Submit batch
             result = self.client.post_orders(post_orders_args)
-            
+
             logger.info(f"Successfully placed batch of {len(orders)} orders: {result}")
             return {
                 "success": True,
@@ -193,11 +193,11 @@ class PolymarketOrderService:
     def execute_orders_from_list(self, orders: List[Order], neg_risk: bool = True) -> Dict[str, Any]:
         """
         Execute a list of Order objects, handling batching automatically.
-        
+
         Args:
             orders: List of Order objects to execute
             neg_risk: Whether this is a negative risk market (binary yes/no)
-            
+
         Returns:
             Summary of execution results
         """
@@ -208,15 +208,15 @@ class PolymarketOrderService:
                 "batches_processed": 0,
                 "results": []
             }
-        
+
         logger.info(f"Executing {len(orders)} orders in batches of 4")
-        
+
         results = self.place_multiple_orders(orders, neg_risk=neg_risk)
-        
+
         # Summarize results
         total_success = sum(1 for r in results if r.get("success", False))
         total_orders = len(orders)
-        
+
         return {
             "success": total_success == len(results),
             "total_orders": total_orders,

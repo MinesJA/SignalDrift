@@ -7,7 +7,7 @@ import sys
 import traceback
 from concurrent.futures import ThreadPoolExecutor
 from src.strategies import calculate_orders
-from src.services import PolymarketService, PolymarketMarketEventsService
+from src.services import PolymarketService, PolymarketMarketEventsService, PolymarketOrderService
 from src.models import MarketEvent, SyntheticOrderBook, OrderBookStore, Order
 from src.daos import write_marketEvents, write_orderBookStore, write_orders, write_metadata
 from src.utils import datetime_to_epoch, CSVMessageProcessor
@@ -44,6 +44,8 @@ def get_order_message_register(orderBook_store: OrderBookStore, order_store: Ord
             # TODO: Rename to make it clear this is strategy execution
             orders = calculate_orders(book_a, book_b)
             order_store.add_orders(orders)
+
+            response = PolymarketOrderService().execute_orders_from_list(orders)
 
             write_marketEvents(
                 market_slug=book_store.market_slug,
