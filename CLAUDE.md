@@ -19,6 +19,9 @@ make clean                          # Removes venv, __pycache__, and .ipynb_chec
 
 # IMPORTANT: When starting work on a new issue or branch, always run:
 make clean && make build && make test  # Clean environment, rebuild, and run all tests
+
+# IMPORTANT: Before running tests after creating new test files, always run:
+make clean && make build && make test  # This ensures environment is properly set up
 ```
 
 ### Running the System
@@ -42,6 +45,7 @@ make test FILE={test_name} ARGS="{options}" # Run specific test with additional 
 # Common debugging examples:
 make test FILE=test_order_book_store ARGS="-s"           # Disable output capture for breakpoint() debugging
 make test FILE=test_order_book_store ARGS="-s --pdb"     # Auto-drop into debugger on failures
+make test FILE=test_orderbook_dao                        # Run specific test file (e.g., DAO tests)
 make test ARGS="--maxfail=1"                             # Stop after first failure
 make test ARGS="-x --tb=short"                           # Stop on first failure with short traceback
 ```
