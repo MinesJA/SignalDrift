@@ -13,13 +13,13 @@ logger = logging.getLogger(__name__)
 FIELD_NAMES = ['market_slug', 'market_id', 'asset_id', 'outcome_name', 'event_type', 'price', 'side', 'size', 'hash', 'timestamp']
 
 def write_marketEvents(market_slug: str, market_id: int, market_events: List[MarketEvent], datetime: datetime,  test_mode: bool = False):
+    test_suffix = "_test" if test_mode else ""
+    csv_filename = os.path.join('data', f"{datetime.strftime('%Y%m%d')}_{market_slug}_polymarket-market-events{test_suffix}.csv")
+
     if len(market_events) == 0:
         return
 
-    logger.info("Writing market messages")
-
-    test_suffix = "_test" if test_mode else ""
-    csv_filename = os.path.join('data', f"{datetime.strftime('%Y%m%d')}_{market_slug}_polymarket-market-events{test_suffix}.csv")
+    logger.info(f"Writing {len(market_events)} market events for market -- {market_slug}")
 
     rows = []
     for event in market_events:

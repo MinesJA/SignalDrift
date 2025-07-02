@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 FIELD_NAMES = ['market_slug', 'market_id', 'asset_id', 'outcome_name', 'price', 'size', 'side',  'timestamp']
 
 def write_orderBookStore(market_slug: str, orderBook_store: OrderBookStore, datetime: datetime, test_mode: bool = False):
-    logger.info("Writing order book")
     test_suffix = "_test" if test_mode else ""
     csv_filename = os.path.join('data', f"{datetime.strftime('%Y%m%d')}_{market_slug}_synthetic-order-book{test_suffix}.csv")
 
@@ -20,6 +19,11 @@ def write_orderBookStore(market_slug: str, orderBook_store: OrderBookStore, date
 
     for book in orderBook_store.books:
         rows.extend(book.asdict_rows())
+
+    if len(rows) == 0:
+        return
+
+    logger.info(f"Writing {len(rows)} synthetic orders for market -- {market_slug}")
 
     _write_to_csv(csv_filename, rows)
 
