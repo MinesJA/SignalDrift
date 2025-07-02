@@ -152,3 +152,46 @@ class TestMarketDaoFixes:
                 
             finally:
                 os.chdir(original_cwd)
+    
+    def test_write_market_events_with_none_market_id(self):
+        """Test that write_marketEvents handles None market_id gracefully."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            import os
+            original_cwd = os.getcwd()
+            temp_data_dir = Path(temp_dir) / 'data'
+            temp_data_dir.mkdir()
+            
+            try:
+                os.chdir(temp_dir)
+                
+                from src.models.market_event import BookEvent, EventType
+                from src.models.synthetic_orderbook import SyntheticOrder
+                from src.models.order import OrderSide
+                
+                # Create MarketEvent objects
+                market_events = [
+                    BookEvent(
+                        event_type=EventType.BOOK,
+                        market_slug='test-market',
+                        market_id=554912,
+                        market='test-market-address',
+                        asset_id='123456789',
+                        outcome_name='Yes',
+                        timestamp=1750888000000,
+                        hash='test-hash-1',
+                        asks=[SyntheticOrder(price=0.6, size=100.0, side=OrderSide.SELL)],
+                        bids=[SyntheticOrder(price=0.4, size=200.0, side=OrderSide.BUY)]
+                    )
+                ]
+                
+                test_datetime = datetime(2025, 6, 25, 10, 0, 0)
+                
+                # Test with None market_id - should not create file and should log error
+                write_marketEvents('test-market-none', None, market_events, test_datetime, test_mode=True)
+                
+                # Check that CSV was NOT created for None market_id
+                csv_path = temp_data_dir / '20250625_test-market-none_polymarket-market-events_test.csv'
+                assert not csv_path.exists(), "CSV should not be created when market_id is None"
+                
+            finally:
+                os.chdir(original_cwd)

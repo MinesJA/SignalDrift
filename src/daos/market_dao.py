@@ -10,10 +10,16 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # TODO: Should this be defined in MarketEvent?
-FIELD_NAMES = ['market_slug', 'market_id', 'asset_id', 'outcome_name', 'event_type', 'price', 'side', 'size', 'hash', 'timestamp']
+# Order must match actual CSV column order
+FIELD_NAMES = ['market_slug', 'asset_id', 'market_id', 'event_type', 'price', 'side', 'size', 'hash', 'timestamp']
 
 def write_marketEvents(market_slug: str, market_id: int, market_events: List[MarketEvent], datetime: datetime,  test_mode: bool = False):
     if len(market_events) == 0:
+        return
+
+    # Validate that market_id is provided and not None
+    if market_id is None:
+        logger.error(f"market_id is None for market_slug {market_slug} - cannot write events")
         return
 
     logger.info("Writing market messages")
