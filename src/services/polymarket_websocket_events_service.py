@@ -1,4 +1,5 @@
 from websocket import WebSocketApp
+from typing import List, Callable
 import json
 import time
 import threading
@@ -53,7 +54,7 @@ class WebsocketConnection(ABC):
 
 class PolymarketUserEventsService(WebsocketConnection):
 
-    def __init__(self, asset_ids, event_handlers):
+    def __init__(self, asset_ids, event_handlers: List[Callable]):
         super().__init__("user")
         client = PolymarketClobClient.connect()
         if not client:

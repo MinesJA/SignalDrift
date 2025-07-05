@@ -61,13 +61,6 @@ class MarketEvent(ABC):
 
         return int(market_id)
 
-    @classmethod
-    def validate_market(cls, market: Optional[Any]) -> str:
-        """Validate market is not None."""
-        if not market:
-            raise ValueError("market cannot not be None")
-
-        return market
 
     @classmethod
     def validate_asset_id(cls, asset_id: Optional[Any]) -> str:
@@ -194,7 +187,7 @@ class BookEvent(MarketEvent):
             event_type = EventType.BOOK,
             market_slug = cls.validate_market_slug(data.get('market_slug')),
             market_id = cls.validate_market_id(data.get('market_id')),
-            market = cls.validate_market(data.get('market')),
+            market = data.get('market', 'unknown'),
             asset_id = cls.validate_asset_id(data.get('asset_id')),
             outcome_name = cls.validate_outcome_name(data.get('outcome_name')),
             timestamp = cls.validate_timestamp(data.get('timestamp')),
@@ -276,7 +269,7 @@ class PriceChangeEvent(MarketEvent):
             event_type = EventType.PRICE_CHANGE,
             market_slug = cls.validate_market_slug(data.get('market_slug')),
             market_id = cls.validate_market_id(data.get('market_id')),
-            market = "", #cls.validate_market(data.get('market')),
+            market = data.get('market', 'unknown'),
             asset_id = cls.validate_asset_id(data.get('asset_id')),
             outcome_name = cls.validate_outcome_name(data.get('outcome_name')),
             timestamp = cls.validate_timestamp(data.get('timestamp')),

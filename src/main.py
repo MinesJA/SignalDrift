@@ -7,19 +7,26 @@ import sys
 import traceback
 from src.strategies import calculate_orders
 from src.services import PolymarketService, PolymarketMarketEventsService, PolymarketOrderService
-from src.models import MarketEvent, SyntheticOrderBook, OrderBookStore, Order, OrderSide, OrderType
-from src.daos import write_marketEvents, write_orderBookStore, write_orders, write_metadata, write_orderExecutions
+from src.models import MarketEvent, SyntheticOrderBook, OrderBookStore, Order
+from src.daos import write_marketEvents, write_orderBookStore, write_orders, write_metadata
 from src.utils import datetime_to_epoch, CSVMessageProcessor
 
 class OrdersStore:
     def __init__(self):
+        self.orders_by_price = {}
         self.orders = []
 
     def add_order(self, order: Order):
         self.orders.append(order)
 
+        if self.orders_by_price.get(order.price):
+            self.orders_by_price[order.price].append(order)
+        else:
+            self.orders_by_price[order.price] = [order]
+
     def add_orders(self, orders: List[Order]):
-        self.orders.extend(orders)
+        for order in orders:
+            self.add_order(order)
 
 
 # TODO: Could use the same pattern as OrderBuilder in polymarket_arb
@@ -46,11 +53,13 @@ def get_order_message_register(orderBook_store: OrderBookStore, order_store: Ord
             for order in orders:
                 book = book_store.lookup(order.asset_id)
                 book.update_entries(reduce_size=order.size, at_price=order.price, timestamp=order.timestamp)
-
-            order_store.add_orders(orders)
+                order_store.add_order(order)
 
             if not test_mode:
-                orders = PolymarketOrderService().post_orders(orders)
+                # This is a safety for now so we don't end up placing lots of orders for the same price
+                # In the future we will want to do that though
+                orders_to_place = [order for order in orders if order.price not in order_store.orders_by_price]
+                orders = PolymarketOrderService().post_orders(orders_to_place)
 
             write_marketEvents(
                 market_slug=book_store.market_slug,
@@ -170,43 +179,9 @@ def get_csv_file_path(filename: str) -> str:
     csv_filename = f"{filename}_polymarket-market-events.csv"
     return os.path.join(data_dir, csv_filename)
 
-#if __name__ == "__main__":
-#
-#    print("Getting metadata")
-#    #market_slug="mlb-min-mia-2025-07-02"
-#    #market_slug = "mlb-sd-phi-2025-07-02"
-#    market_slug="mlb-det-wsh-2025-07-02"
-#
-#    market_metadata = PolymarketService().get_market_by_slug(market_slug)
-#    print(market_metadata)
-#
-#
-#    if market_metadata:
-#        timestamp = datetime_to_epoch(datetime.now())
-#        orders = [
-#            Order(
-#                market_slug=market_slug,
-#                market_id=int(market_metadata['id']),
-#                asset_id=asset_id,
-#                outcome_name=outcome_name,
-#                side=OrderSide.BUY,
-#                order_type=OrderType.GTC,
-#                price=0.25,
-#                size=5,
-#                timestamp=timestamp
-#            )
-#            for asset_id, outcome_name
-#            in zip(json.loads(market_metadata['clobTokenIds']), json.loads(market_metadata['outcomes']))
-#        ]
-#
-#        print(orders)
-#        response = PolymarketOrderService().execute_orders_from_list(orders)
-#        print(" \n ")
-#        print(response)
-
-
 if __name__ == "__main__":
     # Check if CSV file is provided via environment variable or command line
+
     csv_filename = os.environ.get('CSV_FILE')
 
     if csv_filename:

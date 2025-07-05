@@ -45,9 +45,10 @@ def _recurs_build_orders(orders_a: List[SyntheticOrder], orderBuilder_a: OrderBu
         b = orders_b[0]
 
         total = a.price + b.price
-        if total < 1:
+        if total < 1 and (a.size >= 5 and b.size >= 5):
             if a.size < b.size and round(a.size/2) >= 1:
                 size = round(a.size/2)
+
                 # TODO: Figure out how to remove all the duplicate extend _build_order calls for each conditional
                 orders.extend([
                     orderBuilder_a(a.price, size, timestamp),
@@ -57,7 +58,9 @@ def _recurs_build_orders(orders_a: List[SyntheticOrder], orderBuilder_a: OrderBu
                 orders_a = orders_a[1:]
                 orders_b[0] = SyntheticOrder(side=b.side, price=b.price, size=b.size - a.size)
             elif a.size > b.size and round(b.size/2) >= 1:
+
                 size = round(b.size/2)
+
                 orders.extend([
                     orderBuilder_a(a.price, size, timestamp),
                     orderBuilder_b(b.price, size, timestamp)
@@ -68,6 +71,7 @@ def _recurs_build_orders(orders_a: List[SyntheticOrder], orderBuilder_a: OrderBu
 
             elif a.size == b.size and round(a.size/2) >= 1:
                 size = round(a.size/2)
+
                 orders.extend([
                     orderBuilder_a(a.price, size, timestamp),
                     orderBuilder_b(b.price, size, timestamp)
