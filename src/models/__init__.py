@@ -3,6 +3,7 @@ from .order import Order, OrderType, OrderSide
 from .synthetic_orderbook import SyntheticOrderBook, SyntheticOrder
 from .market_event import MarketEvent, EventType, PriceChangeEvent, BookEvent
 from .order_book_store import OrderBookStore
+from .order_execution import OrderExecution
 
 __all__ = ['OddsEvent',
            'OddsSource',
@@ -16,4 +17,5 @@ __all__ = ['OddsEvent',
            'BookEvent',
            'MarketEvent',
            'OrderBookStore',
-           'SyntheticOrder']
+           'SyntheticOrder',
+           'OrderExecution']

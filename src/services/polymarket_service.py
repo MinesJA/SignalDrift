@@ -91,8 +91,8 @@ class PolymarketService:
             url = f"{self.gamma_api_base}/markets"
             params = {
                 'slug': market_slug,
-                'active': True,
-                'closed': False
+                'active': False,
+                'closed': True
             }
 
             response = requests.get(url, params=params, headers=self.headers)

@@ -2,25 +2,25 @@ import os
 import csv
 from typing import List, Dict, Any
 from datetime import datetime
-from src.models import Order
+from src.models import OrderExecution
+from dataclasses import fields
 import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-FIELD_NAMES = Order.field_names()
+FIELD_NAMES = [field.name for field in fields(OrderExecution)]
 
-def write_orders(market_slug: str, orders: List[Order], datetime: datetime, test_mode: bool = False):
-
+def write_orderExecutions(market_slug: str, order_executions: List[OrderExecution], datetime: datetime, test_mode: bool = False):
     test_suffix = "_test" if test_mode else ""
-    csv_filename = os.path.join('data', f"{datetime.strftime('%Y%m%d')}_{market_slug}_orders{test_suffix}.csv")
+    csv_filename = os.path.join('data', f"{datetime.strftime('%Y%m%d')}_{market_slug}_order-executions{test_suffix}.csv")
 
-    if len(orders) == 0:
+    if len(order_executions) == 0:
         return
 
-    logger.info(f"Writing {len(orders)} orders for market -- {market_slug}")
+    logger.info(f"Writing {len(order_executions)} orders_executions for market -- {market_slug}")
 
-    rows = [order.asdict() for order in orders]
+    rows = [order_execution.asdict() for order_execution in order_executions]
 
     _write_to_csv(csv_filename, rows)
 

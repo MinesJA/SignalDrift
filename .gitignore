@@ -5,11 +5,14 @@ proxy-details.*
 **/*credentials*
 
 # Environment files
-.env*
+.env
 .env.local
 .env.development
 .env.test
 .env.production
+
+# Allow .env.example to be tracked
+!.env.example
 
 # Jupyter Notebook checkpoints
 **/.ipynb_checkpoints/

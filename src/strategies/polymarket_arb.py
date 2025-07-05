@@ -65,6 +65,7 @@ def _recurs_build_orders(orders_a: List[SyntheticOrder], orderBuilder_a: OrderBu
 
                 orders_a[0] = SyntheticOrder(side=a.side, price=a.price, size=a.size - b.size)
                 orders_b = orders_b[1:]
+
             elif a.size == b.size and round(a.size/2) >= 1:
                 size = round(a.size/2)
                 orders.extend([

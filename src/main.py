@@ -3,11 +3,12 @@ from datetime import datetime
 from typing import Dict, Any, List, Optional
 import json
 import os
+import sys
 import traceback
 from src.strategies import calculate_orders
 from src.services import PolymarketService, PolymarketMarketEventsService, PolymarketOrderService
 from src.models import MarketEvent, SyntheticOrderBook, OrderBookStore, Order, OrderSide, OrderType
-from src.daos import write_marketEvents, write_orderBookStore, write_orders, write_metadata
+from src.daos import write_marketEvents, write_orderBookStore, write_orders, write_metadata, write_orderExecutions
 from src.utils import datetime_to_epoch, CSVMessageProcessor
 
 class OrdersStore:
@@ -41,9 +42,15 @@ def get_order_message_register(orderBook_store: OrderBookStore, order_store: Ord
 
             # TODO: Rename to make it clear this is strategy execution
             orders = calculate_orders(book_a, book_b)
+
+            for order in orders:
+                book = book_store.lookup(order.asset_id)
+                book.update_entries(reduce_size=order.size, at_price=order.price, timestamp=order.timestamp)
+
             order_store.add_orders(orders)
 
-            response = PolymarketOrderService().execute_orders_from_list(orders)
+            if not test_mode:
+                orders = PolymarketOrderService().post_orders(orders)
 
             write_marketEvents(
                 market_slug=book_store.market_slug,
@@ -64,6 +71,12 @@ def get_order_message_register(orderBook_store: OrderBookStore, order_store: Ord
                 datetime=now,
                 test_mode=test_mode
             )
+            #write_orderExecutions(
+            #    market_slug=book_store.market_slug,
+            #    order_executions=order_executions,
+            #    datetime=now,
+            #    test_mode=test_mode
+            #)
         except Exception:
             print("ERROR ERROR ERROR")
             print(traceback.format_exc())
@@ -157,39 +170,42 @@ def get_csv_file_path(filename: str) -> str:
     csv_filename = f"{filename}_polymarket-market-events.csv"
     return os.path.join(data_dir, csv_filename)
 
+#if __name__ == "__main__":
+#
+#    print("Getting metadata")
+#    #market_slug="mlb-min-mia-2025-07-02"
+#    #market_slug = "mlb-sd-phi-2025-07-02"
+#    market_slug="mlb-det-wsh-2025-07-02"
+#
+#    market_metadata = PolymarketService().get_market_by_slug(market_slug)
+#    print(market_metadata)
+#
+#
+#    if market_metadata:
+#        timestamp = datetime_to_epoch(datetime.now())
+#        orders = [
+#            Order(
+#                market_slug=market_slug,
+#                market_id=int(market_metadata['id']),
+#                asset_id=asset_id,
+#                outcome_name=outcome_name,
+#                side=OrderSide.BUY,
+#                order_type=OrderType.GTC,
+#                price=0.25,
+#                size=5,
+#                timestamp=timestamp
+#            )
+#            for asset_id, outcome_name
+#            in zip(json.loads(market_metadata['clobTokenIds']), json.loads(market_metadata['outcomes']))
+#        ]
+#
+#        print(orders)
+#        response = PolymarketOrderService().execute_orders_from_list(orders)
+#        print(" \n ")
+#        print(response)
+
+
 if __name__ == "__main__":
-
-    print("Getting metadata")
-    market_slug = "mlb-sd-phi-2025-07-02"
-    market_metadata = PolymarketService().get_market_by_slug(market_slug)
-
-    print("Getting metadata")
-
-    if market_metadata:
-        timestamp = datetime_to_epoch(datetime.now())
-        orders = [
-            Order(
-                market_slug=market_slug,
-                market_id=int(market_metadata['id']),
-                asset_id=asset_id,
-                outcome_name=outcome_name,
-                side=OrderSide.BUY,
-                order_type=OrderType.GTC,
-                price=0.25,
-                size=1,
-                timestamp=timestamp
-            )
-            for asset_id, outcome_name
-            in zip(json.loads(market_metadata['clobTokenIds']), json.loads(market_metadata['outcomes']))
-        ]
-
-        print(orders)
-        response = PolymarketOrderService().execute_orders_from_list(orders)
-        print(" \n ")
-        print(response)
-
-
-if __name__ == "__mn__":
     # Check if CSV file is provided via environment variable or command line
     csv_filename = os.environ.get('CSV_FILE')
 

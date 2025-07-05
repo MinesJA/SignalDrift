@@ -276,7 +276,7 @@ class PriceChangeEvent(MarketEvent):
             event_type = EventType.PRICE_CHANGE,
             market_slug = cls.validate_market_slug(data.get('market_slug')),
             market_id = cls.validate_market_id(data.get('market_id')),
-            market = cls.validate_market(data.get('market')),
+            market = "", #cls.validate_market(data.get('market')),
             asset_id = cls.validate_asset_id(data.get('asset_id')),
             outcome_name = cls.validate_outcome_name(data.get('outcome_name')),
             timestamp = cls.validate_timestamp(data.get('timestamp')),

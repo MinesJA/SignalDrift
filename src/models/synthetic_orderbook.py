@@ -1,6 +1,6 @@
 from typing import Dict, Any, List
 from src.models import OrderSide
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, replace
 
 @dataclass
 class SyntheticOrder:
@@ -48,6 +48,13 @@ class SyntheticOrderBook:
             for order in orders
             if order.size > 0
         }
+
+    def update_entries(self, reduce_size: float, at_price: float, timestamp: int):
+        """Reduces size of entires for a particular price"""
+        synth_order = self.orders_lookup[at_price]
+        new_size = synth_order.size - reduce_size
+        self.timestamp = timestamp
+        self.orders_lookup[at_price] = replace(synth_order, size=new_size)
 
     def asdict_rows(self) -> List[Dict[str, Any]]:
         """Creates dict for reach order"""

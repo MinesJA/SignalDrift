@@ -4,20 +4,12 @@ from py_clob_client.order_builder.constants import BUY, SELL
 from typing import List, Dict, Any, Optional, NamedTuple
 import logging
 from src.config import config
-from src.models import Order, OrderSide, OrderType
+from src.models import Order, OrderSide, OrderType, OrderExecution
+from src.utils.datetime_utils import datetime_to_epoch
+from datetime import datetime
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-
-class OrderExecutionResult(NamedTuple):
-    """Result of an order execution attempt."""
-    order: Order  # Original order object
-    success: bool  # Whether the order was successfully placed
-    order_id: Optional[str]  # Polymarket order ID if successful
-    status: Optional[str]  # Order status (matched, live, delayed, unmatched)
-    error_msg: Optional[str]  # Error message if failed
-    polymarket_response: Dict[str, Any]  # Full response from Polymarket
 
 
 class PolymarketOrderService:
@@ -40,7 +32,7 @@ class PolymarketOrderService:
 
         # Initialize client with browser wallet signature type (2)
         self.client = ClobClient(
-            host=self.host,
+            self.host,
             key=self.private_key,
             chain_id=self.chain_id,
             signature_type=2,
@@ -52,7 +44,6 @@ class PolymarketOrderService:
         self.client.set_api_creds(api_creds)
 
         logger.info("PolymarketOrderService initialized successfully")
-
 
 
     def _convert_order_to_polymarket(self, order: Order) -> OrderArgs:
@@ -79,7 +70,63 @@ class PolymarketOrderService:
             token_id=order.asset_id
         )
 
-    def place_single_order(self, order: Order, neg_risk: bool = True) -> Optional[Dict[str, Any]]:
+    def _build_polymarket_order(self, order: Order, neg_risk: bool) -> PostOrdersArgs:
+
+        """
+         TODO: Revisit this
+         Will probably need some more logic in the Order models
+         because a FOK and FAK will only specify a total amount in $
+         to purchase (because they are essentially market orders)
+         I don't think we can specify a price and size for FOK/FAK.
+         Maybe do a polymorphic/inheritance model to capture different
+         argument requirements.
+
+         The other option (tho not mutually exclusive with polymorphic models)
+         is to go back to using traditional finance terms that then get
+         translated to Polymarket terms. I'm worried we're tying our logic too
+         much to polymarket. Should be more agnostic
+
+         Bid/Ask
+         Limit Buy Order, Limit Sell Order, Market Order
+        """
+        order_side_map = {
+            OrderSide.BUY: BUY,
+            OrderSide.SELL: SELL
+        }
+        order_type_map = {
+            OrderType.GTC: PolymarketOrderType.GTC,
+            OrderType.FOK: PolymarketOrderType.FOK,
+            OrderType.FAK: PolymarketOrderType.FAK,
+            OrderType.GTD: PolymarketOrderType.GTD
+        }
+
+        poly_ordertype = order_type_map.get(order.order_type)
+        poly_orderside = order_side_map.get(order.side)
+
+        #TODO: Need to import ArgumentError
+        #if poly_ordertype is None:
+        #    raise ArgumentError(f"Must provide valid order_type. {order.order_type} not valid")
+
+        #TODO: Need to import ArgumentError
+        #if poly_orderside is None:
+        #    raise ArgumentError(f"Must provide valid order_side. {order.side} not valid")
+
+        signed_order = self.client.create_order(
+            OrderArgs(
+                price=order.price,
+                size=order.size,
+                side=poly_orderside,
+                token_id=order.asset_id
+            ),
+            PartialCreateOrderOptions(neg_risk=neg_risk)
+        )
+
+        return PostOrdersArgs(
+            order=signed_order,
+            orderType=poly_ordertype
+        )
+
+    def post_order(self, order: Order, neg_risk: bool = True) -> Optional[Dict[str, Any]]:
         """
         Place a single order on Polymarket.
 
@@ -97,7 +144,7 @@ class PolymarketOrderService:
             # Create and sign the order
             signed_order = self.client.create_order(
                 order_args,
-                PartialCreateOrderOptions(neg_risk=neg_risk)
+                PartialCreateOrderOptions(neg_risk=False)
             )
 
             # Convert our OrderType to Polymarket's OrderType
@@ -124,98 +171,49 @@ class PolymarketOrderService:
                 "orderHashes": None
             }
 
-    def place_multiple_orders(self, orders: List[Order], neg_risk: bool = True) -> List[Dict[str, Any]]:
-        """
-        Place multiple orders in batches on Polymarket.
 
-        Args:
-            orders: List of internal Order objects (each must have order_type attribute)
-            neg_risk: Whether this is a negative risk market (binary yes/no)
-
-        Returns:
-            List of results for each batch (max 5 orders per batch)
-
-        Note:
-            Automatically splits orders into batches of 5
-        """
-        if not orders:
-            return []
-
-        results = []
-
-        # Split orders into batches of 5
-        for i in range(0, len(orders), 5):
-            batch = orders[i:i+5]
-            batch_result = self._place_order_batch(batch, neg_risk)
-            results.append(batch_result)
-
-        return results
-
-    def _place_order_batch(self, orders: List[Order], neg_risk: bool) -> Dict[str, Any]:
-        """
-        Place a single batch of orders (max 5).
-
-        Args:
-            orders: List of Order objects (max 5, each with order_type)
-            neg_risk: Whether this is a negative risk market
-
-        Returns:
-            Batch execution result
-        """
+    def _execute_batch(self, orders: List[Order], neg_risk: bool = False) -> List[Order]:
+        posted_at_timestamp = datetime_to_epoch(datetime.now())
         try:
-            if len(orders) > 5:
-                error_msg = "Maximum of 5 orders per batch request"
-                logger.error(error_msg)
-                return {
-                    "success": False,
-                    "errorMsg": error_msg,
-                    "orders_processed": 0,
-                    "results": []
-                }
+            post_orders_args = [self._build_polymarket_order(order, neg_risk) for order in orders]
+            order_results = self.client.post_orders(post_orders_args)
 
-            # Convert orders to PostOrdersArgs
-            post_orders_args = []
-            for order in orders:
-                order_args = self._convert_order_to_polymarket(order)
-                signed_order = self.client.create_order(
-                    order_args,
-                    PartialCreateOrderOptions(neg_risk=neg_risk)
-                )
-                # Convert our OrderType to Polymarket's OrderType
-                order_type_map = {
-                    OrderType.GTC: PolymarketOrderType.GTC,
-                    OrderType.FOK: PolymarketOrderType.FOK,
-                    OrderType.FAK: PolymarketOrderType.FAK,
-                    OrderType.GTD: PolymarketOrderType.GTD
-                }
-                polymarket_order_type = order_type_map.get(order.order_type, PolymarketOrderType.FOK)
+            if not isinstance(order_results, list):
+                error_msg = order_results.get('errorMsg', 'Unknown batch error')
+                return [order.with_post_failure(error_msg, None, posted_at_timestamp) for order in orders]
 
-                post_orders_args.append(PostOrdersArgs(
-                    order=signed_order,
-                    orderType=polymarket_order_type
-                ))
+            order_results = []
+            for _, (order, result) in enumerate(zip(orders, order_results)):
+                success = result.get("success", False)
+                error_msg = result.get("errorMsg")
+                status = result.get("status", "")
 
-            # Submit batch
-            result = self.client.post_orders(post_orders_args)
+                if success and error_msg is None:
+                    order_results.append(order.with_post_success(
+                        order_id=result.get("orderID"),
+                        status=status,
+                        making_amount=result.get("makingAmount"),
+                        taking_amount=result.get("takingAmount"),
+                        posted_at_timestamp=posted_at_timestamp
+                    ))
+                else:
+                    order_results.append(order.with_post_failure(
+                        error_msg=error_msg,
+                        status=status,
+                        posted_at_timestamp=posted_at_timestamp
+                    ))
 
-            logger.info(f"Successfully placed batch of {len(orders)} orders: {result}")
-            return {
-                "success": True,
-                "orders_processed": len(orders),
-                "results": result,
-                "errorMsg": None
-            }
-
+            return order_results
         except Exception as e:
-            logger.error(f"Error placing order batch: {e}")
-            return {
-                "success": False,
-                "errorMsg": str(e),
-                "orders_processed": 0,
-                "results": []
-            }
+            # If exception occurs, create failure results for all orders in batch
+            logger.error(f"Error placing batch: {e}")
+            return [ order.with_post_failure(
+                    error_msg="Error placing batch",
+                    status=None, # Could add our own status like "internal_failure"
+                    posted_at_timestamp=posted_at_timestamp
+                ) for order in orders]
 
-    def execute_orders_from_list(self, orders: List[Order], neg_risk: bool = True) -> List[OrderExecutionResult]:
+    def post_orders(self, orders: List[Order], neg_risk: bool = False) -> List[Order]:
         """
         Execute a list of Order objects, handling batching automatically.
 
@@ -224,86 +222,24 @@ class PolymarketOrderService:
             neg_risk: Whether this is a negative risk market (binary yes/no)
 
         Returns:
-            List of OrderExecutionResult tuples, one for each order
+            List of Orders, updated with execution results
         """
         if not orders:
             return []
 
-        logger.info(f"Executing {len(orders)} orders in batches of 5")
+        logger.info(f"Executing {len(orders)} orders in batches of 4")
 
         execution_results = []
 
-        # Split orders into batches of 5
-        for i in range(0, len(orders), 5):
-            batch = orders[i:i+5]
-
-            try:
-                # Convert orders to PostOrdersArgs
-                post_orders_args = []
-                for order in batch:
-                    order_args = self._convert_order_to_polymarket(order)
-                    signed_order = self.client.create_order(
-                        order_args,
-                        PartialCreateOrderOptions(neg_risk=neg_risk)
-                    )
-
-                    # Convert our OrderType to Polymarket's OrderType
-                    # TODO: Revisit, this seems silly but maybe its necessary
-                    order_type_map = {
-                        OrderType.GTC: PolymarketOrderType.GTC,
-                        OrderType.FOK: PolymarketOrderType.FOK,
-                        OrderType.FAK: PolymarketOrderType.FAK,
-                        OrderType.GTD: PolymarketOrderType.GTD
-                    }
-                    polymarket_order_type = order_type_map.get(order.order_type, PolymarketOrderType.FOK)
-
-                    post_orders_args.append(PostOrdersArgs(
-                        order=signed_order,
-                        orderType=polymarket_order_type
-                    ))
-
-                # Submit batch and get results
-                batch_results = self.client.post_orders(post_orders_args)
-
-                # Process results - batch_results should be a list of individual order results
-                if isinstance(batch_results, list):
-                    for j, (order, result) in enumerate(zip(batch, batch_results)):
-                        execution_results.append(OrderExecutionResult(
-                            order=order,
-                            success=result.get('success', False),
-                            order_id=result.get('orderId'),
-                            status=result.get('status'),
-                            error_msg=result.get('errorMsg'),
-                            polymarket_response=result
-                        ))
-                else:
-                    # If batch failed as a whole, create failure results for all orders
-                    error_msg = batch_results.get('errorMsg', 'Unknown batch error')
-                    for order in batch:
-                        execution_results.append(OrderExecutionResult(
-                            order=order,
-                            success=False,
-                            order_id=None,
-                            status=None,
-                            error_msg=error_msg,
-                            polymarket_response=batch_results
-                        ))
-
-            except Exception as e:
-                # If exception occurs, create failure results for all orders in batch
-                logger.error(f"Error placing batch: {e}")
-                for order in batch:
-                    execution_results.append(OrderExecutionResult(
-                        order=order,
-                        success=False,
-                        order_id=None,
-                        status=None,
-                        error_msg=str(e),
-                        polymarket_response={'error': str(e)}
-                    ))
+        # Split orders into batches of 5 -- limit by polymarket
+        for i in range(0, len(orders), 4):
+            batch = orders[i:i+4]
+            execution_results.extend(self._execute_batch(batch, neg_risk))
 
         # Log summary
         successful_orders = sum(1 for r in execution_results if r.success)
         logger.info(f"Executed {len(orders)} orders: {successful_orders} successful, {len(orders) - successful_orders} failed")
 
         return execution_results
+
+
